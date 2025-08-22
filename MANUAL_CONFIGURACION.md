@@ -1,0 +1,63 @@
+# Manual de Configuración: ERPNext Ecuador
+
+Este manual proporciona una guía paso a paso para configurar el módulo de localización de Ecuador en ERPNext.
+
+## Paso 1: Configuración de la Compañía
+
+Asegúrate de que los datos de tu compañía en ERPNext estén completos y correctos.
+1.  Ve a `Contabilidad > Compañía` y selecciona tu compañía.
+2.  Asegúrate de que los siguientes campos estén llenos:
+    -   **Nombre de la Compañía**
+    -   **RUC** (en el campo de ID de Impuestos)
+    -   **Dirección Principal**
+    -   **Teléfono** y **Email**
+
+## Paso 2: Configurar Ambientes del SRI
+
+El módulo permite conectarse a los dos ambientes del SRI: Pruebas y Producción.
+1.  Ve al módulo `Sri > Ambientes SRI`.
+2.  Por defecto, el sistema incluye los dos ambientes que el SRI provee. No necesitas modificarlos, pero puedes revisarlos:
+    -   **Ambiente 1 (Pruebas):** Usado para realizar pruebas de emisión de documentos sin validez tributaria.
+    -   **Ambiente 2 (Producción):** Usado para la emisión de documentos reales con validez tributaria.
+3.  En `Contabilidad > Configuración Contable`, en la sección de `Configuración Regional SRI`, selecciona el **Ambiente SRI por defecto** que deseas utilizar. Generalmente, se empieza con el ambiente de Pruebas.
+
+## Paso 3: Configurar Firma Electrónica
+
+La firma electrónica es indispensable para generar los documentos tributarios.
+1.  **Obtén tu Firma Electrónica:** Adquiere un certificado de firma electrónica en formato `.p12` a través de una de las [entidades de certificación autorizadas en Ecuador](https://www.google.com/search?q=entidades+de+certificacion+autorizadas+ecuador).
+2.  **Sube tu Firma al Sistema:**
+    -   Ve al módulo `Sri > Firma Electrónica`.
+    -   Crea un nuevo registro.
+    -   Asígnale un nombre (ej. "Firma Principal").
+    -   Sube tu archivo `.p12`.
+    -   Ingresa la contraseña de tu firma electrónica. El sistema la almacenará de forma segura.
+    -   Guarda el documento.
+3.  **Asigna la Firma a tu Compañía:**
+    -   Ve a `Contabilidad > Compañía` y selecciona tu compañía.
+    -   En la sección `Configuración Regional SRI`, selecciona la firma que acabas de crear en el campo **Firma Electrónica Activa**.
+
+## Paso 4: Crear Establecimientos y Puntos de Emisión
+
+Debes registrar los establecimientos y puntos de emisión que tu compañía utiliza para facturar.
+1.  Ve al módulo `Sri > Establecimientos`.
+2.  Crea un nuevo **Establecimiento**.
+    -   **Compañía:** Selecciona tu compañía.
+    -   **Record Name (Código):** Ingresa el código del establecimiento asignado por el SRI (ej. `001`).
+    -   **Description:** Dale un nombre descriptivo (ej. "Oficina Principal Quito").
+3.  **Añadir Puntos de Emisión:**
+    -   Dentro del mismo documento de **Establecimiento**, verás una tabla llamada **Puntos de Emisión**.
+    -   Haz clic en "Agregar Fila" para añadir un nuevo punto de emisión.
+    -   **Record Name (Código):** Ingresa el código del punto de emisión (ej. `001`).
+    -   **Description:** Dale un nombre descriptivo (ej. "Caja 1").
+    -   **Secuencias:** Ingresa el número inicial para cada tipo de documento (Factura, Nota de Crédito, etc.). Generalmente, este valor es `1` si estás empezando.
+4.  Guarda el documento de Establecimiento. Repite el proceso para todos tus establecimientos y puntos de emisión.
+
+## Paso 5: Verificar Secuencias (Opcional)
+
+Las secuencias de los documentos se configuran dentro de cada Punto de Emisión (Paso 4). Sin embargo, puedes ver todas las secuencias del sistema de forma centralizada.
+1.  Ve al módulo `Sri > Secuencias`.
+2.  Aquí podrás ver y, si es necesario, ajustar el valor actual de la secuencia para cualquier tipo de documento y ambiente. **Atención:** Modificar esto directamente puede causar problemas si ya has emitido documentos.
+
+## ¡Configuración Completa!
+
+Con estos pasos, tu sistema está listo para empezar a generar documentos electrónicos. Cuando crees una **Factura de Venta** y la **envíes (Submit)**, el sistema generará automáticamente el XML firmado y lo enviará al SRI (si la opción está habilitada). Podrás ver el estado de la autorización y el XML en el propio documento de la factura.

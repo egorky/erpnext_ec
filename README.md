@@ -47,3 +47,10 @@ El módulo "Sri" en el escritorio de ERPNext te da acceso a las configuraciones 
 -   **Ambientes SRI:** Configura el ambiente de trabajo (Pruebas o Producción) para la conexión con los web services del SRI.
 -   **Tipos de Comprobantes:** Catálogo de los tipos de documentos tributarios según el SRI.
 -   **Tipos de Identificación:** Catálogo de los tipos de identificación (RUC, Cédula, Pasaporte).
+
+## Documentación Detallada
+
+Para una guía más completa sobre la configuración y el uso de cada funcionalidad, consulta nuestros manuales detallados:
+
+-   **[Manual de Configuración](./MANUAL_CONFIGURACION.md):** Guía paso a paso para la puesta en marcha del módulo.
+-   **[Manual de Referencia de DocTypes](./MANUAL_DOCTYPES.md):** Explicación de cada uno de los DocTypes personalizados que este módulo añade.
