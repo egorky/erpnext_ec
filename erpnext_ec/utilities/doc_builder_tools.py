@@ -219,6 +219,10 @@ def get_full_customer_sri(def_customer):
 
     if docs:
         doc = docs[0]
+
+        if not doc.typeidtax:
+            frappe.throw(_("Please set the 'Tipo de Identificación' for Customer {0} before proceeding.").format(def_customer))
+
         #print(doc)
         customer_sri['customer_tax_id'] = doc.tax_id
         if(doc.nombrecomercial):
