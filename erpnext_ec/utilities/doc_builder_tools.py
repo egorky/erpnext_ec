@@ -1107,19 +1107,15 @@ def setSecuencial(doc, typeDocSri):
     )
 
     establishment_object = frappe.get_list('Sri Establishment',
-                                      fields = ['*'],
-                                      filters = {
+                                      fields=['*'],
+                                      filters={
                                           'company_link': company_object.name,
-                                          'record_name': doc.estab
-                                          },
-                                      docstatus = [0, 1])
+                                          'name': doc.estab
+                                      },
+                                      docstatus=[0, 1])
     
     if not establishment_object:
-        debug_message = _("Searching for Establishment with filters: Company='{0}', Establishment Code='{1}'").format(company_object.name, doc.estab)
-        frappe.throw(
-            _("SRI Establishment '{0}' not found for Company '{1}'. Please check configuration.<br><br><b>Debug Info:</b><br>{2}").format(doc.estab, company_object.name, debug_message),
-            title=_("Configuration Error")
-        )
+        frappe.throw(_("SRI Establishment '{0}' not found for Company '{1}'. Please check configuration.").format(doc.estab, company_object.name))
 
     if(establishment_object):
         print("establishment_object[0]")
