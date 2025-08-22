@@ -1100,12 +1100,19 @@ def setSecuencial(doc, typeDocSri):
         message=f"Searching for Establishment. Company: '{company_object.name}', Establishment Code: '{doc.estab}'"
     )
 
-    establishment_object = frappe.get_list('Sri Establishment', 
-                                      fields = ['*'], 
+    # Diagnostic logging
+    frappe.log_error(
+        title='SRI Secuencial Debug',
+        message=f"Searching for Establishment. Company: '{company_object.name}', Establishment Code: '{doc.estab}'"
+    )
+
+    establishment_object = frappe.get_list('Sri Establishment',
+                                      fields = ['*'],
                                       filters = {
-                                          'company_link': company_object.name, 
-                                          'record_name': doc.estab 
-                                          })
+                                          'company_link': company_object.name,
+                                          'record_name': doc.estab
+                                          },
+                                      docstatus = [0, 1])
     
     if not establishment_object:
         frappe.throw(_("SRI Establishment '{0}' not found for Company '{1}'. Please check configuration.").format(doc.estab, company_object.name))
@@ -1113,13 +1120,14 @@ def setSecuencial(doc, typeDocSri):
     if(establishment_object):
         print("establishment_object[0]")
         print(establishment_object[0])
-        sequence_object = frappe.get_all('Sri Ptoemi', 
+        sequence_object = frappe.get_all('Sri Ptoemi',
                                         fields = ['*'],
                                         filters = {
                                             'parent': establishment_object[0].name,
                                             'record_name': doc.ptoemi,
-                                            'sri_environment_lnk': company_object.sri_active_environment                                            
-                                            })
+                                            'sri_environment_lnk': company_object.sri_active_environment
+                                            },
+                                        docstatus = [0, 1])
         print("sequence_object")
         print(sequence_object)
 
