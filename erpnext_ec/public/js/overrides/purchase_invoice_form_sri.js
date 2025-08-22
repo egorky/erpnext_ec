@@ -1,7 +1,17 @@
 var doctype_customized = "Purchase Invoice";
 
 frappe.ui.form.on(doctype_customized, {
-    onload: function(frm) {        
+    onload: function(frm) {
+        // Set query for ptoemi based on estab
+        frm.set_query('ptoemi', function() {
+            return {
+                filters: {
+                    'parent': frm.doc.estab,
+                    'parenttype': 'Sri Establishment'
+                }
+            };
+        });
+
         if (frappe.session.default_is_purchase_settlement == 1) {
             var default_is_purchase_settlement = frappe.session.default_is_purchase_settlement;
             frm.set_value('is_purchase_settlement', default_is_purchase_settlement);
@@ -16,18 +26,6 @@ frappe.ui.form.on(doctype_customized, {
     },
 	refresh(frm)
     {
-        if (frm.doc.status == 'Draft')
-        {
-            //Fields for custom settings
-            frm.set_query('ptoemi', function() {
-                return {
-                    filters: {
-                        'sri_establishment_lnk': frm.doc.estab
-                    }
-                };
-            });
-        }
-
         if (frm.doc.status == 'Cancelled' || frm.doc.status == 'Draft')
         {
             return false;

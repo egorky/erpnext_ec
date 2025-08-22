@@ -54,3 +54,4 @@ Para una guía más completa sobre la configuración y el uso de cada funcionali
 
 -   **[Manual de Configuración](./MANUAL_CONFIGURACION.md):** Guía paso a paso para la puesta en marcha del módulo.
 -   **[Manual de Referencia de DocTypes](./MANUAL_DOCTYPES.md):** Explicación de cada uno de los DocTypes personalizados que este módulo añade.
+-   **[Manual de Modificaciones a Documentos Estándar](./MANUAL_MODIFICACIONES.md):** Detalle de los campos que este módulo añade a los documentos estándar de ERPNext.
