@@ -237,3 +237,17 @@ def get_ptoemi_for_establishment(doctype, txt, searchfield, start, page_len, fil
         "page_len": page_len,
         "estab": filters.get("estab")
     })
+
+@frappe.whitelist()
+def get_ptoemi_list_for_establishment(establishment):
+    if not establishment:
+        return []
+
+    ptoemi_docs = frappe.get_all(
+        "Sri Ptoemi",
+        filters={"parent": establishment, "parenttype": "Sri Establishment"},
+        fields=["name"],
+        order_by="name asc"
+    )
+
+    return [d.name for d in ptoemi_docs]

@@ -1,49 +1,26 @@
 var doctype_customized = "Purchase Invoice";
 
 frappe.ui.form.on(doctype_customized, {
-    onload: function(frm) {
-        // Set query for ptoemi based on estab
-        frm.set_query('ptoemi', function() {
-            console.log("Attempting to filter PtoEmi for Establishment: ", frm.doc.estab);
-            if (!frm.doc.estab) {
-                frappe.msgprint(__("Please select an Establishment first to get Point of Emission."));
-                return;
-            }
-            return {
-                filters: {
-                    'parent': frm.doc.estab
+    refresh(frm) {
+        update_headline(frm);
+    },
+    estab: function(frm) {
+        frm.set_value('ptoemi', '');
+        if (frm.doc.estab) {
+            frappe.call({
+                method: 'erpnext_ec.utilities.tools.get_ptoemi_list_for_establishment',
+                args: {
+                    establishment: frm.doc.estab
+                },
+                callback: function(r) {
+                    if (r.message) {
+                        frm.set_df_property('ptoemi', 'options', r.message);
+                        frm.refresh_field('ptoemi');
+                    }
                 }
-            };
-        });
-
-        if (frappe.session.default_is_purchase_settlement == 1) {
-            var default_is_purchase_settlement = frappe.session.default_is_purchase_settlement;
-            frm.set_value('is_purchase_settlement', default_is_purchase_settlement);
-            frappe.session.default_is_purchase_settlement = null;
-        }
-
-        if (frm.doc.is_purchase_settlement)
-        {
-            //frm.dashboard.clear_headline();
-            //frm.dashboard.set_headline('MODO LIQUIDACIÓN DE COMPRA')
+            });
         }
     },
-	refresh(frm)
-    {
-        if (frm.doc.status == 'Cancelled' || frm.doc.status == 'Draft')
-        {
-            return false;
-        }        
-        
-        //SetFormSriButtons(frm, doctype_customized);      
-        //console.log(frm);
-        //console.log(frm.doctype_customized);
-    },
-    estab: function(frm)
-	{
-        frm.set_value('ptoemi',  '');
-        frm.refresh_field('ptoemi');
-	},
     is_purchase_settlement: function(frm)
     {
         if (frm.doc.is_purchase_settlement) {
