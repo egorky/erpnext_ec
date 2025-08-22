@@ -9,7 +9,7 @@
  "document_type": "Setup",
  "editable_grid": 1,
  "engine": "InnoDB",
- "istable": 1,
+ "istable": 0,
  "field_order": [
   "record_name",
   "description",
