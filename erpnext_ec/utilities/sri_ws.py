@@ -46,20 +46,19 @@ from suds.client import Client
 
 @frappe.whitelist()
 def test_signature(signature_doc):
-	#print ("----")
-	#print(signature_doc)
-	#Este metodo aun utiliza el api
-	doc_data = build_doc_fac('ACC-SINV-2024-00001')
-	#archivo XML de prueba
-	full_path_doc = frappe.get_app_path('erpnext_ec', 'public', 'xml', 'ACC-SINV-2024-00001_for_test.xml')
-	file = open(full_path_doc, "r")
-	doc_text = file.read()
-	file.close()
-	#print(doc_text)
+	# Parse the JSON string from the client into an object
+	signature_doc_obj = json.loads(signature_doc, object_hook=lambda d: SimpleNamespace(**d))
 
-	#doc_text = get_doc('ACC-SINV-2024-00001', 'FAC', 'xml', 'principal')
-	signed_xml = SriXmlData.sign_xml(SriXmlData, doc_text, doc_data, signature_doc)
-	#print(signed_xml)
+	# Get the test XML file content
+	full_path_doc = frappe.get_app_path('erpnext_ec', 'public', 'xml', 'ACC-SINV-2024-00001_for_test.xml')
+	with open(full_path_doc, "r") as f:
+		doc_text = f.read()
+
+	# Call the correct signing method with the correct arguments
+	# Note: The first argument to an instance method call is implicitly `self`, so we pass the object instance.
+	# However, since we are calling it on the class, we pass the class itself as the first argument.
+	signed_xml = SriXmlData().sign_xml_cmd(doc_text, signature_doc_obj)
+
 	return signed_xml
 
 @frappe.whitelist()
