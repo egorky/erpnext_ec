@@ -3,13 +3,17 @@ var doctype_customized = "Purchase Invoice";
 frappe.ui.form.on(doctype_customized, {
     onload: function(frm) {
         // Set query for ptoemi based on estab
-        frm.set_query("ptoemi", function() {
-            return {
-                "query": "erpnext_ec.utilities.tools.get_ptoemi_for_establishment",
-                "filters": {
-                    "estab": frm.doc.estab
-                }
+        frm.set_query('ptoemi', function() {
+            console.log("Attempting to filter PtoEmi for Establishment: ", frm.doc.estab);
+            if (!frm.doc.estab) {
+                frappe.msgprint(__("Please select an Establishment first to get Point of Emission."));
+                return;
             }
+            return {
+                filters: {
+                    'parent': frm.doc.estab
+                }
+            };
         });
 
         if (frappe.session.default_is_purchase_settlement == 1) {

@@ -58,6 +58,27 @@ Las secuencias de los documentos se configuran dentro de cada Punto de Emisión 
 1.  Ve al módulo `Sri > Secuencias`.
 2.  Aquí podrás ver y, si es necesario, ajustar el valor actual de la secuencia para cualquier tipo de documento y ambiente. **Atención:** Modificar esto directamente puede causar problemas si ya has emitido documentos.
 
+## Paso 6: Crear Formatos de Impresión (RIDE)
+
+El sistema necesita formatos de impresión específicos para generar la representación gráfica (RIDE) de los documentos electrónicos. El módulo puede crearlos por ti.
+
+1.  Ve a la lista de **Formato de Impresión** (Puedes buscarlo en la barra de búsqueda).
+2.  En la parte superior, verás un botón llamado **"Crear Formatos SRI"**.
+3.  Haz clic en el botón. El sistema creará automáticamente todos los formatos de impresión necesarios (`Factura SRI`, `Retención SRI`, etc.).
+
+## Paso 7: Configurar Plan de Cuentas
+
+Para la correcta generación de los impuestos en los documentos XML, debes mapear tus cuentas contables de impuestos con los códigos que el SRI utiliza.
+
+1.  Ve a `Contabilidad > Plan de Cuentas`.
+2.  Busca las cuentas que utilizas para los impuestos (ej. IVA, ICE, etc.).
+3.  Para cada cuenta de impuesto, edítala y busca el campo **`Sri Code`**.
+4.  Introduce el código numérico que el SRI asigna a ese impuesto. Por ejemplo:
+    -   Para IVA 12%, el `Sri Code` es `2`.
+    -   Para IVA 0%, el `Sri Code` es `2` y el `Sri Codigo Porcentaje` es `0`.
+    -   Para ICE, el `Sri Code` es `3`.
+5.  Guarda los cambios en cada cuenta.
+
 ## ¡Configuración Completa!
 
 Con estos pasos, tu sistema está listo para empezar a generar documentos electrónicos. Cuando crees una **Factura de Venta** y la **envíes (Submit)**, el sistema generará automáticamente el XML firmado y lo enviará al SRI (si la opción está habilitada). Podrás ver el estado de la autorización y el XML en el propio documento de la factura.
