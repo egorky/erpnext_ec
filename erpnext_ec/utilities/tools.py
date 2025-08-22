@@ -212,3 +212,24 @@ def create_notification_log(user, subject, body):
     # Confirmar los cambios
     frappe.db.commit()
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def get_ptoemi_for_establishment(doctype, txt, searchfield, start, page_len, filters):
+    if not filters.get("estab"):
+        frappe.throw("Please select an Establishment first.")
+
+    return frappe.db.sql("""
+        SELECT name, record_name
+        FROM `tabSri Ptoemi`
+        WHERE parent = %(estab)s
+        AND parenttype = 'Sri Establishment'
+        AND `%(searchfield)s` LIKE %(txt)s
+        ORDER BY name
+        LIMIT %(start)s, %(page_len)s
+    """, {
+        "searchfield": searchfield,
+        "txt": "%%%s%%" % txt,
+        "start": start,
+        "page_len": page_len,
+        "estab": filters.get("estab")
+    })

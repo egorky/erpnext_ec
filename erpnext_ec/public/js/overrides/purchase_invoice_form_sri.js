@@ -3,13 +3,13 @@ var doctype_customized = "Purchase Invoice";
 frappe.ui.form.on(doctype_customized, {
     onload: function(frm) {
         // Set query for ptoemi based on estab
-        frm.set_query('ptoemi', function() {
+        frm.set_query("ptoemi", function() {
             return {
-                filters: {
-                    'parent': frm.doc.estab,
-                    'parenttype': 'Sri Establishment'
+                "query": "erpnext_ec.utilities.tools.get_ptoemi_for_establishment",
+                "filters": {
+                    "estab": frm.doc.estab
                 }
-            };
+            }
         });
 
         if (frappe.session.default_is_purchase_settlement == 1) {
