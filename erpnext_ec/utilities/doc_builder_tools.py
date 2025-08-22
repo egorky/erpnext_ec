@@ -1094,6 +1094,12 @@ def setSecuencial(doc, typeDocSri):
     print("--------------------------")
     nuevo_secuencial = 0
 
+    # Diagnostic logging
+    frappe.log_error(
+        title='SRI Secuencial Debug',
+        message=f"Searching for Establishment. Company: '{company_object.name}', Establishment Code: '{doc.estab}'"
+    )
+
     establishment_object = frappe.get_list('Sri Establishment', 
                                       fields = ['*'], 
                                       filters = {
