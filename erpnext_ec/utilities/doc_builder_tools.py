@@ -1101,6 +1101,9 @@ def setSecuencial(doc, typeDocSri):
                                           'record_name': doc.estab 
                                           })
     
+    if not establishment_object:
+        frappe.throw(_("SRI Establishment '{0}' not found for Company '{1}'. Please check configuration.").format(doc.estab, company_object.name))
+
     if(establishment_object):
         print("establishment_object[0]")
         print(establishment_object[0])
@@ -1113,6 +1116,9 @@ def setSecuencial(doc, typeDocSri):
                                             })
         print("sequence_object")
         print(sequence_object)
+
+        if not sequence_object:
+            frappe.throw(_("SRI Point of Emission '{0}' not found for Establishment '{1}' in the current Environment. Please check configuration.").format(doc.ptoemi, doc.estab))
 
         if (sequence_object):
 
