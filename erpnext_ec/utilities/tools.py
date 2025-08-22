@@ -218,17 +218,21 @@ def get_ptoemi_for_establishment(doctype, txt, searchfield, start, page_len, fil
     if not filters.get("estab"):
         frappe.throw("Please select an Establishment first.")
 
+    # Sanitize searchfield to prevent SQL injection on identifiers
+    allowed_search_fields = ["name", "record_name", "description"]
+    if searchfield not in allowed_search_fields:
+        searchfield = "name"
+
     return frappe.db.sql("""
         SELECT name, record_name
         FROM `tabSri Ptoemi`
         WHERE parent = %(estab)s
         AND parenttype = 'Sri Establishment'
-        AND `%(searchfield)s` LIKE %(txt)s
+        AND `{searchfield}` LIKE %(txt)s
         ORDER BY name
         LIMIT %(start)s, %(page_len)s
-    """, {
-        "searchfield": searchfield,
-        "txt": "%%%s%%" % txt,
+    """.format(searchfield=searchfield), {
+        "txt": "%" + txt + "%",
         "start": start,
         "page_len": page_len,
         "estab": filters.get("estab")
