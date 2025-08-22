@@ -51,7 +51,7 @@ def test_signature(signature_doc):
 	#Este metodo aun utiliza el api
 	doc_data = build_doc_fac('ACC-SINV-2024-00001')
 	#archivo XML de prueba
-	full_path_doc = '/opt/bench/frappe-bench/sites/principal/private/files/ACC-SINV-2024-00001.xml'
+	full_path_doc = frappe.get_app_path('erpnext_ec', 'public', 'xml', 'ACC-SINV-2024-00001_for_test.xml')
 	file = open(full_path_doc, "r")
 	doc_text = file.read()
 	file.close()
