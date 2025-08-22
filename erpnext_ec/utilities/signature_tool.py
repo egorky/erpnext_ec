@@ -137,43 +137,50 @@ class SriXmlData():
         with open(tmp_xml, "w") as text_file:
             text_file.write(xml_string_data)
 
-        p12 = frappe.get_site_path() + signature_doc.p12        
-        from frappe.utils.password import get_decrypted_password       
+        p12_path = frappe.get_site_path() + signature_doc.p12
+        from frappe.utils.password import get_decrypted_password
         password = get_decrypted_password('Sri Signature', signature_doc.name, "password")
         
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        app_path = os.path.join(dir_path, "apps", "XadesSignerCmd", "XadesSignerCmd")
 
-        # Nombre del archivo XSD
-        appPath = dir_path + "/apps/XadesSignerCmd/XadesSignerCmd"
-        tmpFolder = dir_path + "/apps/XadesSignerCmd/" 
+        try:
+            process = subprocess.run(
+                [app_path,
+                 '--fileinput', tmp_xml,
+                 '--p12', p12_path,
+                 '--password', password,
+                 '--output', output_xml],
+                capture_output=True,
+                text=True,
+                check=True  # This will raise CalledProcessError if returncode is non-zero
+            )
+        except subprocess.CalledProcessError as e:
+            # If the command fails, raise a Frappe exception with the details
+            frappe.throw(
+                _("XadesSignerCmd failed with return code {0}:\n<pre>Stderr: {1}\nStdout: {2}</pre>").format(
+                    e.returncode, e.stderr, e.stdout
+                )
+            )
+        except FileNotFoundError:
+            # If the command itself is not found
+            frappe.throw(
+                _("CRITICAL: XadesSignerCmd executable not found at {0}. Please check file permissions and installation.").format(app_path)
+            )
+        except Exception as e:
+            frappe.throw(_("An unexpected error occurred while trying to sign the document: {0}").format(str(e)))
 
-        p = subprocess.Popen([appPath,
-                              '--fileinput', tmp_xml ,
-                              '--p12', p12,
-                              '--password', password,
-                              '--output', output_xml])
-
-        res = p.communicate()
-
-        #Leer XML Firmado
-        file = open(output_xml, "r")
-        content = file.read()
-        #print(content)
-        file.close()
+        # If we get here, the command succeeded and the file should exist.
+        with open(output_xml, "r") as file:
+            content = file.read()
         
-        #En caso de usar firmas UANATACA
-        #content = content.replace('organizationIdentifier=VATES-A66721499', '2.5.4.97=#0c0f56415445532d413636373231343939')
-
+        # Cleanup temporary files
         try:
             os.remove(tmp_xml)
             os.remove(output_xml)
-            #print("El archivo se ha eliminado exitosamente.")
-        except FileNotFoundError:
-            #print("El archivo no existe.")
-            pass
-        except Exception as e:
-            #print("Ocurrió un error al intentar eliminar el archivo:", e)
-            pass
+        except OSError as e:
+            # Log cleanup error but don't fail the whole operation
+            frappe.log_error(f"Could not remove temporary signing files: {e}", "Signature Cleanup Error")
 
         return content
 
