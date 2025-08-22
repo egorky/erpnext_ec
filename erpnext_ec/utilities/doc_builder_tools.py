@@ -1121,13 +1121,13 @@ def setSecuencial(doc, typeDocSri):
         print("establishment_object[0]")
         print(establishment_object[0])
         sequence_object = frappe.get_all('Sri Ptoemi',
-                                        fields = ['*'],
-                                        filters = {
+                                        fields=['*'],
+                                        filters={
                                             'parent': establishment_object[0].name,
-                                            'record_name': doc.ptoemi,
+                                            'name': doc.ptoemi,
                                             'sri_environment_lnk': company_object.sri_active_environment
-                                            },
-                                        docstatus = [0, 1])
+                                        },
+                                        docstatus=[0, 1])
         print("sequence_object")
         print(sequence_object)
 
