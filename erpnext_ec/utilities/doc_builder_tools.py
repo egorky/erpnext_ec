@@ -1164,23 +1164,24 @@ def setSecuencial(doc, typeDocSri):
                                             'sri_environment_lnk': company_object.sri_active_environment
                                          })
             
-            def _update_sequence():
-                if typeDocSri == "FAC":
-                    doc_sequence_object.db_set('sec_factura', nuevo_secuencial)
-                elif typeDocSri == "NCR":
-                    doc_sequence_object.db_set('sec_notacredito', nuevo_secuencial)
-                elif typeDocSri == "GRS":
-                    doc_sequence_object.db_set('sec_guiaremision', nuevo_secuencial)
-                elif typeDocSri == "CRE":
-                    doc_sequence_object.db_set('sec_comprobanteretencion', nuevo_secuencial)
-                elif typeDocSri == "LIQ":
-                    doc_sequence_object.db_set('sec_liquidacioncompra', nuevo_secuencial)
-                elif typeDocSri == "NDE":
-                    doc_sequence_object.db_set('sec_notadebito', nuevo_secuencial)
+            # Usar doc.save() en lugar de db_set para compatibilidad y robustez
+            if typeDocSri == "FAC":
+                doc_sequence_object.sec_factura = nuevo_secuencial
+            elif typeDocSri == "NCR":
+                doc_sequence_object.sec_notacredito = nuevo_secuencial
+            elif typeDocSri == "GRS":
+                doc_sequence_object.sec_guiaremision = nuevo_secuencial
+            elif typeDocSri == "CRE":
+                doc_sequence_object.sec_comprobanteretencion = nuevo_secuencial
+            elif typeDocSri == "LIQ":
+                doc_sequence_object.sec_liquidacioncompra = nuevo_secuencial
+            elif typeDocSri == "NDE":
+                doc_sequence_object.sec_notadebito = nuevo_secuencial
 
-                frappe.db.commit()
-
-            frappe.as_admin(_update_sequence)
+            # Guardar el documento con ignore_permissions para evitar el error de permisos
+            # Esto es compatible con versiones antiguas de Frappe donde as_admin no existe.
+            doc_sequence_object.save(ignore_permissions=True)
+            frappe.db.commit()
                 	
         return nuevo_secuencial
     

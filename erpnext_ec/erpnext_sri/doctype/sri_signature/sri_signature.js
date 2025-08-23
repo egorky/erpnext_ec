@@ -17,14 +17,27 @@ frappe.ui.form.on('Sri Signature', {
                 },
                 callback: function(r)
                 {
-                    if (r.message && r.message.status === "success") {
+                    let response = r.message;
+                    try {
+                        // Asegurarse de que la respuesta sea un objeto
+                        if (typeof response === 'string') {
+                            response = JSON.parse(response);
+                        }
+
+                        if (response && response.status === "success") {
+                            frappe.show_alert({
+                                message: __(response.message || "Firma válida."),
+                                indicator: 'green'
+                            }, 10);
+                        } else {
+                            frappe.show_alert({
+                                message: __("Error al procesar firma: ") + (response ? response.message : "Respuesta no válida del servidor."),
+                                indicator: 'red'
+                            }, 10);
+                        }
+                    } catch (e) {
                         frappe.show_alert({
-                            message: __(r.message.message || "Firma válida."),
-                            indicator: 'green'
-                        }, 10);
-                    } else {
-                        frappe.show_alert({
-                            message: __("Error al procesar firma: ") + (r.message ? r.message.message : "Respuesta no válida del servidor."),
+                            message: __("Error al interpretar la respuesta del servidor."),
                             indicator: 'red'
                         }, 10);
                     }
