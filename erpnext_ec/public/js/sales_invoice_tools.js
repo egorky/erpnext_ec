@@ -377,6 +377,7 @@ function validationSri(doc)
 			//}
 		},
 		error: function(r) {
+			var btnProcess = $('.list-actions button[data-name="' + doc.name + '"]').parent().find('.btn-action');
 			$(btnProcess).show();
 			$(btnProcess).parent().find('.custom-animation').remove();
 		},

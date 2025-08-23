@@ -1157,31 +1157,30 @@ def setSecuencial(doc, typeDocSri):
 
             #Actualizar dato de secuencia
             #doc_sequence_object = frappe.get_last_doc('Sri Sequence', filters = { 'id': sequence_object[0].id })
-            doc_sequence_object = frappe.get_last_doc('Sri Ptoemi', 
-                    filters = { 
+            doc_sequence_object = frappe.get_last_doc('Sri Ptoemi',
+                    filters = {
                         'parent': establishment_object[0].name,
-                                            'record_name': doc.ptoemi,
+                                            'name': doc.ptoemi,
                                             'sri_environment_lnk': company_object.sri_active_environment
                                          })
             
-            if typeDocSri ==  "FAC":
-                doc_sequence_object.db_set('sec_factura', nuevo_secuencial)
+            def _update_sequence():
+                if typeDocSri == "FAC":
+                    doc_sequence_object.db_set('sec_factura', nuevo_secuencial)
+                elif typeDocSri == "NCR":
+                    doc_sequence_object.db_set('sec_notacredito', nuevo_secuencial)
+                elif typeDocSri == "GRS":
+                    doc_sequence_object.db_set('sec_guiaremision', nuevo_secuencial)
+                elif typeDocSri == "CRE":
+                    doc_sequence_object.db_set('sec_comprobanteretencion', nuevo_secuencial)
+                elif typeDocSri == "LIQ":
+                    doc_sequence_object.db_set('sec_liquidacioncompra', nuevo_secuencial)
+                elif typeDocSri == "NDE":
+                    doc_sequence_object.db_set('sec_notadebito', nuevo_secuencial)
+
                 frappe.db.commit()
-            elif typeDocSri ==  "NCR":			
-                doc_sequence_object.db_set('sec_notacredito', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "GRS":
-                doc_sequence_object.db_set('sec_guiaremision', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "CRE":                    
-                doc_sequence_object.db_set('sec_comprobanteretencion', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "LIQ":
-                doc_sequence_object.db_set('sec_liquidacioncompra', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "NDE":
-                doc_sequence_object.db_set('sec_notadebito', nuevo_secuencial)
-                frappe.db.commit()
+
+            frappe.as_admin(_update_sequence)
                 	
         return nuevo_secuencial
     

@@ -15,16 +15,19 @@ frappe.ui.form.on('Sri Signature', {
                     success: function(r) {},								
                     always: function(r) {},
                 },
-                callback: function(r) 
+                callback: function(r)
                 {
-                    console.log(r);
-
-                    //jsonResponse = JSON.parse(r.message);
-                    //console.log(jsonResponse);
-                    frappe.show_alert({
-                        message: __(`Error al procesar firma:`),
-                        indicator: 'red'
-                    }, 10);
+                    if (r.message && r.message.status === "success") {
+                        frappe.show_alert({
+                            message: __(r.message.message || "Firma válida."),
+                            indicator: 'green'
+                        }, 10);
+                    } else {
+                        frappe.show_alert({
+                            message: __("Error al procesar firma: ") + (r.message ? r.message.message : "Respuesta no válida del servidor."),
+                            indicator: 'red'
+                        }, 10);
+                    }
                 },
                 error: function(r) {
                     
