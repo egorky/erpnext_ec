@@ -858,8 +858,26 @@ def GenerarClaveAcceso(tipoDocumento, fechaEmision, puntoEmision, secuencial, ti
                        ruc,
                        tipoAmbiente,
                        establecimiento):
-    
-    #Se hace la conversión a entero para poder luego convertirlo de forma segura
+
+    # Validación de componentes numéricos
+    componentes = {
+        "tipoDocumento": tipoDocumento,
+        "ruc": ruc,
+        "tipoAmbiente": tipoAmbiente,
+        "establecimiento": establecimiento,
+        "puntoEmision": puntoEmision,
+        "secuencial": secuencial,
+        "tipoEmision": tipoEmision
+    }
+
+    for nombre, valor in componentes.items():
+        if valor is None or not str(valor).isdigit():
+            frappe.throw(
+                _("El componente '{0}' con valor '{1}' no es numérico y es necesario para generar la Clave de Acceso. Por favor, revise la configuración.").format(nombre, valor),
+                title="Error de Validación de Datos"
+            )
+
+    # Se hace la conversión a entero para poder luego convertirlo de forma segura
     secuencial = int(secuencial)
 
     cadenaNumeros = "{0}{1}{2}{3}{4}{5}{6}{7}{8}".format(
@@ -874,7 +892,6 @@ def GenerarClaveAcceso(tipoDocumento, fechaEmision, puntoEmision, secuencial, ti
         tipoEmision
     )
     
-    #return "{0}{1}".format(cadenaNumeros, ObtenerModulo11(cadenaNumeros))    
     return "{0}{1}".format(cadenaNumeros, compute_mod11(cadenaNumeros))
 
 #FAILS

@@ -82,3 +82,19 @@ Para la correcta generación de los impuestos en los documentos XML, debes mapea
 ## ¡Configuración Completa!
 
 Con estos pasos, tu sistema está listo para empezar a generar documentos electrónicos. Cuando crees una **Factura de Venta** y la **envíes (Submit)**, el sistema generará automáticamente el XML firmado y lo enviará al SRI (si la opción está habilitada). Podrás ver el estado de la autorización y el XML en el propio documento de la factura.
+
+---
+
+### **Importante: Requisitos para el Envío de Documentos**
+
+Antes de que un documento pueda ser enviado exitosamente al SRI, el sistema validará que cumple con ciertos requisitos mínimos. Si al presionar "Enviar al SRI" recibes un aviso, asegúrate de cumplir con lo siguiente:
+
+1.  **Email del Cliente:**
+    -   **Error común:** "No se ha definido Email del cliente".
+    -   **Solución:** El cliente seleccionado en la factura debe tener un correo electrónico válido. Ve a `CRM > Cliente`, busca al cliente, y asegúrate de que tenga una **dirección de facturación** guardada. Dentro de la dirección, el campo **Email** debe estar lleno.
+
+2.  **Datos de Pago de la Factura:**
+    -   **Error común:** "No se han definido datos de pago (solicitud de pago/entrada de pago)".
+    -   **Solución:** Una factura debe tener un registro de pago asociado para poder ser enviada. Esto se puede hacer de dos maneras principales en ERPNext:
+        -   **Opción A: Crear una Entrada de Pago.** Ve a `Contabilidad > Entrada de Pago`, crea un nuevo registro y aplícalo a la factura que deseas enviar. Esto es útil si la factura ya ha sido pagada total o parcialmente.
+        -   **Opción B: Crear una Solicitud de Pago.** Desde la propia Factura de Venta, ve al menú `Crear > Solicitud de Pago`. Esto genera el registro necesario sin marcar la factura como pagada. Es la opción más común si solo necesitas cumplir el requisito para el envío al SRI.

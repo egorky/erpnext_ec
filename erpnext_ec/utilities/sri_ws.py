@@ -838,10 +838,6 @@ def send_doc_native(doc, typeDocSri, doctype_erpnext, siteName):
 	if (doc_data):
 		company_object = frappe.get_last_doc('Company', filters = { 'name': doc_data.company  })
 
-		if(company_object.use_simulation_mode):
-			print('SE USARA MODO DE SIMULACION')
-			return BuildSimulationResponse()
-
 		sri_environment = frappe.get_last_doc('Sri Environment', filters = { 'id': doc_data.ambiente })
 
 		if (sri_environment):
