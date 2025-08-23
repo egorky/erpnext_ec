@@ -9,7 +9,7 @@ Asegúrate de que los datos de tu compañía en ERPNext estén completos y corre
 2.  Asegúrate de que los siguientes campos estén llenos:
     -   **Nombre de la Compañía**
     -   **RUC** (en el campo de ID de Impuestos)
-    -   **Dirección Principal**
+    -   **Dirección Principal:** Es crucial que la compañía tenga una dirección principal (Billing Address) asignada y que esta contenga, como mínimo, el dato en "Línea de Dirección 1". Este campo se usa como la `dirMatriz` obligatoria en los documentos electrónicos.
     -   **Teléfono** y **Email**
 
 ## Paso 2: Configurar Ambientes del SRI

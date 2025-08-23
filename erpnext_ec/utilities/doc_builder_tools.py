@@ -202,7 +202,12 @@ def get_full_company_sri(def_company):
         else:
             compania_sri['dirMatriz'] = ''
 
-        #print(compania_sri)
+        if not compania_sri.get('dirMatriz'):
+            frappe.throw(
+                _("No se ha configurado la dirección de la matriz (Línea de Dirección 1) para la compañía {0}. Por favor, vaya a la lista de 'Dirección', busque la dirección principal de la compañía y asegúrese de que el campo 'Línea de Dirección 1' esté lleno.").format(def_company),
+                title="Dato Requerido Faltante"
+            )
+
         return compania_sri
     
 
