@@ -121,6 +121,7 @@
 		"is_custom_field": 1,
 		"doctype": "Custom Field",
 		"description":"Si usa este modo, los documentos no serán enviados al SRI, solo se harán una simulación",
+		"hidden": 1,
 		"dt": "Company"
 	},
 	{
