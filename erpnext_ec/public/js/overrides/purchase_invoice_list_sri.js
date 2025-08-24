@@ -223,12 +223,7 @@ frappe.listview_settings['Purchase Invoice'] = {
         });//.addClass("btn-primary").css({'color':'#efeccc','font-weight': 'bold'});
 
         listview.page.add_menu_item(__('Comprobantes de Retención'), function() {
-            // Redirige a la creación de un nuevo Purchase Invoice con el campo check marcado
-            frappe.new_doc('Purchase Invoice', {
-                'is_paid': 1 // Reemplaza con el nombre del campo check que quieres marcar
-            });
-
-            //frappe.new_doc('Journal Entry', {company: get_company()});
+            frappe.new_doc('Purchase Withholding Sri Ec', {});
         });
     }
 };
