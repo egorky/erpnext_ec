@@ -250,7 +250,7 @@ def import_purchase_invoice_from_xml(file, auto_create_data, update_invoices, re
         if(child.tag == "comprobante"):            
             #print(child.text)
             #doc_comprobante = etree.fromstring(b'' + child.text)
-            doc_comprobante = etree.fromstring(child.text.encode('utf-8'))
+            doc_comprobante = etree.fromstring(child.text.strip().encode('utf-8'))
             #print(doc_comprobante)
             
             defaulProductGroup = 'Adquisiciones (DI)'
