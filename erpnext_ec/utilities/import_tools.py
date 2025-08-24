@@ -285,19 +285,44 @@ def import_purchase_invoice_from_xml(file, auto_create_data, update_invoices, re
         total_con_impuestos_node = doc_comprobante.find('infoFactura').find('totalConImpuestos')
         if total_con_impuestos_node is not None:
             for totalConImpuestoItem in total_con_impuestos_node:
-                found_account = search_account_tax(True, 
-                                    totalConImpuestoItem.find('codigo').text, 
-                                    totalConImpuestoItem.find('codigoPorcentaje').text, 
-                                    totalConImpuestoItem.find('tarifa').text)
-                if(found_account):
-                    new_tax_items.append({
-                        "category" : "Total", "add_deduct_tax" : "Add", "charge_type" : "On Net Total",
-                        "account_head" : found_account.name, "description" : found_account.account_name + "@" + str(found_account.tax_rate),
-                        "rate" : float(totalConImpuestoItem.find('tarifa').text), "tax_amount" : float(totalConImpuestoItem.find('valor').text),
-                        "tax_amount_after_discount_amount" : float(totalConImpuestoItem.find('valor').text),
-                        "total" : float(totalConImpuestoItem.find('baseImponible').text) + float(totalConImpuestoItem.find('valor').text),
-                        "base_tax_amount" : float(totalConImpuestoItem.find('valor').text)
-                    })
+                tarifa_node = totalConImpuestoItem.find('tarifa')
+                tarifa_text = None
+
+                if tarifa_node is not None:
+                    tarifa_text = tarifa_node.text
+                else:
+                    codigo = totalConImpuestoItem.find('codigo').text
+                    codigoPorcentaje = totalConImpuestoItem.find('codigoPorcentaje').text
+                    
+                    detalles_node = doc_comprobante.find('detalles')
+                    if detalles_node is not None:
+                        for detalleItem in detalles_node:
+                            impuestos_node = detalleItem.find('impuestos')
+                            if impuestos_node is None:
+                                continue
+                            for impuestoItem in impuestos_node:
+                                if impuestoItem.find('codigo').text == codigo and impuestoItem.find('codigoPorcentaje').text == codigoPorcentaje:
+                                    tarifa_node_from_detail = impuestoItem.find('tarifa')
+                                    if tarifa_node_from_detail is not None:
+                                        tarifa_text = tarifa_node_from_detail.text
+                                        break
+                            if tarifa_text:
+                                break
+
+                if tarifa_text is not None:
+                    found_account = search_account_tax(True, 
+                                        totalConImpuestoItem.find('codigo').text, 
+                                        totalConImpuestoItem.find('codigoPorcentaje').text, 
+                                        tarifa_text)
+                    if(found_account):
+                        new_tax_items.append({
+                            "category" : "Total", "add_deduct_tax" : "Add", "charge_type" : "On Net Total",
+                            "account_head" : found_account.name, "description" : found_account.account_name + "@" + str(found_account.tax_rate),
+                            "rate" : float(tarifa_text), "tax_amount" : float(totalConImpuestoItem.find('valor').text),
+                            "tax_amount_after_discount_amount" : float(totalConImpuestoItem.find('valor').text),
+                            "total" : float(totalConImpuestoItem.find('baseImponible').text) + float(totalConImpuestoItem.find('valor').text),
+                            "base_tax_amount" : float(totalConImpuestoItem.find('valor').text)
+                        })
 
         new_items = []
         idx_item = 0
