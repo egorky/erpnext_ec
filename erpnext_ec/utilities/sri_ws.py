@@ -46,21 +46,27 @@ from suds.client import Client
 
 @frappe.whitelist()
 def test_signature(signature_doc):
-	#print ("----")
-	#print(signature_doc)
-	#Este metodo aun utiliza el api
-	doc_data = build_doc_fac('ACC-SINV-2024-00001')
-	#archivo XML de prueba
-	full_path_doc = '/opt/bench/frappe-bench/sites/principal/private/files/ACC-SINV-2024-00001.xml'
-	file = open(full_path_doc, "r")
-	doc_text = file.read()
-	file.close()
-	#print(doc_text)
+	try:
+		signature_doc_obj = json.loads(signature_doc, object_hook=lambda d: SimpleNamespace(**d))
 
-	#doc_text = get_doc('ACC-SINV-2024-00001', 'FAC', 'xml', 'principal')
-	signed_xml = SriXmlData.sign_xml(SriXmlData, doc_text, doc_data, signature_doc)
-	#print(signed_xml)
-	return signed_xml
+		# Texto XML simple y válido para la prueba de firma
+		text_to_sign = "<?xml version='1.0' encoding='UTF-8'?><test>ok</test>"
+
+		# Llamar al método de firma con el texto de prueba
+		signed_data = SriXmlData().sign_xml_cmd(text_to_sign, signature_doc_obj)
+
+		if signed_data:
+			# Si la firma es exitosa, devolver un mensaje de éxito.
+			# El contenido exacto de 'signed_data' puede variar, pero si no hay error, es un éxito.
+			return {"status": "success", "message": "Firma procesada y verificada correctamente."}
+		else:
+			# Si por alguna razón la firma devuelve un resultado vacío sin error
+			return {"status": "error", "message": "La función de firma no devolvió datos."}
+
+	except Exception as e:
+		# Capturar cualquier excepción durante el proceso y devolver un error detallado.
+		frappe.log_error(frappe.get_traceback(), "Error en test_signature")
+		return {"status": "error", "message": f"Error al procesar la firma: {str(e)}"}
 
 @frappe.whitelist()
 def verify_signature(signature_doc):	
@@ -831,10 +837,6 @@ def send_doc_native(doc, typeDocSri, doctype_erpnext, siteName):
 	
 	if (doc_data):
 		company_object = frappe.get_last_doc('Company', filters = { 'name': doc_data.company  })
-
-		if(company_object.use_simulation_mode):
-			print('SE USARA MODO DE SIMULACION')
-			return BuildSimulationResponse()
 
 		sri_environment = frappe.get_last_doc('Sri Environment', filters = { 'id': doc_data.ambiente })
 

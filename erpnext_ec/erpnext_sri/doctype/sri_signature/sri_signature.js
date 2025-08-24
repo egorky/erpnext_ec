@@ -15,16 +15,41 @@ frappe.ui.form.on('Sri Signature', {
                     success: function(r) {},								
                     always: function(r) {},
                 },
-                callback: function(r) 
+                callback: function(r)
                 {
-                    console.log(r);
+                    console.log("SRI Debug: Raw response object 'r'", r);
+                    console.log("SRI Debug: Message content 'r.message'", r.message);
+                    console.log("SRI Debug: Type of r.message", typeof r.message);
 
-                    //jsonResponse = JSON.parse(r.message);
-                    //console.log(jsonResponse);
-                    frappe.show_alert({
-                        message: __(`Error al procesar firma:`),
-                        indicator: 'red'
-                    }, 10);
+                    let response = r.message;
+                    try {
+                        if (typeof response === 'string') {
+                            console.log("SRI Debug: r.message is a string, attempting to parse.");
+                            response = JSON.parse(response);
+                            console.log("SRI Debug: Parsed response object", response);
+                        }
+
+                        if (response && response.status === "success") {
+                            console.log("SRI Debug: Condition is true, showing success.");
+                            frappe.show_alert({
+                                message: __(response.message || "Firma válida."),
+                                indicator: 'green'
+                            }, 10);
+                        } else {
+                            console.log("SRI Debug: Condition is false, showing error.");
+                            console.log("SRI Debug: response.status value is:", response ? response.status : "N/A");
+                            frappe.show_alert({
+                                message: __("Error al procesar firma: ") + (response ? response.message : "Respuesta no válida del servidor."),
+                                indicator: 'red'
+                            }, 10);
+                        }
+                    } catch (e) {
+                        console.log("SRI Debug: Error during JSON parsing or processing.", e);
+                        frappe.show_alert({
+                            message: __("Error al interpretar la respuesta del servidor."),
+                            indicator: 'red'
+                        }, 10);
+                    }
                 },
                 error: function(r) {
                     

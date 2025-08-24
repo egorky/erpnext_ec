@@ -202,7 +202,12 @@ def get_full_company_sri(def_company):
         else:
             compania_sri['dirMatriz'] = ''
 
-        #print(compania_sri)
+        if not compania_sri.get('dirMatriz'):
+            frappe.throw(
+                _("No se ha configurado la dirección de la matriz (Línea de Dirección 1) para la compañía {0}. Por favor, vaya a la lista de 'Dirección', busque la dirección principal de la compañía y asegúrese de que el campo 'Línea de Dirección 1' esté lleno.").format(def_company),
+                title="Dato Requerido Faltante"
+            )
+
         return compania_sri
     
 
@@ -219,6 +224,10 @@ def get_full_customer_sri(def_customer):
 
     if docs:
         doc = docs[0]
+
+        if not doc.typeidtax:
+            frappe.throw(_("Please set the 'Tipo de Identificación' for Customer {0} before proceeding.").format(def_customer))
+
         #print(doc)
         customer_sri['customer_tax_id'] = doc.tax_id
         if(doc.nombrecomercial):
@@ -854,8 +863,26 @@ def GenerarClaveAcceso(tipoDocumento, fechaEmision, puntoEmision, secuencial, ti
                        ruc,
                        tipoAmbiente,
                        establecimiento):
-    
-    #Se hace la conversión a entero para poder luego convertirlo de forma segura
+
+    # Validación de componentes numéricos
+    componentes = {
+        "tipoDocumento": tipoDocumento,
+        "ruc": ruc,
+        "tipoAmbiente": tipoAmbiente,
+        "establecimiento": establecimiento,
+        "puntoEmision": puntoEmision,
+        "secuencial": secuencial,
+        "tipoEmision": tipoEmision
+    }
+
+    for nombre, valor in componentes.items():
+        if valor is None or not str(valor).isdigit():
+            frappe.throw(
+                _("El componente '{0}' con valor '{1}' no es numérico y es necesario para generar la Clave de Acceso. Por favor, revise la configuración.").format(nombre, valor),
+                title="Error de Validación de Datos"
+            )
+
+    # Se hace la conversión a entero para poder luego convertirlo de forma segura
     secuencial = int(secuencial)
 
     cadenaNumeros = "{0}{1}{2}{3}{4}{5}{6}{7}{8}".format(
@@ -870,7 +897,6 @@ def GenerarClaveAcceso(tipoDocumento, fechaEmision, puntoEmision, secuencial, ti
         tipoEmision
     )
     
-    #return "{0}{1}".format(cadenaNumeros, ObtenerModulo11(cadenaNumeros))    
     return "{0}{1}".format(cadenaNumeros, compute_mod11(cadenaNumeros))
 
 #FAILS
@@ -1090,25 +1116,45 @@ def setSecuencial(doc, typeDocSri):
     print("--------------------------")
     nuevo_secuencial = 0
 
-    establishment_object = frappe.get_list('Sri Establishment', 
-                                      fields = ['*'], 
-                                      filters = {
-                                          'company_link': company_object.name, 
-                                          'record_name': doc.estab 
-                                          })
+    # Diagnostic logging
+    frappe.log_error(
+        title='SRI Secuencial Debug',
+        message=f"Searching for Establishment. Company: '{company_object.name}', Establishment Code: '{doc.estab}'"
+    )
+
+    # Diagnostic logging
+    frappe.log_error(
+        title='SRI Secuencial Debug',
+        message=f"Searching for Establishment. Company: '{company_object.name}', Establishment Code: '{doc.estab}'"
+    )
+
+    establishment_object = frappe.get_list('Sri Establishment',
+                                      fields=['*'],
+                                      filters={
+                                          'company_link': company_object.name,
+                                          'name': doc.estab
+                                      },
+                                      docstatus=[0, 1])
     
+    if not establishment_object:
+        frappe.throw(_("SRI Establishment '{0}' not found for Company '{1}'. Please check configuration.").format(doc.estab, company_object.name))
+
     if(establishment_object):
         print("establishment_object[0]")
         print(establishment_object[0])
-        sequence_object = frappe.get_all('Sri Ptoemi', 
-                                        fields = ['*'],
-                                        filters = {
+        sequence_object = frappe.get_all('Sri Ptoemi',
+                                        fields=['*'],
+                                        filters={
                                             'parent': establishment_object[0].name,
-                                            'record_name': doc.ptoemi,
-                                            'sri_environment_lnk': company_object.sri_active_environment                                            
-                                            })
+                                            'name': doc.ptoemi,
+                                            'sri_environment_lnk': company_object.sri_active_environment
+                                        },
+                                        docstatus=[0, 1])
         print("sequence_object")
         print(sequence_object)
+
+        if not sequence_object:
+            frappe.throw(_("SRI Point of Emission '{0}' not found for Establishment '{1}' in the current Environment. Please check configuration.").format(doc.ptoemi, doc.estab))
 
         if (sequence_object):
 
@@ -1133,31 +1179,31 @@ def setSecuencial(doc, typeDocSri):
 
             #Actualizar dato de secuencia
             #doc_sequence_object = frappe.get_last_doc('Sri Sequence', filters = { 'id': sequence_object[0].id })
-            doc_sequence_object = frappe.get_last_doc('Sri Ptoemi', 
-                    filters = { 
+            doc_sequence_object = frappe.get_last_doc('Sri Ptoemi',
+                    filters = {
                         'parent': establishment_object[0].name,
-                                            'record_name': doc.ptoemi,
+                                            'name': doc.ptoemi,
                                             'sri_environment_lnk': company_object.sri_active_environment
                                          })
             
-            if typeDocSri ==  "FAC":
-                doc_sequence_object.db_set('sec_factura', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "NCR":			
-                doc_sequence_object.db_set('sec_notacredito', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "GRS":
-                doc_sequence_object.db_set('sec_guiaremision', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "CRE":                    
-                doc_sequence_object.db_set('sec_comprobanteretencion', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "LIQ":
-                doc_sequence_object.db_set('sec_liquidacioncompra', nuevo_secuencial)
-                frappe.db.commit()
-            elif typeDocSri ==  "NDE":
-                doc_sequence_object.db_set('sec_notadebito', nuevo_secuencial)
-                frappe.db.commit()
+            # Usar doc.save() en lugar de db_set para compatibilidad y robustez
+            if typeDocSri == "FAC":
+                doc_sequence_object.sec_factura = nuevo_secuencial
+            elif typeDocSri == "NCR":
+                doc_sequence_object.sec_notacredito = nuevo_secuencial
+            elif typeDocSri == "GRS":
+                doc_sequence_object.sec_guiaremision = nuevo_secuencial
+            elif typeDocSri == "CRE":
+                doc_sequence_object.sec_comprobanteretencion = nuevo_secuencial
+            elif typeDocSri == "LIQ":
+                doc_sequence_object.sec_liquidacioncompra = nuevo_secuencial
+            elif typeDocSri == "NDE":
+                doc_sequence_object.sec_notadebito = nuevo_secuencial
+
+            # Guardar el documento con ignore_permissions para evitar el error de permisos
+            # Esto es compatible con versiones antiguas de Frappe donde as_admin no existe.
+            doc_sequence_object.save(ignore_permissions=True)
+            frappe.db.commit()
                 	
         return nuevo_secuencial
     

@@ -11,6 +11,10 @@ from erpnext_ec.utilities.doc_builder_liq import build_doc_liq
 
 @frappe.whitelist()
 def validate_sales_invoice(doc_name):
+    frappe.log_error(
+        title='SRI Validation Debug',
+        message=f"Entering validate_sales_invoice for document: {doc_name}"
+    )
     #Esta validacion servira para saber si el documento contiene toda la informacion necesaria para el SRI
     result = {}
     header = []

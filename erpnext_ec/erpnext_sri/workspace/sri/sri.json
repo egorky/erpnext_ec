@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electr\u00f3nicas\",\"col\":3}}]",
+ "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Sri</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Secuencias\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electr\u00f3nicas\",\"col\":3}},{\"id\":\"ID1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Establecimientos\",\"col\":3}},{\"id\":\"ID3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tipos de Comprobantes\",\"col\":3}},{\"id\":\"ID4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tipos de Identificaci\u00f3n\",\"col\":3}},{\"id\":\"ID5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Ambientes SRI\",\"col\":3}}]",
  "creation": "2024-01-26 11:24:07.707685",
  "custom_blocks": [],
  "docstatus": 0,
@@ -45,6 +45,34 @@
    "doc_view": "List",
    "label": "Secuencias",
    "link_to": "Sri Sequence",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Establecimientos",
+   "link_to": "Sri Establishment",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Tipos de Comprobantes",
+   "link_to": "Sri Type Doc",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Tipos de Identificaci\u00f3n",
+   "link_to": "Sri Type Id",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Ambientes SRI",
+   "link_to": "Sri Environment",
    "type": "DocType"
   }
  ],
