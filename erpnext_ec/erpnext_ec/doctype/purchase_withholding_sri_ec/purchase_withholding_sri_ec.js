@@ -155,8 +155,6 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
 
             frm.set_value('purchase_withholding_supplier', data.supplier);
 
-            frm.set_value('purchase_withholding_supplier', data.supplier);
-
             let row = frm.add_child('taxes', {
                 'codDocSustentoLink': 'CRE',
                 'numDocSustentoLink': data.invoice_name

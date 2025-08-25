@@ -453,6 +453,17 @@
   "read_only": 0
 },
 {
+    "fieldname": "payable_account",
+    "fieldtype": "Link",
+    "label": "Cuenta de Cuentas por Pagar",
+    "options": "Account",
+    "reqd": 1,
+    "filters": {
+        "account_type": "Payable",
+        "is_group": 0
+    }
+},
+{
   "name": "Sales Invoice-withhold-section",
   "parent": "Customize Form",
   "parentfield": "fields",
