@@ -38,7 +38,7 @@ function setPurchaseInvoicesFilter()
     //console.log(cur_frm.fields_dict);
 
     var purchase_withholding_supplier = cur_frm.doc.purchase_withholding_supplier;
-    if(purchase_withholding_supplier.length == 0)
+    if(!purchase_withholding_supplier || purchase_withholding_supplier.length == 0)
     {
         purchase_withholding_supplier = '44566%^78iu';
     }
@@ -95,8 +95,6 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
                 }
             }
         }
-
-        setPurchaseInvoicesFilter();
         
         if(frm.doc.status == 'Draft')
         {
