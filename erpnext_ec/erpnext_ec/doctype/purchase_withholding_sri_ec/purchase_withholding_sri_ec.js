@@ -166,13 +166,16 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
         setTimeout(
             async function () 
             {
-                $(cur_frm.fields_dict.periodoFiscal.$input).monthpicker({
-                    changeYear:true,
-                    defaultDate: null
+                // Initialize month picker
+                $(cur_frm.fields_dict.periodoFiscal.input).monthpicker({
+                    changeYear: true,
+                    dateFormat: 'mm/yy'
                 });
-                    
-                $(cur_frm.fields_dict.periodoFiscal.$input).val(moment().format('MM/YYYY'));
 
+                // Set default value if empty
+                if (!frm.doc.periodoFiscal) {
+                    frm.set_value('periodoFiscal', moment().format('MM/YYYY'));
+                }
                 // var user_setings = {"updated_on":"Fri+May+24+2024+15:36:47+GMT-0500","GridView":{"Purchase+Taxes+and+Charges+Ec":[{"fieldname":"codDocSustentoLink","columns":1},{"fieldname":"numDocSustentoLink","columns":1},{"fieldname":"fechaEmisionDocSustento","columns":1},{"fieldname":"codigoRetencion","columns":1},{"fieldname":"baseImponible","columns":2},{"fieldname":"porcentajeRetener","columns":2},{"fieldname":"valorRetenido","columns":2}]}};
 
                 // frappe.call({

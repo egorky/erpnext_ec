@@ -447,8 +447,8 @@
   "name": "Purchase-Withholding-periodoFiscal",
   "fieldname": "periodoFiscal",
   "fieldtype": "Data",
-  "label": "periodoFiscal",
-  "reqd": 0,
+  "label": "Período Fiscal (MM/YYYY)",
+  "reqd": 1,
   "in_list_view": 1,
   "read_only": 0
 },
