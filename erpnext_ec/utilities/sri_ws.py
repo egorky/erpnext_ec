@@ -882,8 +882,8 @@ def send_doc_internal(doc, typeDocSri, doctype_erpnext, siteName, regional_setti
 	if (doc_data):
 		company_object = frappe.get_last_doc('Company', filters = { 'name': doc_data.company  })
 
-		if(company_object.use_simulation_mode):
-			print('SE USARA MODO DE SIMULACION')
+		if(doc_data.ambiente == 1):
+			print('SE USARA MODO DE SIMULACION (AMBIENTE DE PRUEBAS)')
 			return BuildSimulationResponse()
 
 		sri_environment = frappe.get_last_doc('Sri Environment', filters = { 'id': doc_data.ambiente })
