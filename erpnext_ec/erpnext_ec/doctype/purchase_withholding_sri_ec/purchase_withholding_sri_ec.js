@@ -96,23 +96,6 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
             }
         }
         
-        if(frm.doc.status == 'Draft')
-        {
-            var def_company = frappe.defaults.get_user_default("Company");
-            
-            var companySri = await GetFullCompanySri(def_company);
-            console.log('GetFullCompanySri');
-            console.log(companySri);
-
-            frm.set_value('nombreComercial',  companySri.nombrecomercial);
-            frm.set_value('ruc',  companySri.tax_id);                
-            frm.set_value('obligadoContabilidad',  companySri.obligadocontabilidad);        
-            frm.set_value('dirMatriz',  companySri.dirMatriz);
-            
-            //frm.refresh_field('nombreComercial');
-            //frm.refresh_field('dirMatriz');
-        }
-        
     },
 	refresh(frm) {
         //console.log(frm);
