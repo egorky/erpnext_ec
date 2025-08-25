@@ -158,7 +158,8 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
         //setPurchaseInvoicesFilter();
         refreshPurchaseInvoicesFilter();
 	},
-	estab: function(frm) {
+	estab: function(frm)
+	{
         frm.set_value('ptoemi', '');
         if (frm.doc.estab) {
             frappe.call({
@@ -174,7 +175,7 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
                 }
             });
         }
-    },
+	},
     onload: function(frm) 
     {
         setTimeout(
