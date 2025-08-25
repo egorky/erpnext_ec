@@ -118,6 +118,9 @@ def build_doc_cre(doc_name):
 		ruc = doc.tax_id
 		establecimiento = frappe.db.get_value("Sri Establishment", doc.estab, "record_name")
 
+		doc.estab = establecimiento
+		doc.ptoemi = puntoEmision
+
 		claveAcceso = GenerarClaveAcceso(tipoDocumento, 
 									fechaEmision, 
 									puntoEmision, 
