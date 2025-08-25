@@ -148,26 +148,6 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
 	},
     onload: function(frm) 
     {
-        console.log("Purchase Withholding onload event fired.");
-        console.log("frappe.route_options on load:", frappe.route_options);
-
-        if (frappe.route_options && frappe.route_options.purchase_invoice_supplier) {
-            console.log("Found route_options. Applying values...");
-            frm.set_value('purchase_withholding_supplier', frappe.route_options.purchase_invoice_supplier);
-
-            let row = frm.add_child('taxes', {
-                'codDocSustentoLink': 'CRE',
-                'numDocSustentoLink': frappe.route_options.purchase_invoice_name
-            });
-            frm.refresh_field('taxes');
-
-            console.log("Values applied. Clearing route_options.");
-            // Clear the route options so they don't get used again
-            frappe.route_options = null;
-        } else {
-            console.log("No route_options found or supplier is missing.");
-        }
-
         setTimeout(
             async function () 
             {
