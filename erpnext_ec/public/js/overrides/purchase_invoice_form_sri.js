@@ -10,6 +10,7 @@ frappe.ui.form.on(doctype_customized, {
                     'purchase_withholding_supplier': frm.doc.supplier,
                     'taxes': [
                         {
+                            'doctype': 'Purchase Taxes and Charges Ec',
                             'codDocSustentoLink': 'CRE',
                             'numDocSustentoLink': frm.doc.name
                         }
