@@ -86,7 +86,7 @@ function resolveFromExternal(r, doc, btnProcess)
 	$(btnProcess).parent().find('.custom-animation').remove();  
 }
 
-function resolveFromInternal(r, doc, btnProcess)
+function resolveFromInternalSales(r, doc, btnProcess)
 {
 	var r___ = {
 		"message": {
@@ -298,7 +298,7 @@ function SendSalesInvoiceToSri(documentIsReady, document_preview, doc)
 					callback: function(r)
 					{
 						//resolveFromExternal(r, doc, btnProcess);
-						resolveFromInternal(r, doc, btnProcess);
+						resolveFromInternalSales(r, doc, btnProcess);
 					},
 					error: function(r) {
 						$(btnProcess).show();
