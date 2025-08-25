@@ -6,15 +6,11 @@ frappe.ui.form.on(doctype_customized, {
 
         if (frm.doc.docstatus === 1) { // 1 is for Submitted status
             frm.add_custom_button(__('Comprobante de Retención'), function() {
-                frappe.new_doc('Purchase Withholding Sri Ec', {
-                    'purchase_withholding_supplier': frm.doc.supplier,
-                    'taxes': [
-                        {
-                            'codDocSustentoLink': 'CRE',
-                            'numDocSustentoLink': frm.doc.name
-                        }
-                    ]
-                });
+                frappe.route_options = {
+                    "purchase_invoice_supplier": frm.doc.supplier,
+                    "purchase_invoice_name": frm.doc.name
+                };
+                frappe.new_doc('Purchase Withholding Sri Ec');
             }, __('Crear'));
         }
     },

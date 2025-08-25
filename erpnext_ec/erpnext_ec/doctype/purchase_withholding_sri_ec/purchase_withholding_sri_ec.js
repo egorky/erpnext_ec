@@ -12,16 +12,17 @@ function refreshPurchaseInvoicesFilter()
 
     //cur_frm.fields_dict['taxes'].grid.update_docfield_property(
     //    "numDocSustentoLink","value", "");
-    
-    for(i=0;i<cur_frm.fields_dict['taxes'].grid.grid_rows.length;i++)
-    {        
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.numDocSustentoLink='';
 
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.baseImponible=0;
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.porcentajeRetener=0;
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.valorRetenido=0;
-
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).refresh();
+    if (cur_frm.fields_dict['taxes'].grid && cur_frm.fields_dict['taxes'].grid.grid_rows) {
+        for(let i=0; i < cur_frm.fields_dict['taxes'].grid.grid_rows.length; i++)
+        {
+            let row = cur_frm.fields_dict['taxes'].grid.grid_rows[i];
+            row.doc.numDocSustentoLink='';
+            row.doc.baseImponible=0;
+            row.doc.porcentajeRetener=0;
+            row.doc.valorRetenido=0;
+            row.refresh();
+        }
     }
 
     cur_frm.fields_dict['taxes'].grid.update_docfield_property(
@@ -178,6 +179,19 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
 	},
     onload: function(frm) 
     {
+        if (frappe.route_options) {
+            frm.set_value('purchase_withholding_supplier', frappe.route_options.purchase_invoice_supplier);
+
+            let row = frm.add_child('taxes', {
+                'codDocSustentoLink': 'CRE',
+                'numDocSustentoLink': frappe.route_options.purchase_invoice_name
+            });
+            frm.refresh_field('taxes');
+
+            // Clear the route options so they don't get used again
+            frappe.route_options = null;
+        }
+
         setTimeout(
             async function () 
             {
