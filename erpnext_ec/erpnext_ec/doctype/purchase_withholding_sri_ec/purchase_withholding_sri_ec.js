@@ -5,30 +5,18 @@
 function refreshPurchaseInvoicesFilter()
 {    
     var purchase_withholding_supplier = cur_frm.doc.purchase_withholding_supplier;
-    if(purchase_withholding_supplier.length == 0)
-    {
-        purchase_withholding_supplier = '--------';
+    if(!purchase_withholding_supplier) {
+        // If there's no supplier, we can't filter, so maybe clear the filter or set a dummy value
+        purchase_withholding_supplier = '-----------';
     }
 
-    //cur_frm.fields_dict['taxes'].grid.update_docfield_property(
-    //    "numDocSustentoLink","value", "");
-
-    if (cur_frm.fields_dict['taxes'].grid && cur_frm.fields_dict['taxes'].grid.grid_rows) {
-        for(let i=0; i < cur_frm.fields_dict['taxes'].grid.grid_rows.length; i++)
-        {
-            let row = cur_frm.fields_dict['taxes'].grid.grid_rows[i];
-            row.doc.numDocSustentoLink='';
-            row.doc.baseImponible=0;
-            row.doc.porcentajeRetener=0;
-            row.doc.valorRetenido=0;
-            row.refresh();
-        }
+    if (cur_frm.fields_dict['taxes'] && cur_frm.fields_dict['taxes'].grid) {
+        cur_frm.fields_dict['taxes'].grid.update_docfield_property(
+            "numDocSustentoLink", "filters", {
+                "supplier": purchase_withholding_supplier
+            }
+        );
     }
-
-    cur_frm.fields_dict['taxes'].grid.update_docfield_property(
-        "numDocSustentoLink","filters", {
-            "supplier": purchase_withholding_supplier
-            }); 
 }
 
 function setPurchaseInvoicesFilter()
