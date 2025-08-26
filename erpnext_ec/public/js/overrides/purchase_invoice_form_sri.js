@@ -53,7 +53,8 @@ frappe.ui.form.on(doctype_customized, {
                 },
                 callback: function(r) {
                     if (r.message) {
-                        frm.set_df_property('ptoemi_link', 'options', r.message);
+                        // For Select fields, options must be a newline-separated string
+                        frm.set_df_property('ptoemi_link', 'options', r.message.join('\\n'));
                         frm.refresh_field('ptoemi_link');
                     }
                 }
