@@ -36,6 +36,31 @@ frappe.ui.form.on(doctype_customized, {
     {
         if (frm.doc.is_purchase_settlement) {
             frm.set_value('is_return', 0);
+
+            // Change fieldtype to Link
+            frm.set_df_property('estab', 'fieldtype', 'Link');
+            frm.set_df_property('ptoemi', 'fieldtype', 'Link');
+
+            // Set options for the Link fields
+            frm.set_df_property('estab', 'options', 'SRI Establishment');
+            frm.set_df_property('ptoemi', 'options', 'SRI PtoEmi');
+
+            // Refresh fields
+            frm.refresh_field('estab');
+            frm.refresh_field('ptoemi');
+
+        } else {
+            // Change fieldtype back to Data
+            frm.set_df_property('estab', 'fieldtype', 'Data');
+            frm.set_df_property('ptoemi', 'fieldtype', 'Data');
+
+            // Clear options for the fields
+            frm.set_df_property('estab', 'options', '');
+            frm.set_df_property('ptoemi', 'options', '');
+
+            // Refresh fields
+            frm.refresh_field('estab');
+            frm.refresh_field('ptoemi');
         }
         update_headline(frm);
     },
