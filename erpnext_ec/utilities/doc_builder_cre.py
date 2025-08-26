@@ -113,10 +113,13 @@ def build_doc_cre(doc_name):
 		tipoEmision = 1
 
 		fechaEmision = doc.fechaEmision
-		puntoEmision = doc.ptoemi
+		puntoEmision = frappe.db.get_value("Sri Ptoemi", doc.ptoemi, "record_name")
 		secuencial = doc.secuencial
 		ruc = doc.tax_id
-		establecimiento = doc.estab
+		establecimiento = frappe.db.get_value("Sri Establishment", doc.estab, "record_name")
+
+		doc.estab = establecimiento
+		doc.ptoemi = puntoEmision
 
 		claveAcceso = GenerarClaveAcceso(tipoDocumento, 
 									fechaEmision, 

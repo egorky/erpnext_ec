@@ -5,29 +5,18 @@
 function refreshPurchaseInvoicesFilter()
 {    
     var purchase_withholding_supplier = cur_frm.doc.purchase_withholding_supplier;
-    if(purchase_withholding_supplier.length == 0)
-    {
-        purchase_withholding_supplier = '--------';
+    if(!purchase_withholding_supplier) {
+        // If there's no supplier, we can't filter, so maybe clear the filter or set a dummy value
+        purchase_withholding_supplier = '-----------';
     }
 
-    //cur_frm.fields_dict['taxes'].grid.update_docfield_property(
-    //    "numDocSustentoLink","value", "");
-    
-    for(i=0;i<cur_frm.fields_dict['taxes'].grid.grid_rows.length;i++)
-    {        
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.numDocSustentoLink='';
-
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.baseImponible=0;
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.porcentajeRetener=0;
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).doc.valorRetenido=0;
-
-        cur_frm.fields_dict['taxes'].grid.get_grid_row(i).refresh();
+    if (cur_frm.fields_dict['taxes'] && cur_frm.fields_dict['taxes'].grid) {
+        cur_frm.fields_dict['taxes'].grid.update_docfield_property(
+            "numDocSustentoLink", "filters", {
+                "supplier": purchase_withholding_supplier
+            }
+        );
     }
-
-    cur_frm.fields_dict['taxes'].grid.update_docfield_property(
-        "numDocSustentoLink","filters", {
-            "supplier": purchase_withholding_supplier
-            }); 
 }
 
 function setPurchaseInvoicesFilter()
@@ -37,7 +26,7 @@ function setPurchaseInvoicesFilter()
     //console.log(cur_frm.fields_dict);
 
     var purchase_withholding_supplier = cur_frm.doc.purchase_withholding_supplier;
-    if(purchase_withholding_supplier.length == 0)
+    if(!purchase_withholding_supplier || purchase_withholding_supplier.length == 0)
     {
         purchase_withholding_supplier = '44566%^78iu';
     }
@@ -94,25 +83,6 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
                 }
             }
         }
-
-        setPurchaseInvoicesFilter();
-        
-        if(frm.doc.status == 'Draft')
-        {
-            var def_company = frappe.defaults.get_user_default("Company");
-            
-            var companySri = await GetFullCompanySri(def_company);
-            console.log('GetFullCompanySri');
-            console.log(companySri);
-
-            frm.set_value('nombreComercial',  companySri.nombrecomercial);
-            frm.set_value('ruc',  companySri.tax_id);                
-            frm.set_value('obligadoContabilidad',  companySri.obligadocontabilidad);        
-            frm.set_value('dirMatriz',  companySri.dirMatriz);
-            
-            //frm.refresh_field('nombreComercial');
-            //frm.refresh_field('dirMatriz');
-        }
         
     },
 	refresh(frm) {
@@ -160,20 +130,52 @@ frappe.ui.form.on('Purchase Withholding Sri Ec',
 	},
 	estab: function(frm)
 	{
-	    console.log('estab event!!!');
+        frm.set_value('ptoemi', '');
+        if (frm.doc.estab) {
+            frappe.call({
+                method: 'erpnext_ec.utilities.tools.get_ptoemi_list_for_establishment',
+                args: {
+                    establishment: frm.doc.estab
+                },
+                callback: function(r) {
+                    if (r.message) {
+                        frm.set_df_property('ptoemi', 'options', r.message);
+                        frm.refresh_field('ptoemi');
+                    }
+                }
+            });
+        }
 	},
     onload: function(frm) 
     {
+        const withholding_data = localStorage.getItem('new_withholding_data');
+        if (withholding_data) {
+            localStorage.removeItem('new_withholding_data');
+            const data = JSON.parse(withholding_data);
+
+            frm.set_value('purchase_withholding_supplier', data.supplier);
+
+            let row = frm.add_child('taxes', {
+                'codDocSustentoLink': 'CRE',
+                'numDocSustentoLink': data.invoice_name
+            });
+            frm.refresh_field('taxes');
+            frm.script_manager.trigger("numDocSustentoLink", row.doctype, row.name);
+        }
+
         setTimeout(
             async function () 
             {
-                $(cur_frm.fields_dict.periodoFiscal.$input).monthpicker({
-                    changeYear:true,
-                    defaultDate: null
+                // Initialize month picker
+                $(cur_frm.fields_dict.periodoFiscal.input).monthpicker({
+                    changeYear: true,
+                    dateFormat: 'mm/yy'
                 });
-                    
-                $(cur_frm.fields_dict.periodoFiscal.$input).val(moment().format('MM/YYYY'));
 
+                // Set default value if empty
+                if (!frm.doc.periodoFiscal) {
+                    frm.set_value('periodoFiscal', moment().format('MM/YYYY'));
+                }
                 // var user_setings = {"updated_on":"Fri+May+24+2024+15:36:47+GMT-0500","GridView":{"Purchase+Taxes+and+Charges+Ec":[{"fieldname":"codDocSustentoLink","columns":1},{"fieldname":"numDocSustentoLink","columns":1},{"fieldname":"fechaEmisionDocSustento","columns":1},{"fieldname":"codigoRetencion","columns":1},{"fieldname":"baseImponible","columns":2},{"fieldname":"porcentajeRetener","columns":2},{"fieldname":"valorRetenido","columns":2}]}};
 
                 // frappe.call({

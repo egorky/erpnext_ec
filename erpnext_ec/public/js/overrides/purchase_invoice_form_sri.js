@@ -3,6 +3,17 @@ var doctype_customized = "Purchase Invoice";
 frappe.ui.form.on(doctype_customized, {
     refresh(frm) {
         update_headline(frm);
+
+        if (frm.doc.docstatus === 1) { // 1 is for Submitted status
+            frm.add_custom_button(__('Comprobante de Retención'), function() {
+                const data_to_pass = {
+                    supplier: frm.doc.supplier,
+                    invoice_name: frm.doc.name
+                };
+                localStorage.setItem('new_withholding_data', JSON.stringify(data_to_pass));
+                frappe.new_doc('Purchase Withholding Sri Ec');
+            }, __('Crear'));
+        }
     },
     estab: function(frm) {
         frm.set_value('ptoemi', '');

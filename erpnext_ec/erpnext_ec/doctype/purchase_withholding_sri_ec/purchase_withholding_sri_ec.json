@@ -41,6 +41,16 @@
     "reqd": 1
    },
    {
+    "fieldname": "amended_from",
+    "fieldtype": "Link",
+    "label": "Amended From",
+    "no_copy": 1,
+    "options": "Purchase Withholding Sri Ec",
+    "print_hide": 1,
+    "read_only": 1,
+    "search_index": 1
+   },
+   {
     "idx": 2,    
     "parent": "Customize Form",
     "parentfield": "fields",
@@ -319,7 +329,7 @@
       "idx": 32,
       "docstatus": 0,
       "label": "ptoEmi",
-      "fieldtype": "Link",
+      "fieldtype": "Select",
       "fieldname": "ptoemi",
       "non_negative": 0,
       "reqd": 0,
@@ -334,7 +344,7 @@
       "default": "002",
       "precision": "",
       "length": 0,
-      "options": "Sri Ptoemi",
+      "options": "",
       "fetch_if_empty": 0,
       "permlevel": 0,
       "hidden": 0,
@@ -447,10 +457,21 @@
   "name": "Purchase-Withholding-periodoFiscal",
   "fieldname": "periodoFiscal",
   "fieldtype": "Data",
-  "label": "periodoFiscal",
-  "reqd": 0,
+  "label": "Período Fiscal (MM/YYYY)",
+  "reqd": 1,
   "in_list_view": 1,
   "read_only": 0
+},
+{
+    "fieldname": "payable_account",
+    "fieldtype": "Link",
+    "label": "Cuenta de Cuentas por Pagar",
+    "options": "Account",
+    "reqd": 1,
+    "filters": {
+        "account_type": "Payable",
+        "is_group": 0
+    }
 },
 {
   "name": "Sales Invoice-withhold-section",

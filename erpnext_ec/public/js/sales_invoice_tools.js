@@ -86,7 +86,7 @@ function resolveFromExternal(r, doc, btnProcess)
 	$(btnProcess).parent().find('.custom-animation').remove();  
 }
 
-function resolveFromInternal(r, doc, btnProcess)
+function resolveFromInternalSales(r, doc, btnProcess)
 {
 	var r___ = {
 		"message": {
@@ -127,9 +127,9 @@ function resolveFromInternal(r, doc, btnProcess)
 	
 	if(jsonResponse.numeroComprobantes > 0)
 	{
-		if(jsonResponse.autorizaciones.autorizacion.estado == 'AUTORIZADO')
+		if(jsonResponse.autorizaciones.autorizacion[0].estado == 'AUTORIZADO')
 		{
-			var newNumeroAutorizacion = jsonResponse.autorizaciones.autorizacion.numeroAutorizacion;
+			var newNumeroAutorizacion = jsonResponse.autorizaciones.autorizacion[0].numeroAutorizacion;
 
 			$(btnProcess).parent().find('.custom-animation').remove();
 			$(btnProcess).parent().append(`
@@ -150,16 +150,16 @@ function resolveFromInternal(r, doc, btnProcess)
 			
 			return;
 		}
-		//if(jsonResponse.autorizaciones.autorizacion.estado == 'NO AUTORIZADO')
+		//if(jsonResponse.autorizaciones.autorizacion[0].estado == 'NO AUTORIZADO')
 		else
 		{
-			//if(jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.tipo = "ERROR")
+			//if(jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.tipo = "ERROR")
 			//{
 				var string_error = 
-				jsonResponse.autorizaciones.autorizacion.estado + ":" +
-				jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.identificador + ":" +
-				jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.mensaje + ":" +
-				jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.informacionAdicional;
+				jsonResponse.autorizaciones.autorizacion[0].estado + ":" +
+				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.identificador + ":" +
+				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.mensaje + ":" +
+				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.informacionAdicional;
 				frappe.show_alert({
 					message: __(string_error),
 					indicator: 'red'
@@ -298,7 +298,7 @@ function SendSalesInvoiceToSri(documentIsReady, document_preview, doc)
 					callback: function(r)
 					{
 						//resolveFromExternal(r, doc, btnProcess);
-						resolveFromInternal(r, doc, btnProcess);
+						resolveFromInternalSales(r, doc, btnProcess);
 					},
 					error: function(r) {
 						$(btnProcess).show();

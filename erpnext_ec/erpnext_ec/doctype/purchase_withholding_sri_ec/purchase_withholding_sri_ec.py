@@ -52,12 +52,6 @@ class PurchaseWithholdingSriEc(Document):
 		journal_entry.title = f'AUTO-{self.name}'
 		journal_entry.write_off_based_on = "Accounts Receivable"
 
-		#journal_entry.bill_no = "Accounts Receivable"
-		#journal_entry.bill_date = "Accounts Receivable"
-		#journal_entry.due_date = "Accounts Receivable"
-
-		account_for_withHolding = '2110 - Acreedores - RSCV'
-
 		total_credit_in_account_currency = 0
 		#Linea de cuenta de Acreedores
 		for itemTax in self.taxes:			
@@ -65,7 +59,7 @@ class PurchaseWithholdingSriEc(Document):
 			total_credit_in_account_currency += itemTax.valorRetenido
 			
 		journal_entry.append('accounts', {
-            'account': account_for_withHolding,
+            'account': self.payable_account,
 			'account_type':'Payable',
 			"against_account": self.purchase_withholding_supplier,
 			"doctype": "Journal Entry Account",
