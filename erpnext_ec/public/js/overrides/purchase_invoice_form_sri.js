@@ -37,32 +37,34 @@ frappe.ui.form.on(doctype_customized, {
         if (frm.doc.is_purchase_settlement) {
             frm.set_value('is_return', 0);
 
-            // Change fieldtype to Link
-            frm.set_df_property('estab', 'fieldtype', 'Link');
-            frm.set_df_property('ptoemi', 'fieldtype', 'Link');
+            // Use direct metadata manipulation for robust UI update
+            let estab_df = frappe.meta.get_docfield(frm.doctype, 'estab', frm.doc.name);
+            estab_df.fieldtype = 'Link';
+            estab_df.options = 'SRI Establishment';
 
-            // Set options for the Link fields
-            frm.set_df_property('estab', 'options', 'SRI Establishment');
-            frm.set_df_property('ptoemi', 'options', 'SRI PtoEmi');
+            let ptoemi_df = frappe.meta.get_docfield(frm.doctype, 'ptoemi', frm.doc.name);
+            ptoemi_df.fieldtype = 'Link';
+            ptoemi_df.options = 'SRI PtoEmi';
 
-            // Refresh fields
+            // Refresh the fields to apply changes
             frm.refresh_field('estab');
             frm.refresh_field('ptoemi');
 
         } else {
-            // Change fieldtype back to Data
-            frm.set_df_property('estab', 'fieldtype', 'Data');
-            frm.set_df_property('ptoemi', 'fieldtype', 'Data');
+            // Revert fields back to Data
+            let estab_df = frappe.meta.get_docfield(frm.doctype, 'estab', frm.doc.name);
+            estab_df.fieldtype = 'Data';
+            estab_df.options = '';
 
-            // Clear options for the fields
-            frm.set_df_property('estab', 'options', '');
-            frm.set_df_property('ptoemi', 'options', '');
+            let ptoemi_df = frappe.meta.get_docfield(frm.doctype, 'ptoemi', frm.doc.name);
+            ptoemi_df.fieldtype = 'Data';
+            ptoemi_df.options = '';
 
             // Clear values
             frm.set_value('estab', '');
             frm.set_value('ptoemi', '');
 
-            // Refresh fields
+            // Refresh the fields to apply changes
             frm.refresh_field('estab');
             frm.refresh_field('ptoemi');
         }
