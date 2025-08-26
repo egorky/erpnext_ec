@@ -38,10 +38,27 @@ frappe.ui.form.on(doctype_customized, {
         toggle_settlement_fields(frm);
     },
     estab_link: function(frm) {
-        // Sync link field to data field
+        // Sync link field to data field for backend logic
         frm.set_value('estab', frm.doc.estab_link);
-        // Trigger ptoemi filtering
-        frm.trigger('estab');
+
+        // Clear dependent fields
+        frm.set_value('ptoemi_link', '');
+        frm.set_value('ptoemi', '');
+
+        if (frm.doc.estab_link) {
+            frappe.call({
+                method: 'erpnext_ec.utilities.tools.get_ptoemi_list_for_establishment',
+                args: {
+                    establishment: frm.doc.estab_link
+                },
+                callback: function(r) {
+                    if (r.message) {
+                        frm.set_df_property('ptoemi_link', 'options', r.message);
+                        frm.refresh_field('ptoemi_link');
+                    }
+                }
+            });
+        }
     },
     ptoemi_link: function(frm) {
         // Sync link field to data field
