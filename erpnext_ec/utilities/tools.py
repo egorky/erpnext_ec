@@ -251,3 +251,33 @@ def get_ptoemi_list_for_establishment(establishment):
     )
 
     return [d.name for d in ptoemi_docs]
+
+@frappe.whitelist()
+def get_default_establishment_and_ptoemi(company):
+    """
+    Fetches the default establishment and emission point for a given company.
+    """
+    if not company:
+        frappe.throw("Company not specified.")
+
+    # Find the default establishment linked to the company
+    default_establishment = frappe.db.get_value(
+        "SRI Establishment Link",
+        {"parent": company, "is_default": 1},
+        "establishment"
+    )
+
+    if not default_establishment:
+        return {}
+
+    # Find the default emission point for that establishment
+    default_ptoemi = frappe.db.get_value(
+        "SRI PtoEmi",
+        {"parent": default_establishment, "is_default": 1},
+        "name"
+    )
+
+    return {
+        "estab": default_establishment,
+        "ptoemi": default_ptoemi
+    }
