@@ -45,20 +45,6 @@ frappe.ui.form.on(doctype_customized, {
             frm.set_df_property('estab', 'options', 'SRI Establishment');
             frm.set_df_property('ptoemi', 'options', 'SRI PtoEmi');
 
-            // Get and set default establishment and ptoemi
-            frappe.call({
-                method: 'erpnext_ec.utilities.tools.get_default_establishment_and_ptoemi',
-                args: {
-                    company: frm.doc.company
-                },
-                callback: function(r) {
-                    if (r.message) {
-                        frm.set_value('estab', r.message.estab);
-                        frm.set_value('ptoemi', r.message.ptoemi);
-                    }
-                }
-            });
-
             // Refresh fields
             frm.refresh_field('estab');
             frm.refresh_field('ptoemi');
