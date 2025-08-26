@@ -3,6 +3,7 @@ var doctype_customized = "Purchase Invoice";
 frappe.ui.form.on(doctype_customized, {
     refresh(frm) {
         update_headline(frm);
+        toggle_settlement_fields(frm);
 
         if (frm.doc.docstatus === 1) { // 1 is for Submitted status
             frm.add_custom_button(__('Comprobante de Retención'), function() {
@@ -34,41 +35,17 @@ frappe.ui.form.on(doctype_customized, {
     },
     is_purchase_settlement: function(frm)
     {
-        if (frm.doc.is_purchase_settlement) {
-            frm.set_value('is_return', 0);
-
-            // Use direct metadata manipulation for robust UI update
-            let estab_df = frappe.meta.get_docfield(frm.doctype, 'estab', frm.doc.name);
-            estab_df.fieldtype = 'Link';
-            estab_df.options = 'SRI Establishment';
-
-            let ptoemi_df = frappe.meta.get_docfield(frm.doctype, 'ptoemi', frm.doc.name);
-            ptoemi_df.fieldtype = 'Link';
-            ptoemi_df.options = 'SRI PtoEmi';
-
-            // Refresh the fields to apply changes
-            frm.refresh_field('estab');
-            frm.refresh_field('ptoemi');
-
-        } else {
-            // Revert fields back to Data
-            let estab_df = frappe.meta.get_docfield(frm.doctype, 'estab', frm.doc.name);
-            estab_df.fieldtype = 'Data';
-            estab_df.options = '';
-
-            let ptoemi_df = frappe.meta.get_docfield(frm.doctype, 'ptoemi', frm.doc.name);
-            ptoemi_df.fieldtype = 'Data';
-            ptoemi_df.options = '';
-
-            // Clear values
-            frm.set_value('estab', '');
-            frm.set_value('ptoemi', '');
-
-            // Refresh the fields to apply changes
-            frm.refresh_field('estab');
-            frm.refresh_field('ptoemi');
-        }
-        update_headline(frm);
+        toggle_settlement_fields(frm);
+    },
+    estab_link: function(frm) {
+        // Sync link field to data field
+        frm.set_value('estab', frm.doc.estab_link);
+        // Trigger ptoemi filtering
+        frm.trigger('estab');
+    },
+    ptoemi_link: function(frm) {
+        // Sync link field to data field
+        frm.set_value('ptoemi', frm.doc.ptoemi_link);
     },
     is_return: function(frm)
     {
@@ -89,4 +66,37 @@ function update_headline(frm) {
     } else {
         frm.dashboard.set_headline("FACTURA DE COMPRA");
     }
+}
+
+function toggle_settlement_fields(frm) {
+    const is_settlement = frm.doc.is_purchase_settlement;
+
+    // Toggle visibility
+    frm.toggle_display('estab', !is_settlement);
+    frm.toggle_display('ptoemi', !is_settlement);
+    frm.toggle_display('estab_link', is_settlement);
+    frm.toggle_display('ptoemi_link', is_settlement);
+
+    // Set requirement rules
+    frm.toggle_reqd('estab', !is_settlement);
+    frm.toggle_reqd('ptoemi', !is_settlement);
+    frm.toggle_reqd('estab_link', is_settlement);
+    frm.toggle_reqd('ptoemi_link', is_settlement);
+
+    if (is_settlement) {
+        frm.set_value('is_return', 0);
+        // Ensure data is in sync if it was loaded before toggling
+        frm.set_value('estab_link', frm.doc.estab);
+        frm.set_value('ptoemi_link', frm.doc.ptoemi);
+    } else {
+        // Clear link fields when not a settlement
+        frm.set_value('estab_link', null);
+        frm.set_value('ptoemi_link', null);
+    }
+
+    frm.refresh_field('estab');
+    frm.refresh_field('ptoemi');
+    frm.refresh_field('estab_link');
+    frm.refresh_field('ptoemi_link');
+    update_headline(frm);
 }
