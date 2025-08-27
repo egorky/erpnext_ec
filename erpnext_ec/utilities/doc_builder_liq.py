@@ -112,11 +112,15 @@ def build_doc_liq(doc_name):
 		secuencial = doc.secuencial
 		ruc = doc.tax_id #doc.company_tax_id
 		
-		puntoEmision_rec = get_full_ptoemi(doc.ptoemi)
+		# Use link fields if it's a purchase settlement, otherwise use data fields
+		estab_to_use = doc.estab_link if doc.is_purchase_settlement else doc.estab
+		ptoemi_to_use = doc.ptoemi_link if doc.is_purchase_settlement else doc.ptoemi
+
+		puntoEmision_rec = get_full_ptoemi(ptoemi_to_use)
 		doc.ptoemi = puntoEmision_rec.record_name
 		puntoEmision = doc.ptoemi
 		
-		establecimiento_rec = get_full_establishment(doc.estab)
+		establecimiento_rec = get_full_establishment(estab_to_use)
 		doc.estab = establecimiento_rec.record_name
 		establecimiento = doc.estab
 
