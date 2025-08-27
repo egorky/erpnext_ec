@@ -144,6 +144,11 @@ def generate_xml(data, filters):
     year = filters.get("year")
     month = filters.get("month")
 
+    # Convert date strings back to datetime objects
+    for row in data:
+        if isinstance(row.get("fecha"), str):
+            row["fecha"] = datetime.strptime(row["fecha"], "%Y-%m-%d")
+
     company_doc = frappe.get_doc("Company", company)
 
     total_ventas = sum(d['total'] for d in data if d['tipo'] == 'Sales Invoice' and d['estado'] == 'Emitido')
