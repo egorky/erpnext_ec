@@ -186,10 +186,30 @@ def generate_xml(data, filters):
             # ... add other purchase fields from example ...
 
     ventas_xml = ET.SubElement(root, "ventas")
-    # ... loop and add sales details ...
+    for row in processed_data:
+        if row.get('tipo') == 'Sales Invoice' and row.get('estado') == 'Emitido':
+            detalle = ET.SubElement(ventas_xml, "detalleVentas")
+            ET.SubElement(detalle, "tpIdCliente").text = str(row.get("tpIdCliente", ""))
+            ET.SubElement(detalle, "idCliente").text = str(row.get("idCliente", ""))
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
+            ET.SubElement(detalle, "nroComprobantes").text = "1" # Assuming 1 per row
+            ET.SubElement(detalle, "baseNoGraIva").text = f"{row.get('baseNoGraIva', 0):.2f}"
+            ET.SubElement(detalle, "baseImponible").text = "0.00" # Sales has no baseImponible, only baseImpGrav
+            ET.SubElement(detalle, "baseImpGrav").text = f"{row.get('baseImpGrav', 0):.2f}"
+            ET.SubElement(detalle, "montoIva").text = f"{row.get('montoIva', 0):.2f}"
+            ET.SubElement(detalle, "valorRetIva").text = "0.00" # Placeholder
+            ET.SubElement(detalle, "valorRetRenta").text = "0.00" # Placeholder
 
     anulados_xml = ET.SubElement(root, "anulados")
-    # ... loop and add annulled details ...
+    for row in processed_data:
+        if row.get('estado') == 'Anulado':
+            detalle = ET.SubElement(anulados_xml, "detalleAnulados")
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
+            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
+            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoEmi", ""))
+            ET.SubElement(detalle, "secuencialInicio").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "secuencialFin").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
 
     xml_str = ET.tostring(root, 'utf-8', xml_declaration=True)
     parsed_str = minidom.parseString(xml_str)
