@@ -103,11 +103,30 @@ def get_data(filters):
             row.estado = "Anulado"
 
         # Add other placeholder fields needed for XML
+        # These will be populated with more accurate data in future steps
         row.codSustento = "01"
         row.tpIdProv = "02"
         row.idProv = row.ruc_tercero
         row.tipoComprobante = "01"
-        # ... etc.
+        row.tipoProv = "01"
+        row.denoProv = row.tercero
+        row.parteRel = "NO"
+        row.autorizacion = row.numeroautorizacion
+        row.baseNoGraIva = "0.00"
+        row.baseImponible = "0.00"
+        row.baseImpGrav = "0.00"
+        row.baseImpExe = "0.00"
+        row.montoIce = "0.00"
+        row.valRetBien10 = "0.00"
+        row.valRetServ20 = "0.00"
+        row.valorRetBienes = "0.00"
+        row.valRetServ50 = "0.00"
+        row.valorRetServicios = "0.00"
+        row.valRetServ100 = "0.00"
+        row.valorRetencionNc = "0.00"
+        row.totbasesImpReemb = "0.00"
+        row.pagoLocExt = "01"
+        row.air_details = []
 
     return data
 
@@ -152,12 +171,8 @@ def generate_xml(data, filters):
     month = filters.get("month")
 
     for row in data:
-        if isinstance(row.get("fecha"), str):
+        if row.get("fecha") and isinstance(row.get("fecha"), str):
             row["fecha"] = datetime.strptime(row["fecha"], "%Y-%m-%d")
-        if isinstance(row.get("fechaRegistro"), str):
-            row["fechaRegistro"] = datetime.strptime(row["fechaRegistro"], "%Y-%m-%d")
-        if isinstance(row.get("fechaEmision"), str):
-            row["fechaEmision"] = datetime.strptime(row["fechaEmision"], "%Y-%m-%d")
 
     company_doc = frappe.get_doc("Company", company)
     num_estab_ruc = frappe.db.count("Sri Establishment", {"company_link": company})
@@ -185,11 +200,11 @@ def generate_xml(data, filters):
             ET.SubElement(detalle, "tipoProv").text = str(row.get("tipoProv", ""))
             ET.SubElement(detalle, "denoProv").text = str(row.get("denoProv", ""))
             ET.SubElement(detalle, "parteRel").text = str(row.get("parteRel", "NO"))
-            ET.SubElement(detalle, "fechaRegistro").text = row.get("fechaRegistro").strftime("%d/%m/%Y")
+            ET.SubElement(detalle, "fechaRegistro").text = row.get("fecha").strftime("%d/%m/%Y")
             ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
             ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoemi", ""))
             ET.SubElement(detalle, "secuencial").text = str(row.get("secuencial", ""))
-            ET.SubElement(detalle, "fechaEmision").text = row.get("fechaEmision").strftime("%d/%m/%Y")
+            ET.SubElement(detalle, "fechaEmision").text = row.get("fecha").strftime("%d/%m/%Y")
             ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
             ET.SubElement(detalle, "baseNoGraIva").text = str(row.get("baseNoGraIva", "0.00"))
             ET.SubElement(detalle, "baseImponible").text = str(row.get("baseImponible", "0.00"))
