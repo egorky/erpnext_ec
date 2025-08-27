@@ -15,8 +15,6 @@ def execute(filters=None):
     return columns, data
 
 def get_columns(filters):
-    # These columns are for the web report view, which is simplified.
-    # The full data is fetched for the XML generation.
     columns = [
         {"label": _("Tipo"), "fieldname": "tipo", "fieldtype": "Data", "width": 100},
         {"label": _("Fecha"), "fieldname": "fecha", "fieldtype": "Date", "width": 100},
@@ -39,35 +37,26 @@ def get_data(filters):
     end_date = datetime.strptime(start_date, "%Y-%m-%d").replace(day=28) + frappe.utils.relativedelta(days=4)
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
-    # Fetch raw data. The enrichment will happen in the generate_xml function.
     compras = frappe.get_all("Purchase Invoice",
         filters={"company": company, "posting_date": ["between", [start_date, end_date]], "docstatus": ["in", [1, 2]]},
-        fields=["name", "posting_date", "supplier_name", "grand_total", "docstatus", "is_purchase_settlement", "estab", "ptoemi", "secuencial", "numeroautorizacion", "estab_link", "ptoemi_link"]
+        fields=["name as documento", "posting_date as fecha", "supplier_name as tercero", "grand_total as total", "docstatus"]
     )
-    for c in compras: c['doctype'] = 'Purchase Invoice'
+    for c in compras: c['tipo'] = 'Purchase Invoice'
 
     ventas = frappe.get_all("Sales Invoice",
         filters={"company": company, "posting_date": ["between", [start_date, end_date]], "docstatus": ["in", [1, 2]]},
-        fields=["name", "posting_date", "customer_name", "grand_total", "docstatus", "is_return", "estab", "ptoemi", "secuencial", "numeroautorizacion"]
+        fields=["name as documento", "posting_date as fecha", "customer_name as tercero", "grand_total as total", "docstatus"]
     )
-    for v in ventas: v['doctype'] = 'Sales Invoice'
+    for v in ventas: v['tipo'] = 'Sales Invoice'
 
-    # Prepare data for web view (simplified)
-    web_data = []
-    for doc in compras + ventas:
-        taxes = get_tax_details(doc.doctype, doc.name)
-        web_data.append({
-            "tipo": doc.doctype,
-            "fecha": doc.posting_date,
-            "documento": doc.name,
-            "tercero": doc.supplier_name if doc.doctype == 'Purchase Invoice' else doc.customer_name,
-            "base_cero": taxes.get("base_cero", 0),
-            "base_iva": taxes.get("base_iva", 0),
-            "monto_iva": taxes.get("monto_iva", 0),
-            "total": doc.grand_total,
-            "estado": "Anulado" if doc.docstatus == 2 else "Emitido"
-        })
-    return web_data
+    data = compras + ventas
+
+    for row in data:
+        taxes = get_tax_details(row.tipo, row.documento)
+        row.update(taxes)
+        row["estado"] = "Anulado" if row.docstatus == 2 else "Emitido"
+
+    return data
 
 def get_tax_details(doctype, docname):
     child_table = "Purchase Taxes and Charges" if doctype == "Purchase Invoice" else "Sales Taxes and Charges"
@@ -105,56 +94,52 @@ def generate_xml(data, filters):
     year = filters.get("year")
     month = filters.get("month")
 
-    # Data Enrichment happens here, ensuring consistency
     processed_data = []
     for row in data:
         doc = frappe.get_doc(row.get("tipo"), row.get("documento"))
         taxes = get_tax_details(doc.doctype, doc.name)
 
-        # --- Common Fields ---
-        processed_row = {
+        p_row = {
             "tipo": doc.doctype,
             "fecha": doc.posting_date,
-            "denoProv": doc.supplier_name if doc.doctype == 'Purchase Invoice' else doc.customer_name,
+            "estado": "Anulado" if doc.docstatus == 2 else "Emitido",
+            "secuencial": doc.secuencial,
+            "autorizacion": doc.numeroautorizacion,
             "baseNoGraIva": taxes.get("base_cero", 0),
             "baseImpGrav": taxes.get("base_iva", 0),
             "montoIva": taxes.get("monto_iva", 0),
-            "estado": "Anulado" if doc.docstatus == 2 else "Emitido",
-            "secuencial": doc.secuencial,
-            "autorizacion": doc.numeroautorizacion
         }
 
-        # --- Purchase Specific ---
         if doc.doctype == 'Purchase Invoice':
-            processed_row["idProv"] = frappe.db.get_value("Supplier", doc.supplier, "tax_id")
-            processed_row["tpIdProv"] = frappe.db.get_value("Supplier", doc.supplier, "typeidtax")
-            processed_row["codSustento"] = "01" # Placeholder
-            processed_row["tipoProv"] = "01" # Placeholder
-            processed_row["parteRel"] = "NO"
+            p_row["denoProv"] = doc.supplier_name
+            p_row["idProv"] = frappe.db.get_value("Supplier", doc.supplier, "tax_id")
+            p_row["tpIdProv"] = frappe.db.get_value("Supplier", doc.supplier, "typeidtax")
+            p_row["codSustento"] = "01"
+            p_row["tipoProv"] = "01"
+            p_row["parteRel"] = "NO"
+            p_row["pagoLocExt"] = "01"
 
             if doc.is_purchase_settlement:
-                processed_row["tipoComprobante"] = "03"
-                processed_row["estab"] = frappe.db.get_value("Sri Establishment", doc.estab_link, "record_name")
-                processed_row["ptoEmi"] = frappe.db.get_value("Sri Ptoemi", doc.ptoemi_link, "record_name")
+                p_row["tipoComprobante"] = "03"
+                p_row["estab"] = frappe.db.get_value("Sri Establishment", doc.estab_link, "record_name") if doc.estab_link else ""
+                p_row["ptoEmi"] = frappe.db.get_value("Sri Ptoemi", doc.ptoemi_link, "record_name") if doc.ptoemi_link else ""
             else:
-                processed_row["tipoComprobante"] = "01" # Assuming regular purchase
-                processed_row["estab"] = doc.estab
-                processed_row["ptoEmi"] = doc.ptoemi
+                p_row["tipoComprobante"] = "01"
+                p_row["estab"] = doc.estab
+                p_row["ptoEmi"] = doc.ptoemi
 
-        # --- Sales Specific ---
         elif doc.doctype == 'Sales Invoice':
-            processed_row["idCliente"] = frappe.db.get_value("Customer", doc.customer, "tax_id")
-            processed_row["tpIdCliente"] = frappe.db.get_value("Customer", doc.customer, "typeidtax")
-            processed_row["tipoComprobante"] = "04" if doc.is_return else "18" # 18 for normal, 04 for credit note
-            processed_row["estab"] = doc.estab
-            processed_row["ptoEmi"] = doc.ptoemi
+            p_row["idCliente"] = frappe.db.get_value("Customer", doc.customer, "tax_id")
+            p_row["tpIdCliente"] = frappe.db.get_value("Customer", doc.customer, "typeidtax")
+            p_row["tipoComprobante"] = "04" if doc.is_return else "01"
+            p_row["estab"] = doc.estab
+            p_row["ptoEmi"] = doc.ptoemi
 
-        processed_data.append(processed_row)
+        processed_data.append(p_row)
 
-    # XML Generation
     company_doc = frappe.get_doc("Company", company)
     num_estab_ruc = frappe.db.count("Sri Establishment", {"company_link": company})
-    total_ventas = sum(d.get('total', 0) for d in data if d.get('tipo') == 'Sales Invoice' and d.get('estado') == 'Emitido')
+    total_ventas = sum(float(d.get('total', 0) or 0) for d in data if d.get('tipo') == 'Sales Invoice' and d.get('estado') == 'Emitido')
 
     root = ET.Element("iva")
     ET.SubElement(root, "TipoIDInformante").text = "R"
@@ -170,46 +155,46 @@ def generate_xml(data, filters):
     for row in processed_data:
         if row.get('tipo') == 'Purchase Invoice' and row.get('estado') == 'Emitido':
             detalle = ET.SubElement(compras_xml, "detalleCompras")
-            ET.SubElement(detalle, "codSustento").text = str(row.get("codSustento", ""))
-            ET.SubElement(detalle, "tpIdProv").text = str(row.get("tpIdProv", ""))
-            ET.SubElement(detalle, "idProv").text = str(row.get("idProv", ""))
-            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
+            ET.SubElement(detalle, "codSustento").text = str(row.get("codSustento") or "")
+            ET.SubElement(detalle, "tpIdProv").text = str(row.get("tpIdProv") or "")
+            ET.SubElement(detalle, "idProv").text = str(row.get("idProv") or "")
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante") or "")
             ET.SubElement(detalle, "fechaRegistro").text = row.get("fecha").strftime("%d/%m/%Y")
-            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
-            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoEmi", ""))
-            ET.SubElement(detalle, "secuencial").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab") or "")
+            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoEmi") or "")
+            ET.SubElement(detalle, "secuencial").text = str(row.get("secuencial") or "")
             ET.SubElement(detalle, "fechaEmision").text = row.get("fecha").strftime("%d/%m/%Y")
-            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
+            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion") or "")
             ET.SubElement(detalle, "baseNoGraIva").text = f"{row.get('baseNoGraIva', 0):.2f}"
-            ET.SubElement(detalle, "baseImponible").text = f"{row.get('baseImpGrav', 0):.2f}" # As per example
+            ET.SubElement(detalle, "baseImponible").text = f"{row.get('baseImpGrav', 0):.2f}"
             ET.SubElement(detalle, "montoIva").text = f"{row.get('montoIva', 0):.2f}"
-            # ... add other purchase fields from example ...
+            # ... add other placeholders ...
 
     ventas_xml = ET.SubElement(root, "ventas")
     for row in processed_data:
         if row.get('tipo') == 'Sales Invoice' and row.get('estado') == 'Emitido':
             detalle = ET.SubElement(ventas_xml, "detalleVentas")
-            ET.SubElement(detalle, "tpIdCliente").text = str(row.get("tpIdCliente", ""))
-            ET.SubElement(detalle, "idCliente").text = str(row.get("idCliente", ""))
-            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
-            ET.SubElement(detalle, "nroComprobantes").text = "1" # Assuming 1 per row
+            ET.SubElement(detalle, "tpIdCliente").text = str(row.get("tpIdCliente") or "")
+            ET.SubElement(detalle, "idCliente").text = str(row.get("idCliente") or "")
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante") or "")
+            ET.SubElement(detalle, "nroComprobantes").text = "1"
             ET.SubElement(detalle, "baseNoGraIva").text = f"{row.get('baseNoGraIva', 0):.2f}"
-            ET.SubElement(detalle, "baseImponible").text = "0.00" # Sales has no baseImponible, only baseImpGrav
+            ET.SubElement(detalle, "baseImponible").text = "0.00"
             ET.SubElement(detalle, "baseImpGrav").text = f"{row.get('baseImpGrav', 0):.2f}"
             ET.SubElement(detalle, "montoIva").text = f"{row.get('montoIva', 0):.2f}"
-            ET.SubElement(detalle, "valorRetIva").text = "0.00" # Placeholder
-            ET.SubElement(detalle, "valorRetRenta").text = "0.00" # Placeholder
+            ET.SubElement(detalle, "valorRetIva").text = "0.00"
+            ET.SubElement(detalle, "valorRetRenta").text = "0.00"
 
     anulados_xml = ET.SubElement(root, "anulados")
     for row in processed_data:
         if row.get('estado') == 'Anulado':
             detalle = ET.SubElement(anulados_xml, "detalleAnulados")
-            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
-            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
-            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoEmi", ""))
-            ET.SubElement(detalle, "secuencialInicio").text = str(row.get("secuencial", ""))
-            ET.SubElement(detalle, "secuencialFin").text = str(row.get("secuencial", ""))
-            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante") or "")
+            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab") or "")
+            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoEmi") or "")
+            ET.SubElement(detalle, "secuencialInicio").text = str(row.get("secuencial") or "")
+            ET.SubElement(detalle, "secuencialFin").text = str(row.get("secuencial") or "")
+            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion") or "")
 
     xml_str = ET.tostring(root, 'utf-8', xml_declaration=True)
     parsed_str = minidom.parseString(xml_str)
