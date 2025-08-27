@@ -157,7 +157,7 @@ def generate_xml(data, filters):
             row["fechaEmision"] = datetime.strptime(row["fechaEmision"], "%Y-%m-%d")
 
     company_doc = frappe.get_doc("Company", company)
-    num_estab_ruc = frappe.db.get_value("Company", company, "num_estab_ruc") # Assuming this field exists
+    num_estab_ruc = frappe.db.count("Sri Establishment", {"company_link": company})
 
     total_ventas = sum(d.get('total', 0) for d in data if d.get('tipo') == 'Sales Invoice' and d.get('estado') == 'Emitido')
 
