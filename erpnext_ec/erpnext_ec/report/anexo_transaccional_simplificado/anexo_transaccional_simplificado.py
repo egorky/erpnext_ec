@@ -51,8 +51,8 @@ def get_raw_docs(filters):
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
     # Get all fields needed for processing
-    purchase_fields = ["doctype", "name", "posting_date", "supplier", "supplier_name", "grand_total", "docstatus", "is_purchase_settlement", "estab", "ptoemi", "secuencial", "numeroautorizacion", "estab_link", "ptoemi_link"]
-    sales_fields = ["doctype", "name", "posting_date", "customer", "customer_name", "grand_total", "docstatus", "is_return", "estab", "ptoemi", "secuencial", "numeroautorizacion"]
+    purchase_fields = ["name", "posting_date", "supplier", "supplier_name", "grand_total", "docstatus", "is_purchase_settlement", "estab", "ptoemi", "secuencial", "numeroautorizacion", "estab_link", "ptoemi_link"]
+    sales_fields = ["name", "posting_date", "customer", "customer_name", "grand_total", "docstatus", "is_return", "estab", "ptoemi", "secuencial", "numeroautorizacion"]
 
     compras = frappe.get_all("Purchase Invoice",
         filters=[
@@ -64,11 +64,14 @@ def get_raw_docs(filters):
         ],
         fields=purchase_fields
     )
+    for c in compras: c.doctype = 'Purchase Invoice'
+
 
     ventas = frappe.get_all("Sales Invoice",
         filters={"company": company, "posting_date": ["between", [start_date, end_date]], "docstatus": ["in", [1, 2]]},
         fields=sales_fields
     )
+    for v in ventas: v.doctype = 'Sales Invoice'
 
     return compras + ventas
 
