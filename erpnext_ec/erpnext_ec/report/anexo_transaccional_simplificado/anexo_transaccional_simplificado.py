@@ -37,15 +37,17 @@ def get_data(filters):
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
     # Purchases Query
-    compras = frappe.db.sql(f"""
+    # This query needs to be more complex because Purchase Invoice does not have summary fields
+    # for tax bases. We must calculate them from the child table.
+    compras_query = f"""
         SELECT
             'Purchase Invoice' as tipo,
             pi.posting_date as fecha,
             pi.name as documento,
             pi.supplier_name as tercero,
-            pi.total_base_cero as base_cero,
-            pi.total_base_iva as base_iva,
-            pi.total_iva as monto_iva,
+            SUM(CASE WHEN tax.rate = 0 THEN tax.tax_amount_after_discount ELSE 0 END) as base_cero,
+            SUM(CASE WHEN tax.rate > 0 THEN tax.tax_amount_after_discount ELSE 0 END) as base_iva,
+            SUM(CASE WHEN tax.rate > 0 THEN tax.tax_amount ELSE 0 END) as monto_iva,
             pi.grand_total as total,
             pi.docstatus as estado,
             sup.tax_id as ruc_tercero,
@@ -57,9 +59,12 @@ def get_data(filters):
             pi.return_against
         FROM `tabPurchase Invoice` pi
         LEFT JOIN `tabSupplier` sup ON pi.supplier = sup.name
+        LEFT JOIN `tabPurchase Taxes and Charges` tax ON tax.parent = pi.name
         WHERE pi.company = '{company}' AND pi.posting_date BETWEEN '{start_date}' AND '{end_date}'
         AND pi.docstatus IN (1, 2)
-    """, as_dict=1)
+        GROUP BY pi.name
+    """
+    compras = frappe.db.sql(compras_query, as_dict=1)
 
     # Sales Query
     ventas = frappe.db.sql(f"""
