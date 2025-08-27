@@ -37,66 +37,76 @@ def get_data(filters):
     end_date = datetime.strptime(start_date, "%Y-%m-%d").replace(day=28) + frappe.utils.relativedelta(days=4)
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
-    # Purchases Query
-    compras_query = f"""
-        SELECT
-            'Purchase Invoice' as tipo,
-            pi.posting_date as fecha,
-            pi.name as documento,
-            pi.supplier_name as tercero,
-            SUM(CASE WHEN tax.rate = 0 THEN tax.base_tax_amount ELSE 0 END) as base_cero,
-            SUM(CASE WHEN tax.rate > 0 THEN tax.base_tax_amount ELSE 0 END) as base_iva,
-            SUM(CASE WHEN tax.rate > 0 THEN tax.tax_amount ELSE 0 END) as monto_iva,
-            pi.grand_total as total,
-            pi.docstatus as estado,
-            sup.tax_id as ruc_tercero,
-            pi.estab,
-            pi.ptoemi,
-            pi.secuencial,
-            pi.numeroautorizacion,
-            pi.is_return,
-            pi.return_against
-        FROM `tabPurchase Invoice` pi
-        LEFT JOIN `tabSupplier` sup ON pi.supplier = sup.name
-        LEFT JOIN `tabPurchase Taxes and Charges` tax ON tax.parent = pi.name
-        WHERE pi.company = '{company}' AND pi.posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND pi.docstatus IN (1, 2)
-        GROUP BY pi.name
-    """
-    compras = frappe.db.sql(compras_query, as_dict=1)
+    # This query is a simplified version and will need to be expanded
+    # to include all the fields from the example XML, especially withholding taxes (air).
+    # This will require joining with the withholding doctype.
 
-    # Sales Query
-    ventas_query = f"""
-        SELECT
-            'Sales Invoice' as tipo,
-            si.posting_date as fecha,
-            si.name as documento,
-            si.customer_name as tercero,
-            SUM(CASE WHEN tax.rate = 0 THEN tax.base_tax_amount ELSE 0 END) as base_cero,
-            SUM(CASE WHEN tax.rate > 0 THEN tax.base_tax_amount ELSE 0 END) as base_iva,
-            SUM(CASE WHEN tax.rate > 0 THEN tax.tax_amount ELSE 0 END) as monto_iva,
-            si.grand_total as total,
-            si.docstatus as estado,
-            cus.tax_id as ruc_tercero,
-            si.estab,
-            si.ptoemi,
-            si.secuencial,
-            si.numeroautorizacion,
-            si.is_return,
-            si.return_against
-        FROM `tabSales Invoice` si
-        LEFT JOIN `tabCustomer` cus ON si.customer = cus.name
-        LEFT JOIN `tabSales Taxes and Charges` tax ON tax.parent = si.name
-        WHERE si.company = '{company}' AND si.posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND si.docstatus IN (1, 2)
-        GROUP BY si.name
+    # Common WHERE clause for all queries
+    where_clause = f"""
+        WHERE company = '{company}' AND posting_date BETWEEN '{start_date}' AND '{end_date}'
+        AND docstatus IN (1, 2)
     """
-    ventas = frappe.db.sql(ventas_query, as_dict=1)
+
+    # Using frappe.get_all for better maintainability for now
+    compras = frappe.get_all("Purchase Invoice",
+        filters={
+            "company": company,
+            "posting_date": ["between", [start_date, end_date]],
+            "docstatus": ["in", [1, 2]]
+        },
+        fields=[
+            "'Purchase Invoice' as tipo", "posting_date as fecha", "name as documento",
+            "supplier_name as tercero", "grand_total as total", "docstatus as estado",
+            "supplier", "estab", "ptoemi", "secuencial", "numeroautorizacion", "is_return", "return_against"
+        ]
+    )
+
+    ventas = frappe.get_all("Sales Invoice",
+        filters={
+            "company": company,
+            "posting_date": ["between", [start_date, end_date]],
+            "docstatus": ["in", [1, 2]]
+        },
+        fields=[
+            "'Sales Invoice' as tipo", "posting_date as fecha", "name as documento",
+            "customer_name as tercero", "grand_total as total", "docstatus as estado",
+            "customer", "estab", "ptoemi", "secuencial", "numeroautorizacion", "is_return", "return_against"
+        ]
+    )
 
     data = compras + ventas
 
-    # Process status
     for row in data:
+        # Add placeholder fields to match XML structure, these need to be populated with real data
+        row.codSustento = "01" # Placeholder
+        row.tpIdProv = "02" # Placeholder
+        row.idProv = frappe.db.get_value("Supplier", row.supplier, "tax_id") if row.tipo == 'Purchase Invoice' else frappe.db.get_value("Customer", row.customer, "tax_id")
+        row.tipoComprobante = "01" # Placeholder
+        row.tipoProv = "01" # Placeholder
+        row.denoProv = row.tercero
+        row.parteRel = "NO"
+        row.fechaRegistro = row.fecha
+        row.fechaEmision = row.fecha
+        row.autorizacion = row.numeroautorizacion
+        row.baseNoGraIva = "0.00"
+        row.baseImponible = "0.00"
+        row.baseImpGrav = "0.00"
+        row.baseImpExe = "0.00"
+        row.montoIce = "0.00"
+        row.montoIva = "0.00"
+        row.valRetBien10 = "0.00"
+        row.valRetServ20 = "0.00"
+        row.valorRetBienes = "0.00"
+        row.valRetServ50 = "0.00"
+        row.valorRetServicios = "0.00"
+        row.valRetServ100 = "0.00"
+        row.valorRetencionNc = "0.00"
+        row.totbasesImpReemb = "0.00"
+        row.pagoLocExt = "01"
+
+        # Placeholder for AIR details
+        row.air_details = []
+
         if row.estado == 1:
             row.estado = "Emitido"
         elif row.estado == 2:
@@ -144,80 +154,102 @@ def generate_xml(data, filters):
     year = filters.get("year")
     month = filters.get("month")
 
-    # Convert date strings back to datetime objects
     for row in data:
         if isinstance(row.get("fecha"), str):
             row["fecha"] = datetime.strptime(row["fecha"], "%Y-%m-%d")
 
     company_doc = frappe.get_doc("Company", company)
+    num_estab_ruc = frappe.db.get_value("Company", company, "num_estab_ruc") # Assuming this field exists
 
-    total_ventas = sum(d['total'] for d in data if d['tipo'] == 'Sales Invoice' and d['estado'] == 'Emitido')
+    total_ventas = sum(d.get('total', 0) for d in data if d.get('tipo') == 'Sales Invoice' and d.get('estado') == 'Emitido')
 
     root = ET.Element("iva")
-    ET.SubElement(root, "TipoIDInformante").text = "R" # RUC
+    ET.SubElement(root, "TipoIDInformante").text = "R"
     ET.SubElement(root, "IdInformante").text = company_doc.tax_id
     ET.SubElement(root, "razonSocial").text = company_doc.company_name
-    ET.SubElement(root, "Anio").text = year
-    ET.SubElement(root, "Mes").text = month
+    ET.SubElement(root, "Anio").text = str(year)
+    ET.SubElement(root, "Mes").text = str(month).zfill(2)
+    ET.SubElement(root, "numEstabRuc").text = str(num_estab_ruc).zfill(3) if num_estab_ruc else "001"
     ET.SubElement(root, "totalVentas").text = f"{total_ventas:.2f}"
     ET.SubElement(root, "codigoOperativo").text = "IVA"
 
     # Compras
     compras_xml = ET.SubElement(root, "compras")
     for row in data:
-        if row['tipo'] == 'Purchase Invoice' and row['estado'] == 'Emitido':
+        if row.get('tipo') == 'Purchase Invoice' and row.get('estado') == 'Emitido':
             detalle = ET.SubElement(compras_xml, "detalleCompras")
-            # NOTE: This is a simplified structure. The official ATS requires more specific tags.
-            # This is based on the provided example and will need refinement based on the official spec.
-            ET.SubElement(detalle, "tpIdProv").text = "01" # TODO: Map from data
-            ET.SubElement(detalle, "idProv").text = row.get("ruc_tercero", "")
-            ET.SubElement(detalle, "tipoComp").text = "01" # TODO: Map from data
-            ET.SubElement(detalle, "aut").text = row.get("numeroautorizacion", "")
-            ET.SubElement(detalle, "estab").text = row.get("estab", "")
-            ET.SubElement(detalle, "ptoEmi").text = row.get("ptoemi", "")
-            ET.SubElement(detalle, "sec").text = row.get("secuencial", "")
-            ET.SubElement(detalle, "fechaEmision").text = row.get("fecha").strftime("%d/%m/%Y")
-            ET.SubElement(detalle, "baseImponible").text = f"{row.get('base_cero', 0):.2f}"
-            ET.SubElement(detalle, "baseImpGrav").text = f"{row.get('base_iva', 0):.2f}"
-            ET.SubElement(detalle, "montoIva").text = f"{row.get('monto_iva', 0):.2f}"
+            ET.SubElement(detalle, "codSustento").text = str(row.get("codSustento", ""))
+            ET.SubElement(detalle, "tpIdProv").text = str(row.get("tpIdProv", ""))
+            ET.SubElement(detalle, "idProv").text = str(row.get("idProv", ""))
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
+            ET.SubElement(detalle, "tipoProv").text = str(row.get("tipoProv", ""))
+            ET.SubElement(detalle, "denoProv").text = str(row.get("denoProv", ""))
+            ET.SubElement(detalle, "parteRel").text = str(row.get("parteRel", "NO"))
+            ET.SubElement(detalle, "fechaRegistro").text = row.get("fechaRegistro").strftime("%d/%m/%Y")
+            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
+            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoemi", ""))
+            ET.SubElement(detalle, "secuencial").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "fechaEmision").text = row.get("fechaEmision").strftime("%d/%m/%Y")
+            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
+            ET.SubElement(detalle, "baseNoGraIva").text = str(row.get("baseNoGraIva", "0.00"))
+            ET.SubElement(detalle, "baseImponible").text = str(row.get("baseImponible", "0.00"))
+            ET.SubElement(detalle, "baseImpGrav").text = str(row.get("baseImpGrav", "0.00"))
+            ET.SubElement(detalle, "baseImpExe").text = str(row.get("baseImpExe", "0.00"))
+            ET.SubElement(detalle, "montoIce").text = str(row.get("montoIce", "0.00"))
+            ET.SubElement(detalle, "montoIva").text = str(row.get("montoIva", "0.00"))
+            ET.SubElement(detalle, "valRetBien10").text = str(row.get("valRetBien10", "0.00"))
+            ET.SubElement(detalle, "valRetServ20").text = str(row.get("valRetServ20", "0.00"))
+            ET.SubElement(detalle, "valorRetBienes").text = str(row.get("valorRetBienes", "0.00"))
+            ET.SubElement(detalle, "valRetServ50").text = str(row.get("valRetServ50", "0.00"))
+            ET.SubElement(detalle, "valorRetServicios").text = str(row.get("valorRetServicios", "0.00"))
+            ET.SubElement(detalle, "valRetServ100").text = str(row.get("valRetServ100", "0.00"))
+            ET.SubElement(detalle, "valorRetencionNc").text = str(row.get("valorRetencionNc", "0.00"))
+            ET.SubElement(detalle, "totbasesImpReemb").text = str(row.get("totbasesImpReemb", "0.00"))
+            pago_exterior = ET.SubElement(detalle, "pagoExterior")
+            ET.SubElement(pago_exterior, "pagoLocExt").text = str(row.get("pagoLocExt", "01"))
+            ET.SubElement(pago_exterior, "paisEfecPago").text = "NA"
+            ET.SubElement(pago_exterior, "aplicConvDobTrib").text = "NA"
+            ET.SubElement(pago_exterior, "pagExtSujRetNorLeg").text = "NA"
 
-    # Ventas
+            if row.get("air_details"):
+                air = ET.SubElement(detalle, "air")
+                for air_row in row.get("air_details"):
+                    detalle_air = ET.SubElement(air, "detalleAir")
+                    ET.SubElement(detalle_air, "codRetAir").text = str(air_row.get("codRetAir", ""))
+                    ET.SubElement(detalle_air, "baseImpAir").text = f"{air_row.get('baseImpAir', 0):.2f}"
+                    ET.SubElement(detalle_air, "porcentajeAir").text = f"{air_row.get('porcentajeAir', 0):.2f}"
+                    ET.SubElement(detalle_air, "valRetAir").text = f"{air_row.get('valRetAir', 0):.2f}"
+
+    # Ventas (simplified, needs to be expanded)
     ventas_xml = ET.SubElement(root, "ventas")
-    for row in data:
-        if row['tipo'] == 'Sales Invoice' and row['estado'] == 'Emitido':
-            detalle = ET.SubElement(ventas_xml, "detalleVentas")
-            ET.SubElement(detalle, "tipoEmision").text = "F" # Físico
-            ET.SubElement(detalle, "tpIdCliente").text = "04" # TODO: Map from data
-            ET.SubElement(detalle, "idCliente").text = row.get("ruc_tercero", "")
-            ET.SubElement(detalle, "tipoComprobante").text = "18" # TODO: Map from data
-            ET.SubElement(detalle, "nroComprobantes").text = "1" # Assuming 1 per row
-            ET.SubElement(detalle, "baseImponible").text = f"{row.get('base_cero', 0):.2f}"
-            ET.SubElement(detalle, "baseImpGrav").text = f"{row.get('base_iva', 0):.2f}"
-            ET.SubElement(detalle, "montoIva").text = f"{row.get('monto_iva', 0):.2f}"
-            ET.SubElement(detalle, "valorRetIva").text = "0.00" # TODO
-            ET.SubElement(detalle, "valorRetRenta").text = "0.00" # TODO
+
+    # VentasEstablecimiento (placeholder)
+    ventas_est_xml = ET.SubElement(root, "ventasEstablecimiento")
+    venta_est = ET.SubElement(ventas_est_xml, "ventaEst")
+    ET.SubElement(venta_est, "codEstab").text = "001" # Placeholder
+    ET.SubElement(venta_est, "ventasEstab").text = "0.00"
+    ET.SubElement(venta_est, "ivaComp").text = "0.00"
 
 
-    # Anulados
+    # Anulados (simplified)
     anulados_xml = ET.SubElement(root, "anulados")
     for row in data:
-        if row['estado'] == 'Anulado':
+        if row.get('estado') == 'Anulado':
             detalle = ET.SubElement(anulados_xml, "detalleAnulados")
-            ET.SubElement(detalle, "tipoComprobante").text = "01" # TODO: Map from data
-            ET.SubElement(detalle, "establecimiento").text = row.get("estab", "")
-            ET.SubElement(detalle, "puntoEmision").text = row.get("ptoemi", "")
-            ET.SubElement(detalle, "secuencialInicio").text = row.get("secuencial", "")
-            ET.SubElement(detalle, "secuencialFin").text = row.get("secuencial", "")
-            ET.SubElement(detalle, "autorizacion").text = row.get("numeroautorizacion", "")
+            ET.SubElement(detalle, "tipoComprobante").text = str(row.get("tipoComprobante", ""))
+            ET.SubElement(detalle, "establecimiento").text = str(row.get("estab", ""))
+            ET.SubElement(detalle, "puntoEmision").text = str(row.get("ptoemi", ""))
+            ET.SubElement(detalle, "secuencialInicio").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "secuencialFin").text = str(row.get("secuencial", ""))
+            ET.SubElement(detalle, "autorizacion").text = str(row.get("autorizacion", ""))
 
-    # Pretty print
     xml_str = ET.tostring(root, 'utf-8')
     parsed_str = minidom.parseString(xml_str)
-    pretty_xml_str = parsed_str.toprettyxml(indent="  ", encoding="utf-8")
+    pretty_xml_str = parsed_str.toprettyxml(indent="  ")
 
     file_name = f"ATS-{year}-{month}.xml"
 
     return {
         "file_name": file_name,
-        "file_content": pretty_xml_str
+        "file_content": pretty_xml_str.decode('utf-8')
     }
