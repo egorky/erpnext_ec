@@ -10,17 +10,13 @@ function resolveFromExternal(r, doc, btnProcess)
 	//console.log(json_data.data.claveAccesoConsultada);
 	//console.log(json_data.data.autorizaciones.autorizacion[0].numeroAutorizacion);
 	
-	if(jsonResponse.ok && jsonResponse.data.numeroComprobantes > 0)
-	{		
-		//console.log(req);
-		//console.log(req.responseText)
+	if(jsonResponse.ok && jsonResponse.data && jsonResponse.data.numeroComprobantes > 0)
+	{
+		const autorizacion = Array.isArray(jsonResponse.data.autorizaciones.autorizacion)
+			? jsonResponse.data.autorizaciones.autorizacion[0]
+			: jsonResponse.data.autorizaciones.autorizacion;
 
-		//var stringResponse = req.responseText;
-		//stringResponse = stringResponse.replace(/(<([^>]+)>)/gi, '');											
-		//const jsonResponse = JSON.parse(stringResponse);
-		var newNumeroAutorizacion = jsonResponse.data.autorizaciones.autorizacion[0].numeroAutorizacion;
-
-		//var newNumeroAutorizacion = '000010000100000100001010101010FAKE';
+		var newNumeroAutorizacion = autorizacion.numeroAutorizacion;
 		// old icon version <use class="" href="#icon-reply-all"></use>
 		//	new icon version <i class="fa fa-paper-plane"></i>
 		$(btnProcess).parent().find('.custom-animation').remove();
@@ -62,9 +58,15 @@ function resolveFromExternal(r, doc, btnProcess)
 		var string_mensaje = '';
 		try
 		{
+			const autorizacion = Array.isArray(jsonResponse.data.autorizaciones.autorizacion)
+				? jsonResponse.data.autorizaciones.autorizacion[0]
+				: jsonResponse.data.autorizaciones.autorizacion;
+
+			const mensaje = autorizacion.mensajes.mensaje[0] || autorizacion.mensajes.mensaje || {};
+
 			string_error = jsonResponse.error;
-			string_mensaje = jsonResponse.data.autorizaciones.autorizacion[0].mensajes.mensaje[0].mensaje_;
-			string_informacionAdicional = jsonResponse.data.autorizaciones.autorizacion[0].mensajes.mensaje[0].informacionAdicional;										 
+			string_mensaje = mensaje.mensaje_;
+			string_informacionAdicional = mensaje.informacionAdicional;
 
 			string_error = string_error == null ? '' : string_error;
 			string_mensaje = string_mensaje == null ? '' : string_mensaje;
@@ -88,149 +90,66 @@ function resolveFromExternal(r, doc, btnProcess)
 
 function resolveFromInternalSales(r, doc, btnProcess)
 {
-	var r___ = {
-		"message": {
-				"claveAccesoConsultada": "2803202401091982695800110010020000001701234567818",
-				"numeroComprobantes": "1",
-				"autorizaciones": {
-					"autorizacion": {
-						"estado": "NO AUTORIZADO",
-						"fechaAutorizacion": "2024-05-05T15:31:45-05:00",
-						"ambiente": "PRUEBAS",
-						"comprobante": "<factura id=\"comprobante\" version=\"1.1.0\"></factura>",
-						"mensajes": {
-							"mensaje": {
-								"identificador": "58",
-								"mensaje": "ERROR EN LA ESTRUCTURA DE LA CLAVE DE ACCESO",
-								"informacionAdicional": "La clave de acceso 2803202401091982695800110010020000001701234567818 no cumple módulo 11",
-								"tipo": "ERROR"
-							}
-						}								
-				}				
-			},
-			"ok": true
-		}
-	}
-
+	console.log("Response received in resolveFromInternalSales:");
 	console.log(r);
 
-	jsonResponse = r.message;
-	console.log(jsonResponse);
-
-	if(jsonResponse.data != undefined)
-	{
-		//jsonResponse = jsonResponse.data;
+	if (!r.message) {
+		frappe.show_alert({ message: __("Respuesta inválida del servidor."), indicator: 'red' }, 10);
+		$(btnProcess).show();
+		$(btnProcess).parent().find('.custom-animation').remove();
+		return;
 	}
 
-	//console.log(json_data.data.claveAccesoConsultada);
-	//console.log(json_data.data.autorizaciones.autorizacion[0].numeroAutorizacion);
-	
-	if(jsonResponse.numeroComprobantes > 0)
+	const jsonResponse = r.message;
+
+	// Handle responses where 'numeroComprobantes' is "0" or not present
+	if (jsonResponse.numeroComprobantes && jsonResponse.numeroComprobantes != "0")
 	{
-		// Handle case where 'autorizacion' can be an object or an array
+		// Safely access the 'autorizacion' object, whether it's an array or single object
 		const autorizacion = Array.isArray(jsonResponse.autorizaciones.autorizacion)
 			? jsonResponse.autorizaciones.autorizacion[0]
 			: jsonResponse.autorizaciones.autorizacion;
 
-		if(autorizacion && autorizacion.estado == 'AUTORIZADO')
-		{
-			var newNumeroAutorizacion = autorizacion.numeroAutorizacion;
+		if (autorizacion && autorizacion.estado === 'AUTORIZADO') {
+			const newNumeroAutorizacion = autorizacion.numeroAutorizacion;
 
 			$(btnProcess).parent().find('.custom-animation').remove();
-			$(btnProcess).parent().append(`
-			<button class="btn btn-xs btn-default" data-name="` + doc.name + `" title="Enviar por email" onclick="event.stopPropagation(); document.Website.SendEmail('` + doc.name + `'); ">                					
-				<i class="fa fa-paper-plane"></i></button>`);
+			$(btnProcess).parent().append(
+				`<button class="btn btn-xs btn-default" data-name="${doc.name}" title="Enviar por email" onclick="event.stopPropagation(); document.Website.SendEmail('${doc.name}');">
+					<i class="fa fa-paper-plane"></i>
+				</button>`
+			);
 
-			var alert_message = `Documento ${doc.name} procesado <br>Nueva clave de acceso SRI: ` + newNumeroAutorizacion;
-			
-			if(!jsonResponse.ok)
-			{
+			let alert_message = `Documento ${doc.name} procesado <br>Nueva clave de acceso SRI: ${newNumeroAutorizacion}`;
+			if (!jsonResponse.ok && jsonResponse.custom_info) {
 				alert_message = jsonResponse.custom_info;
 			}
-
-			frappe.show_alert({
-				message: __(alert_message),
-				indicator: 'green'
-			}, 5);
+			frappe.show_alert({ message: __(alert_message), indicator: 'green' }, 5);
 			
-			return;
+		} else if (autorizacion) {
+			// Handle non-authorized responses
+			const mensaje = autorizacion.mensajes && (Array.isArray(autorizacion.mensajes.mensaje) ? autorizacion.mensajes.mensaje[0] : autorizacion.mensajes.mensaje);
+			const string_error = `
+				${autorizacion.estado}:<br>
+				<b>Identificador (${mensaje ? mensaje.identificador : 'N/A'}):</b> ${mensaje ? mensaje.mensaje : 'Error no especificado.'}<br>
+				<b>Info Adicional:</b> ${mensaje ? mensaje.informacionAdicional : 'N/A'}
+			`;
+			frappe.show_alert({ message: __(string_error), indicator: 'red' }, 15);
 		}
-		else if (autorizacion)
-		{
-			const mensaje = autorizacion.mensajes.mensaje || {};
-			var string_error =
-				autorizacion.estado + ":" +
-				(mensaje.identificador || '') + ":" +
-				(mensaje.mensaje || 'Error no especificado.') + ":" +
-				(mensaje.informacionAdicional || '');
-			frappe.show_alert({
-				message: __(string_error),
-				indicator: 'red'
-			}, 10);
-		}
-		
-		//console.log('DATOS DE ERROR');
-		//console.log(jsonResponse.error);
-
-		//Se mostrará alerta de error en este nivel solamente si es que
-		// jsonResponse.error contiene información que deba ser mostrada
-		//if(jsonResponse.error!==null && jsonResponse.error!==undefined && jsonResponse.error !== '')
-		//{
-		//	var string_error = jsonResponse.error;
-		//	frappe.show_alert({
-		//		message: __(string_error),
-		//		indicator: 'red'
-		//	}, 10);
-		//}
-
-		//return;
-	}
-	else 
-	{
-		//MOSTRAR EL MENSAJE DE ERROR MAS DETALLADO
-		
-		var string_error = ''; //jsonResponse.error;
-		var string_informacionAdicional = '';
-		var string_mensaje = '';
-		try
-		{
-				if(jsonResponse.custom_info != undefined)
-				{
-					string_error = jsonResponse.custom_info;
-				}
-
-			//string_error = jsonResponse.error;
-			if(jsonResponse.comprobantes != undefined)
-			{
-				string_mensaje = jsonResponse.comprobantes.comprobante.mensajes.mensaje.mensaje;
-				string_informacionAdicional = jsonResponse.comprobantes.comprobante.mensajes.mensaje.informacionAdicional;
-
-				string_error = string_error == null ? '' : string_error;
-				string_mensaje = string_mensaje == null ? '' : string_mensaje;
-				string_informacionAdicional = string_informacionAdicional == null ? '' : string_informacionAdicional;
+	} else {
+		// Handle cases with no 'numeroComprobantes' or other errors
+		let error_message = `Error al procesar ${doc.name}.`;
+		if (jsonResponse.comprobantes && jsonResponse.comprobantes.comprobante) {
+			const mensaje = Array.isArray(jsonResponse.comprobantes.comprobante.mensajes.mensaje)
+				? jsonResponse.comprobantes.comprobante.mensajes.mensaje[0]
+				: jsonResponse.comprobantes.comprobante.mensajes.mensaje;
+			if (mensaje) {
+				error_message += `<br><b>Mensaje:</b> ${mensaje.mensaje}<br><b>Info:</b> ${mensaje.informacionAdicional || 'N/A'}`;
 			}
-
-			if(jsonResponse.autorizacion != undefined)
-			{				
-				string_mensaje = jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.mensaje;
-				string_informacionAdicional = jsonResponse.autorizaciones.autorizacion.mensajes.mensaje.informacionAdicional;										 
-
-				string_error = string_error == null ? '' : string_error;
-				string_mensaje = string_mensaje == null ? '' : string_mensaje;
-				string_informacionAdicional = string_informacionAdicional == null ? '' : string_informacionAdicional;
-			}
-
-			
+		} else if (jsonResponse.custom_info) {
+			error_message = jsonResponse.custom_info;
 		}
-		catch(ex_messages)
-		{
-			
-		}
-
-		frappe.show_alert({
-			message: __(`Error al procesar documento l2 - ${doc.name}:` + string_error + ":" + string_mensaje + ":" + string_informacionAdicional),
-			indicator: 'red'
-		}, 10);
+		frappe.show_alert({ message: __(error_message), indicator: 'red' }, 15);
 	}
 
 	//console.log('Terminado proceso con el SRI!');
