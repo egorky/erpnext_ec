@@ -71,7 +71,13 @@ frappe.query_reports["Anexo Transaccional Simplificado"] = {
                                 callback: function(response) {
                                     if (response.message) {
                                         const { file_name, file_content } = response.message;
-                                        frappe.ui.download(file_content, file_name, "application/xml");
+                                        const blob = new Blob([file_content], { type: 'application/xml' });
+                                        const link = document.createElement('a');
+                                        link.href = window.URL.createObjectURL(blob);
+                                        link.download = file_name;
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
                                     }
                                 }
                             });
