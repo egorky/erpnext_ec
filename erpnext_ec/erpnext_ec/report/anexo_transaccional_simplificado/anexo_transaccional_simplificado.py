@@ -41,12 +41,6 @@ def get_data(filters):
     # to include all the fields from the example XML, especially withholding taxes (air).
     # This will require joining with the withholding doctype.
 
-    # Common WHERE clause for all queries
-    where_clause = f"""
-        WHERE company = '{company}' AND posting_date BETWEEN '{start_date}' AND '{end_date}'
-        AND docstatus IN (1, 2)
-    """
-
     # Using frappe.get_all for better maintainability for now
     compras = frappe.get_all("Purchase Invoice",
         filters={
@@ -157,6 +151,10 @@ def generate_xml(data, filters):
     for row in data:
         if isinstance(row.get("fecha"), str):
             row["fecha"] = datetime.strptime(row["fecha"], "%Y-%m-%d")
+        if isinstance(row.get("fechaRegistro"), str):
+            row["fechaRegistro"] = datetime.strptime(row["fechaRegistro"], "%Y-%m-%d")
+        if isinstance(row.get("fechaEmision"), str):
+            row["fechaEmision"] = datetime.strptime(row["fechaEmision"], "%Y-%m-%d")
 
     company_doc = frappe.get_doc("Company", company)
     num_estab_ruc = frappe.db.get_value("Company", company, "num_estab_ruc") # Assuming this field exists
@@ -165,15 +163,14 @@ def generate_xml(data, filters):
 
     root = ET.Element("iva")
     ET.SubElement(root, "TipoIDInformante").text = "R"
-    ET.SubElement(root, "IdInformante").text = company_doc.tax_id
-    ET.SubElement(root, "razonSocial").text = company_doc.company_name
+    ET.SubElement(root, "IdInformante").text = str(company_doc.tax_id)
+    ET.SubElement(root, "razonSocial").text = str(company_doc.company_name)
     ET.SubElement(root, "Anio").text = str(year)
     ET.SubElement(root, "Mes").text = str(month).zfill(2)
     ET.SubElement(root, "numEstabRuc").text = str(num_estab_ruc).zfill(3) if num_estab_ruc else "001"
     ET.SubElement(root, "totalVentas").text = f"{total_ventas:.2f}"
     ET.SubElement(root, "codigoOperativo").text = "IVA"
 
-    # Compras
     compras_xml = ET.SubElement(root, "compras")
     for row in data:
         if row.get('tipo') == 'Purchase Invoice' and row.get('estado') == 'Emitido':
@@ -220,18 +217,13 @@ def generate_xml(data, filters):
                     ET.SubElement(detalle_air, "porcentajeAir").text = f"{air_row.get('porcentajeAir', 0):.2f}"
                     ET.SubElement(detalle_air, "valRetAir").text = f"{air_row.get('valRetAir', 0):.2f}"
 
-    # Ventas (simplified, needs to be expanded)
     ventas_xml = ET.SubElement(root, "ventas")
-
-    # VentasEstablecimiento (placeholder)
     ventas_est_xml = ET.SubElement(root, "ventasEstablecimiento")
     venta_est = ET.SubElement(ventas_est_xml, "ventaEst")
-    ET.SubElement(venta_est, "codEstab").text = "001" # Placeholder
+    ET.SubElement(venta_est, "codEstab").text = "001"
     ET.SubElement(venta_est, "ventasEstab").text = "0.00"
     ET.SubElement(venta_est, "ivaComp").text = "0.00"
 
-
-    # Anulados (simplified)
     anulados_xml = ET.SubElement(root, "anulados")
     for row in data:
         if row.get('estado') == 'Anulado':
