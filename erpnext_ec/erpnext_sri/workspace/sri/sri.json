@@ -74,6 +74,13 @@
    "label": "Ambientes SRI",
    "link_to": "Sri Environment",
    "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Anexo Transaccional Simplificado",
+   "link_to": "Anexo Transaccional Simplificado",
+   "type": "Report"
   }
  ],
  "title": "Sri"

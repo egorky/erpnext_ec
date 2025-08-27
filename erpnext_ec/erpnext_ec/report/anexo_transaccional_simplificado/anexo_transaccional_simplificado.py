@@ -243,5 +243,5 @@ def generate_xml(data, filters):
 
     return {
         "file_name": file_name,
-        "file_content": pretty_xml_str.decode('utf-8')
+        "file_content": pretty_xml_str
     }
