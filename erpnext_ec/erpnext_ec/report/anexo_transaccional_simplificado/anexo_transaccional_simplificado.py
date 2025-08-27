@@ -10,8 +10,6 @@ import json
 
 def execute(filters=None):
     columns = get_columns(filters)
-    # The get_data function now only returns the raw list of documents
-    # The main processing happens in generate_xml, so the web view is simplified
     data = get_data_for_view(filters)
     return columns, data
 
@@ -26,8 +24,6 @@ def get_columns(filters):
     ]
 
 def get_data_for_view(filters):
-    # This function provides a simplified view for the web report
-    # The real data processing for XML happens in generate_xml
     docs = get_raw_docs(filters)
     data = []
     for doc in docs:
@@ -35,7 +31,7 @@ def get_data_for_view(filters):
             "tipo": doc.doctype,
             "documento": doc.name,
             "fecha": doc.posting_date,
-            "tercero": doc.supplier_name if doc.doctype == 'Purchase Invoice' else doc.customer_name,
+            "tercero": doc.get("supplier_name") or doc.get("customer_name"),
             "total": doc.grand_total,
             "estado": "Anulado" if doc.docstatus == 2 else "Emitido"
         })
@@ -50,9 +46,8 @@ def get_raw_docs(filters):
     end_date = datetime.strptime(start_date, "%Y-%m-%d").replace(day=28) + frappe.utils.relativedelta(days=4)
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
-    # Get all fields needed for processing
-    purchase_fields = ["name", "posting_date", "supplier", "supplier_name", "grand_total", "docstatus", "is_purchase_settlement", "estab", "ptoemi", "secuencial", "numeroautorizacion", "estab_link", "ptoemi_link"]
-    sales_fields = ["name", "posting_date", "customer", "customer_name", "grand_total", "docstatus", "is_return", "estab", "ptoemi", "secuencial", "numeroautorizacion"]
+    purchase_fields = ["name", "doctype", "posting_date", "supplier", "supplier_name", "grand_total", "docstatus", "is_purchase_settlement", "estab", "ptoemi", "secuencial", "numeroautorizacion", "estab_link", "ptoemi_link"]
+    sales_fields = ["name", "doctype", "posting_date", "customer", "customer_name", "grand_total", "docstatus", "is_return", "estab", "ptoemi", "secuencial", "numeroautorizacion"]
 
     compras = frappe.get_all("Purchase Invoice",
         filters=[
@@ -64,14 +59,11 @@ def get_raw_docs(filters):
         ],
         fields=purchase_fields
     )
-    for c in compras: c.doctype = 'Purchase Invoice'
-
 
     ventas = frappe.get_all("Sales Invoice",
         filters={"company": company, "posting_date": ["between", [start_date, end_date]], "docstatus": ["in", [1, 2]]},
         fields=sales_fields
     )
-    for v in ventas: v.doctype = 'Sales Invoice'
 
     return compras + ventas
 
@@ -87,18 +79,23 @@ def get_tax_details(doctype, docname):
 
 @frappe.whitelist()
 def get_regional_settings(company):
-    # ... (function remains the same)
-    pass
+    if not company: return {"send_sri_manual": 0}
+    try:
+        settings_doc_name = frappe.db.get_value("Company", company, "regional_settings_ec")
+        if not settings_doc_name: return {"send_sri_manual": 0}
+        settings = frappe.get_doc("Regional Settings Ec", settings_doc_name)
+        return {"send_sri_manual": settings.send_sri_manual}
+    except Exception as e:
+        frappe.log_error(f"Error fetching regional settings for {company}: {e}")
+        return {"send_sri_manual": 0}
 
 @frappe.whitelist()
 def send_ats_to_sri(filters):
-    # ... (function remains the same)
-    pass
+    frappe.msgprint(_("La funcionalidad de envío al SRI para el ATS aún no está implementada."))
+    return {"status": "not_implemented"}
 
 @frappe.whitelist()
 def generate_xml(data, filters):
-    # The 'data' from the frontend is just for knowing which documents to process
-    # We will re-fetch the full documents to ensure data integrity
     if isinstance(filters, str): filters = json.loads(filters)
 
     docs = get_raw_docs(filters)
@@ -128,45 +125,45 @@ def generate_xml(data, filters):
     for doc in docs:
         taxes = get_tax_details(doc.doctype, doc.name)
 
+        # --- Data Enrichment ---
         if doc.doctype == 'Purchase Invoice':
-            if doc.docstatus == 1:
+            doc.tpIdProv = frappe.db.get_value("Supplier", doc.supplier, "typeidtax")
+            doc.idProv = frappe.db.get_value("Supplier", doc.supplier, "tax_id")
+            if doc.is_purchase_settlement:
+                doc.tipoComprobante = "03"
+                doc.estab = frappe.db.get_value("Sri Establishment", doc.estab_link, "record_name")
+                doc.ptoEmi = frappe.db.get_value("Sri Ptoemi", doc.ptoemi_link, "record_name")
+            else:
+                doc.tipoComprobante = "01"
+        elif doc.doctype == 'Sales Invoice':
+            doc.tpIdCliente = frappe.db.get_value("Customer", doc.customer, "typeidtax")
+            doc.idCliente = frappe.db.get_value("Customer", doc.customer, "tax_id")
+            doc.tipoComprobante = "04" if doc.is_return else "01"
+
+        # --- XML Building ---
+        if doc.docstatus == 1: # EMITIDO
+            if doc.doctype == 'Purchase Invoice':
                 detalle = ET.SubElement(compras_xml, "detalleCompras")
-
-                # Determine correct estab/ptoemi
-                if doc.is_purchase_settlement:
-                    estab = frappe.db.get_value("Sri Establishment", doc.estab_link, "record_name") if doc.estab_link else ""
-                    ptoemi = frappe.db.get_value("Sri Ptoemi", doc.ptoemi_link, "record_name") if doc.ptoemi_link else ""
-                    tipo_comp = "03"
-                else:
-                    estab = doc.estab
-                    ptoemi = doc.ptoemi
-                    tipo_comp = "01"
-
-                ET.SubElement(detalle, "codSustento").text = "01" # Placeholder
-                ET.SubElement(detalle, "tpIdProv").text = str(frappe.db.get_value("Supplier", doc.supplier, "typeidtax") or "")
-                ET.SubElement(detalle, "idProv").text = str(frappe.db.get_value("Supplier", doc.supplier, "tax_id") or "")
-                ET.SubElement(detalle, "tipoComprobante").text = tipo_comp
+                ET.SubElement(detalle, "codSustento").text = "01"
+                ET.SubElement(detalle, "tpIdProv").text = str(doc.tpIdProv or "")
+                ET.SubElement(detalle, "idProv").text = str(doc.idProv or "")
+                ET.SubElement(detalle, "tipoComprobante").text = str(doc.tipoComprobante or "")
                 ET.SubElement(detalle, "fechaRegistro").text = doc.posting_date.strftime("%d/%m/%Y")
-                ET.SubElement(detalle, "establecimiento").text = str(estab or "").zfill(3)
-                ET.SubElement(detalle, "puntoEmision").text = str(ptoemi or "").zfill(3)
+                ET.SubElement(detalle, "establecimiento").text = str(doc.estab or "").zfill(3)
+                ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoEmi or "").zfill(3)
                 ET.SubElement(detalle, "secuencial").text = str(doc.secuencial or "")
                 ET.SubElement(detalle, "fechaEmision").text = doc.posting_date.strftime("%d/%m/%Y")
                 ET.SubElement(detalle, "autorizacion").text = str(doc.numeroautorizacion or "")
                 ET.SubElement(detalle, "baseNoGraIva").text = f"{taxes.get('baseNoGraIva', 0):.2f}"
-                ET.SubElement(detalle, "baseImponible").text = "0.00" # Per example, this is for 0%
+                ET.SubElement(detalle, "baseImponible").text = "0.00"
                 ET.SubElement(detalle, "baseImpGrav").text = f"{taxes.get('baseImpGrav', 0):.2f}"
                 ET.SubElement(detalle, "montoIva").text = f"{taxes.get('montoIva', 0):.2f}"
-                # ... add all other placeholder fields from the spec ...
-                ET.SubElement(detalle, "montoIce").text = "0.00"
-                # ... etc.
-
-        elif doc.doctype == 'Sales Invoice':
-            if doc.docstatus == 1:
+                # ... add other purchase placeholders ...
+            elif doc.doctype == 'Sales Invoice':
                 detalle = ET.SubElement(ventas_xml, "detalleVentas")
-                tipo_comp = "04" if doc.is_return else "01"
-                ET.SubElement(detalle, "tpIdCliente").text = str(frappe.db.get_value("Customer", doc.customer, "typeidtax") or "")
-                ET.SubElement(detalle, "idCliente").text = str(frappe.db.get_value("Customer", doc.customer, "tax_id") or "")
-                ET.SubElement(detalle, "tipoComprobante").text = tipo_comp
+                ET.SubElement(detalle, "tpIdCliente").text = str(doc.tpIdCliente or "")
+                ET.SubElement(detalle, "idCliente").text = str(doc.idCliente or "")
+                ET.SubElement(detalle, "tipoComprobante").text = str(doc.tipoComprobante or "")
                 ET.SubElement(detalle, "nroComprobantes").text = "1"
                 ET.SubElement(detalle, "baseNoGraIva").text = f"{taxes.get('baseNoGraIva', 0):.2f}"
                 ET.SubElement(detalle, "baseImponible").text = "0.00"
@@ -175,23 +172,11 @@ def generate_xml(data, filters):
                 ET.SubElement(detalle, "valorRetIva").text = "0.00"
                 ET.SubElement(detalle, "valorRetRenta").text = "0.00"
 
-        if doc.docstatus == 2:
+        elif doc.docstatus == 2: # ANULADO
             detalle = ET.SubElement(anulados_xml, "detalleAnulados")
-            tipo_comp = "01" # Default, needs refinement
-            if doc.doctype == 'Purchase Invoice':
-                tipo_comp = "03" if doc.is_purchase_settlement else "01"
-            elif doc.doctype == 'Sales Invoice':
-                tipo_comp = "04" if doc.is_return else "01"
-
-            estab = doc.estab
-            ptoemi = doc.ptoemi
-            if doc.doctype == 'Purchase Invoice' and doc.is_purchase_settlement:
-                estab = frappe.db.get_value("Sri Establishment", doc.estab_link, "record_name") if doc.estab_link else ""
-                ptoemi = frappe.db.get_value("Sri Ptoemi", doc.ptoemi_link, "record_name") if doc.ptoemi_link else ""
-
-            ET.SubElement(detalle, "tipoComprobante").text = tipo_comp
-            ET.SubElement(detalle, "establecimiento").text = str(estab or "").zfill(3)
-            ET.SubElement(detalle, "puntoEmision").text = str(ptoemi or "").zfill(3)
+            ET.SubElement(detalle, "tipoComprobante").text = str(doc.tipoComprobante or "")
+            ET.SubElement(detalle, "establecimiento").text = str(doc.estab or "").zfill(3)
+            ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoEmi or "").zfill(3)
             ET.SubElement(detalle, "secuencialInicio").text = str(doc.secuencial or "")
             ET.SubElement(detalle, "secuencialFin").text = str(doc.secuencial or "")
             ET.SubElement(detalle, "autorizacion").text = str(doc.numeroautorizacion or "")
