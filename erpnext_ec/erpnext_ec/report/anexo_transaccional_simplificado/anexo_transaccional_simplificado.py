@@ -6,6 +6,7 @@ from frappe import _
 from datetime import datetime
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+import json
 
 def execute(filters=None):
     columns = get_columns(filters)
@@ -133,6 +134,9 @@ def send_ats_to_sri(filters):
 
 @frappe.whitelist()
 def generate_xml(data, filters):
+    if isinstance(filters, str):
+        filters = json.loads(filters)
+
     company = filters.get("company")
     year = filters.get("year")
     month = filters.get("month")
