@@ -128,6 +128,16 @@ def get_data(filters):
         row.pagoLocExt = "01"
         row.air_details = []
 
+        # Handle purchase settlements
+        if row.tipo == 'Purchase Invoice' and frappe.db.get_value("Purchase Invoice", row.documento, "is_purchase_settlement"):
+            estab_link = frappe.db.get_value("Purchase Invoice", row.documento, "estab_link")
+            ptoemi_link = frappe.db.get_value("Purchase Invoice", row.documento, "ptoemi_link")
+            if estab_link:
+                row.estab = frappe.db.get_value("Sri Establishment", estab_link, "record_name")
+            if ptoemi_link:
+                row.ptoemi = frappe.db.get_value("Sri Ptoemi", ptoemi_link, "record_name")
+
+
     return data
 
 @frappe.whitelist()
