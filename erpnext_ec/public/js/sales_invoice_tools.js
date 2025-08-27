@@ -127,9 +127,14 @@ function resolveFromInternalSales(r, doc, btnProcess)
 	
 	if(jsonResponse.numeroComprobantes > 0)
 	{
-		if(jsonResponse.autorizaciones.autorizacion[0].estado == 'AUTORIZADO')
+		// Handle case where 'autorizacion' can be an object or an array
+		const autorizacion = Array.isArray(jsonResponse.autorizaciones.autorizacion)
+			? jsonResponse.autorizaciones.autorizacion[0]
+			: jsonResponse.autorizaciones.autorizacion;
+
+		if(autorizacion && autorizacion.estado == 'AUTORIZADO')
 		{
-			var newNumeroAutorizacion = jsonResponse.autorizaciones.autorizacion[0].numeroAutorizacion;
+			var newNumeroAutorizacion = autorizacion.numeroAutorizacion;
 
 			$(btnProcess).parent().find('.custom-animation').remove();
 			$(btnProcess).parent().append(`
@@ -150,21 +155,18 @@ function resolveFromInternalSales(r, doc, btnProcess)
 			
 			return;
 		}
-		//if(jsonResponse.autorizaciones.autorizacion[0].estado == 'NO AUTORIZADO')
-		else
+		else if (autorizacion)
 		{
-			//if(jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.tipo = "ERROR")
-			//{
-				var string_error = 
-				jsonResponse.autorizaciones.autorizacion[0].estado + ":" +
-				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.identificador + ":" +
-				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.mensaje + ":" +
-				jsonResponse.autorizaciones.autorizacion[0].mensajes.mensaje.informacionAdicional;
-				frappe.show_alert({
-					message: __(string_error),
-					indicator: 'red'
-				}, 10);
-			//}
+			const mensaje = autorizacion.mensajes.mensaje || {};
+			var string_error =
+				autorizacion.estado + ":" +
+				(mensaje.identificador || '') + ":" +
+				(mensaje.mensaje || 'Error no especificado.') + ":" +
+				(mensaje.informacionAdicional || '');
+			frappe.show_alert({
+				message: __(string_error),
+				indicator: 'red'
+			}, 10);
 		}
 		
 		//console.log('DATOS DE ERROR');
