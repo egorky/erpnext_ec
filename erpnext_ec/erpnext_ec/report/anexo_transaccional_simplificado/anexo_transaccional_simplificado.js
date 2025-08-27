@@ -42,14 +42,13 @@ frappe.query_reports["Anexo Transaccional Simplificado"] = {
         }
     ],
     "onload": function(report) {
+        // "Generar XML" (Download) button is always visible
         report.page.add_inner_button(__("Generar XML"), function() {
             const filters = report.get_values();
             if (!filters.company || !filters.year || !filters.month) {
                 frappe.msgprint(__("Por favor, seleccione Compañía, Año y Mes."));
                 return;
             }
-
-            // Fetch the data again to pass to the XML generation method
             frappe.call({
                 method: 'frappe.desk.query_report.run',
                 args: {
@@ -57,8 +56,7 @@ frappe.query_reports["Anexo Transaccional Simplificado"] = {
                     filters: filters,
                 },
                 callback: function(r) {
-                    if (r.message && r.message.result) {
-                        // Call a new python method to generate and download the XML
+                    if (r.message && r.message.result && r.message.result.length > 0) {
                         frappe.call({
                             method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.generate_xml",
                             args: {
@@ -77,6 +75,31 @@ frappe.query_reports["Anexo Transaccional Simplificado"] = {
                     }
                 }
             });
+        });
+
+        // "Enviar al SRI" button is conditionally visible
+        frappe.call({
+            method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.get_regional_settings",
+            callback: function(r) {
+                if (r.message && r.message.send_sri_manual) {
+                    report.page.add_inner_button(__("Enviar al SRI"), function() {
+                        frappe.msgprint(__("La funcionalidad de envío al SRI para el ATS aún no está implementada."));
+                        // Placeholder for future implementation
+                        /*
+                        const filters = report.get_values();
+                        frappe.call({
+                            method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.send_ats_to_sri",
+                            args: {
+                                filters: filters
+                            },
+                            callback: function(response) {
+                                // Handle response
+                            }
+                        });
+                        */
+                    });
+                }
+            }
         });
     }
 };

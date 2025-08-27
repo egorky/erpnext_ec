@@ -98,6 +98,26 @@ def get_data(filters):
     return data
 
 @frappe.whitelist()
+def get_regional_settings():
+    try:
+        settings = frappe.get_doc("Regional Settings Ec")
+        return {
+            "send_sri_manual": settings.send_sri_manual
+        }
+    except frappe.DoesNotExistError:
+        return {
+            "send_sri_manual": 0
+        }
+
+@frappe.whitelist()
+def send_ats_to_sri(filters):
+    # This function would contain the logic to send the generated ATS XML to the SRI.
+    # Since the web service endpoint and request format for ATS are unknown without
+    # the official technical specification, this is a placeholder.
+    frappe.msgprint(_("La funcionalidad de envío al SRI para el ATS aún no está implementada."))
+    return {"status": "not_implemented"}
+
+@frappe.whitelist()
 def generate_xml(data, filters):
     company = filters.get("company")
     year = filters.get("year")
