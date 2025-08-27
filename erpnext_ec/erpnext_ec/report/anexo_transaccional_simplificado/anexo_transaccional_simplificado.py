@@ -104,13 +104,21 @@ def get_data(filters):
     return data
 
 @frappe.whitelist()
-def get_regional_settings():
+def get_regional_settings(company):
+    if not company:
+        return {"send_sri_manual": 0}
+
     try:
-        settings = frappe.get_doc("Regional Settings Ec")
+        settings_doc_name = frappe.db.get_value("Company", company, "regional_settings_ec")
+        if not settings_doc_name:
+            return {"send_sri_manual": 0}
+
+        settings = frappe.get_doc("Regional Settings Ec", settings_doc_name)
         return {
             "send_sri_manual": settings.send_sri_manual
         }
-    except frappe.DoesNotExistError:
+    except Exception as e:
+        frappe.log_error(f"Error fetching regional settings for {company}: {e}")
         return {
             "send_sri_manual": 0
         }

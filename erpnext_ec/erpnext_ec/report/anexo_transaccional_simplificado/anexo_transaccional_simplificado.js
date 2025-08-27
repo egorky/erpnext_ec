@@ -42,65 +42,73 @@ frappe.query_reports["Anexo Transaccional Simplificado"] = {
         }
     ],
     "onload": function(report) {
-        // "Generar XML" (Download) button is always visible
-        report.page.add_inner_button(__("Generar XML"), function() {
-            const filters = report.get_values();
-            if (!filters.company || !filters.year || !filters.month) {
-                frappe.msgprint(__("Por favor, seleccione Compañía, Año y Mes."));
-                return;
-            }
-            frappe.call({
-                method: 'frappe.desk.query_report.run',
-                args: {
-                    report_name: 'Anexo Transaccional Simplificado',
-                    filters: filters,
-                },
-                callback: function(r) {
-                    if (r.message && r.message.result && r.message.result.length > 0) {
-                        frappe.call({
-                            method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.generate_xml",
-                            args: {
-                                "data": r.message.result,
-                                "filters": filters
-                            },
-                            callback: function(response) {
-                                if (response.message) {
-                                    const { file_name, file_content } = response.message;
-                                    frappe.ui.download(file_content, file_name, "application/xml");
-                                }
-                            }
-                        });
-                    } else {
-                        frappe.msgprint(__('No hay datos para generar el XML.'));
-                    }
+        // --- Button Logic ---
+        const setup_buttons = (company) => {
+            // Clear existing buttons
+            report.page.clear_inner_toolbar();
+
+            // "Generar XML" button is always visible
+            report.page.add_inner_button(__("Generar XML"), function() {
+                const filters = report.get_values();
+                if (!filters.company || !filters.year || !filters.month) {
+                    frappe.msgprint(__("Por favor, seleccione Compañía, Año y Mes."));
+                    return;
                 }
+                frappe.call({
+                    method: 'frappe.desk.query_report.run',
+                    args: {
+                        report_name: 'Anexo Transaccional Simplificado',
+                        filters: filters,
+                    },
+                    callback: function(r) {
+                        if (r.message && r.message.result && r.message.result.length > 0) {
+                            frappe.call({
+                                method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.generate_xml",
+                                args: {
+                                    "data": r.message.result,
+                                    "filters": filters
+                                },
+                                callback: function(response) {
+                                    if (response.message) {
+                                        const { file_name, file_content } = response.message;
+                                        frappe.ui.download(file_content, file_name, "application/xml");
+                                    }
+                                }
+                            });
+                        } else {
+                            frappe.msgprint(__('No hay datos para generar el XML.'));
+                        }
+                    }
+                });
             });
+
+            // "Enviar al SRI" button is conditionally visible
+            if (company) {
+                frappe.call({
+                    method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.get_regional_settings",
+                    args: {
+                        "company": company
+                    },
+                    callback: function(r) {
+                        if (r.message && r.message.send_sri_manual) {
+                            report.page.add_inner_button(__("Enviar al SRI"), function() {
+                                frappe.msgprint(__("La funcionalidad de envío al SRI para el ATS aún no está implementada."));
+                            });
+                        }
+                    }
+                });
+            }
+        };
+
+        // --- Filter Change Handler ---
+        report.filters.find(f => f.df.fieldname === 'company').$input.on('change', function() {
+            const company = $(this).val();
+            setup_buttons(company);
         });
 
-        // "Enviar al SRI" button is conditionally visible
-        frappe.call({
-            method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.get_regional_settings",
-            callback: function(r) {
-                if (r.message && r.message.send_sri_manual) {
-                    report.page.add_inner_button(__("Enviar al SRI"), function() {
-                        frappe.msgprint(__("La funcionalidad de envío al SRI para el ATS aún no está implementada."));
-                        // Placeholder for future implementation
-                        /*
-                        const filters = report.get_values();
-                        frappe.call({
-                            method: "erpnext_ec.erpnext_ec.report.anexo_transaccional_simplificado.anexo_transaccional_simplificado.send_ats_to_sri",
-                            args: {
-                                filters: filters
-                            },
-                            callback: function(response) {
-                                // Handle response
-                            }
-                        });
-                        */
-                    });
-                }
-            }
-        });
+        // --- Initial Setup ---
+        const initial_company = report.get_values().company;
+        setup_buttons(initial_company);
     }
 };
 
