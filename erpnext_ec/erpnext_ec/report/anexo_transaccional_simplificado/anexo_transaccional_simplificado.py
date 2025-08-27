@@ -137,6 +137,9 @@ def generate_xml(data, filters):
     if isinstance(filters, str):
         filters = json.loads(filters)
 
+    if isinstance(data, str):
+        data = json.loads(data)
+
     company = filters.get("company")
     year = filters.get("year")
     month = filters.get("month")
