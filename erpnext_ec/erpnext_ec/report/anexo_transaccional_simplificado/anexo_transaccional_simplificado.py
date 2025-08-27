@@ -37,8 +37,6 @@ def get_data(filters):
     end_date = (end_date - frappe.utils.relativedelta(days=end_date.day - 1)).strftime("%Y-%m-%d")
 
     # Purchases Query
-    # This query needs to be more complex because Purchase Invoice does not have summary fields
-    # for tax bases. We must calculate them from the child table.
     compras_query = f"""
         SELECT
             'Purchase Invoice' as tipo,
@@ -67,15 +65,15 @@ def get_data(filters):
     compras = frappe.db.sql(compras_query, as_dict=1)
 
     # Sales Query
-    ventas = frappe.db.sql(f"""
+    ventas_query = f"""
         SELECT
             'Sales Invoice' as tipo,
             si.posting_date as fecha,
             si.name as documento,
             si.customer_name as tercero,
-            si.total_base_cero as base_cero,
-            si.total_base_iva as base_iva,
-            si.total_iva as monto_iva,
+            SUM(CASE WHEN tax.rate = 0 THEN tax.base_tax_amount ELSE 0 END) as base_cero,
+            SUM(CASE WHEN tax.rate > 0 THEN tax.base_tax_amount ELSE 0 END) as base_iva,
+            SUM(CASE WHEN tax.rate > 0 THEN tax.tax_amount ELSE 0 END) as monto_iva,
             si.grand_total as total,
             si.docstatus as estado,
             cus.tax_id as ruc_tercero,
@@ -87,9 +85,12 @@ def get_data(filters):
             si.return_against
         FROM `tabSales Invoice` si
         LEFT JOIN `tabCustomer` cus ON si.customer = cus.name
+        LEFT JOIN `tabSales Taxes and Charges` tax ON tax.parent = si.name
         WHERE si.company = '{company}' AND si.posting_date BETWEEN '{start_date}' AND '{end_date}'
         AND si.docstatus IN (1, 2)
-    """, as_dict=1)
+        GROUP BY si.name
+    """
+    ventas = frappe.db.sql(ventas_query, as_dict=1)
 
     data = compras + ventas
 
