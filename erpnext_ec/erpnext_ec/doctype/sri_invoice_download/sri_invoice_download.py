@@ -10,9 +10,8 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
-from playwright.sync_api import sync_playwright
-
 def _perform_sri_download(settings, from_date, to_date):
+	from playwright.sync_api import sync_playwright
 	"""
 	This function contains the Playwright web scraping logic.
 	It logs in, navigates to the download page, and takes a screenshot.
