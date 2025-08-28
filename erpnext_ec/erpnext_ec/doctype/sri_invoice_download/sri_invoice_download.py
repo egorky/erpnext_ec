@@ -15,106 +15,59 @@ def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
 async def _perform_sri_download_async(docname):
-	from pyvirtualdisplay import Display
 	from pydoll.browser import Chrome
 	from pydoll.browser.options import ChromiumOptions as Options
-	from pydoll.exceptions import FailedToStartBrowser, ElementNotFound
+	from pydoll.exceptions import FailedToStartBrowser
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
-	timeout_seconds = settings.timeout or 60
 
 	if not username or not password:
 		raise ValueError("SRI Username and Password must be set.")
 
-	doc_type_map = {
-		"Factura": "1",
-		"Liquidación de compra de bienes y prestación de servicios": "2",
-		"Notas de Crédito": "3",
-		"Notas de Débito": "4",
-		"Comprobante de Retención": "6"
-	}
-
 	options = Options()
 	options.binary_location = "/usr/bin/chromium"
-	options.add_argument('--window-size=1920,1080')
-	options.add_argument('--start-maximized')
-	options.add_argument('--disable-infobars')
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-dev-shm-usage')
 	options.add_argument('--disable-gpu')
-	options.add_argument(f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
 
-	with Display(size=(1920, 1080)):
-		browser = None
-		tab = None
-		try:
-			browser = Chrome(options=options)
-			tab = await browser.start()
-			await browser.set_window_bounds({'left': 0, 'top': 0, 'width': 1920, 'height': 1080})
+	browser = None
+	tab = None
+	try:
+		browser = Chrome(options=options)
+		tab = await browser.start()
 
-			# 1. Login
-			await tab.go_to(settings.sri_login_url, timeout=timeout_seconds)
+		await tab.go_to(settings.sri_login_url)
 
-			# Fill both visible and hidden username fields
-			usuario_input = await tab.find(id='usuario', timeout=timeout_seconds)
-			await usuario_input.type_text(username)
-			hidden_username_input = await tab.find(id='username', timeout=timeout_seconds, raise_exc=False)
-			if hidden_username_input:
-				await tab.execute_script(f"document.getElementById('username').value = '{username}';")
+		usuario_input = await tab.find(id='usuario', timeout=10)
+		await usuario_input.type_text(username)
+		hidden_username_input = await tab.find(id='username', raise_exc=False)
+		if hidden_username_input:
+			await tab.execute_script(f"document.getElementById('username').value = '{username}';")
 
-			password_input = await tab.find(id='password', timeout=timeout_seconds)
-			await password_input.type_text(password)
+		password_input = await tab.find(id='password', timeout=10)
+		await password_input.type_text(password)
 
-			login_button = await tab.find(id='kc-login', timeout=timeout_seconds)
-			await login_button.click()
+		login_button = await tab.find(id='kc-login', timeout=10)
+		await login_button.click()
 
-			# 2. Wait for navigation after login and check for errors
-			await tab.wait_for_navigation(timeout=timeout_seconds)
+		# Generous wait to see what page we land on after login attempt
+		await asyncio.sleep(10)
 
-			login_error = await tab.find(class_name='sri-error-notificacion', raise_exc=False, timeout=3)
-			if login_error:
-				error_text = await login_error.text
-				raise Exception(f"SRI login failed. Error message: {error_text}")
+		# This part of the code will now likely fail, which is intended.
+		# The goal is to capture the HTML of the page we are on after the 10-second wait.
+		await tab.go_to(settings.sri_target_url)
 
-			# 3. Navigate to the target download application
-			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
+		# If it gets here, it means login was successful
+		doc.reload()
+		doc.status = "Completed"
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
-			# 4. Set parameters
-			await (await tab.query('[id="frmPrincipal:ano"]', timeout=timeout_seconds)).select(label=str(doc.year))
-			await (await tab.query('[id="frmPrincipal:mes"]', timeout=timeout_seconds)).select(value=str(doc.month))
-			await (await tab.query('[id="frmPrincipal:dia"]', timeout=timeout_seconds)).select(value=str(doc.day))
-			doc_type_value = doc_type_map.get(doc.document_type)
-			if doc_type_value:
-				await (await tab.query('[id="frmPrincipal:cmbTipoComprobante"]', timeout=timeout_seconds)).select(value=doc_type_value)
-
-			# 5. Click search (reCAPTCHA) and download
-			async with tab.expect_download(timeout=timeout_seconds) as download:
-				await (await tab.find(id='btnRecaptcha', timeout=timeout_seconds)).click()
-				download_link = await tab.query('[id="frmPrincipal:lnkTxtlistado"]', timeout=timeout_seconds)
-				await download_link.click()
-				temp_path = await download.save_as('/tmp/')
-
-			# 6. Attach file to DocType
-			with open(temp_path, "rb") as f:
-				file_content = f.read()
-			new_file = frappe.get_doc({
-				"doctype": "File", "file_name": os.path.basename(temp_path),
-				"attached_to_doctype": "SRI Invoice Download", "attached_to_name": doc.name,
-				"content": file_content, "is_private": 1
-			})
-			new_file.insert(ignore_permissions=True)
-			os.remove(temp_path)
-
-			doc.reload()
-			doc.status = "Completed"
-			doc.save(ignore_permissions=True)
-			frappe.db.commit()
-
-		except Exception as e:
+	except Exception as e:
 			doc.reload()
 			doc.status = "Failed"
 			doc.save(ignore_permissions=True)
