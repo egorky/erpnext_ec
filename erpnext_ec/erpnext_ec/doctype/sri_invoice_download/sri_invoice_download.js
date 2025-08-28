@@ -12,15 +12,13 @@ frappe.ui.form.on("SRI Invoice Download", {
                     },
                     callback: (r) => {
                         if (r.message) {
-                            frappe.msgprint(r.message);
+                            frappe.show_alert({
+                                message: r.message,
+                                indicator: "green"
+                            }, 5);
                             frm.reload_doc();
                         }
                     }
-                }).then(() => {
-                    frappe.show_alert({
-                        message: __("Download process started in the background."),
-                        indicator: "green"
-                    });
                 });
             }).addClass("btn-primary");
         }

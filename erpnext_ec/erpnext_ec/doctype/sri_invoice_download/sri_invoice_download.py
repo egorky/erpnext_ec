@@ -4,7 +4,9 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
+import asyncio
 import os
+import random
 
 class SRIInvoiceDownload(Document):
 	pass
@@ -12,24 +14,21 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
-def _perform_sri_download(docname):
-	from playwright.sync_api import sync_playwright
+async def _perform_sri_download_async(docname):
 	from pyvirtualdisplay import Display
+	from pydoll.browser import Chrome
+	from pydoll.browser.options import ChromiumOptions as Options
+	from pydoll.exceptions import FailedToStartBrowser, ElementNotFound
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
-	timeout_ms = (settings.timeout or 60) * 1000
+	timeout_seconds = settings.timeout or 60
 
 	if not username or not password:
-		doc.reload()
-		doc.status = "Failed"
-		doc.save(ignore_permissions=True)
-		frappe.db.commit()
-		frappe.log_error(title="SRI Download Failed", message="SRI Username and Password must be set.")
-		return
+		raise ValueError("SRI Username and Password must be set.")
 
 	doc_type_map = {
 		"Factura": "1",
@@ -65,7 +64,6 @@ def _perform_sri_download(docname):
 			await usuario_input.type_text(username)
 			hidden_username_input = await tab.find(id='username', timeout=timeout_seconds, raise_exc=False)
 			if hidden_username_input:
-				# pydoll can't type into hidden fields, so we use JS
 				await tab.execute_script(f"document.getElementById('username').value = '{username}';")
 
 			password_input = await tab.find(id='password', timeout=timeout_seconds)
@@ -77,8 +75,6 @@ def _perform_sri_download(docname):
 			# 2. Wait for navigation after login and check for errors
 			await tab.wait_for_navigation(timeout=timeout_seconds)
 
-			# Check if login failed by looking for an error message element
-			# This selector is a guess and may need to be adjusted
 			login_error = await tab.find(class_name='sri-error-notificacion', raise_exc=False, timeout=3)
 			if login_error:
 				error_text = await login_error.text
@@ -87,14 +83,7 @@ def _perform_sri_download(docname):
 			# 3. Navigate to the target download application
 			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
 
-			# Diagnostic screenshot
-			diag_path = frappe.get_site_path("public", "files", f"sri_diag_{doc.name}.png")
-			body = await tab.find(tag_name='body')
-			if body:
-				await body.take_screenshot(path=diag_path)
-				frappe.log_error(f"Diagnostic screenshot saved to: {diag_path}")
-
-			# 3. Set parameters
+			# 4. Set parameters
 			await (await tab.query('[id="frmPrincipal:ano"]', timeout=timeout_seconds)).select(label=str(doc.year))
 			await (await tab.query('[id="frmPrincipal:mes"]', timeout=timeout_seconds)).select(value=str(doc.month))
 			await (await tab.query('[id="frmPrincipal:dia"]', timeout=timeout_seconds)).select(value=str(doc.day))
@@ -102,14 +91,14 @@ def _perform_sri_download(docname):
 			if doc_type_value:
 				await (await tab.query('[id="frmPrincipal:cmbTipoComprobante"]', timeout=timeout_seconds)).select(value=doc_type_value)
 
-			# 4. Click search (reCAPTCHA) and download
+			# 5. Click search (reCAPTCHA) and download
 			async with tab.expect_download(timeout=timeout_seconds) as download:
 				await (await tab.find(id='btnRecaptcha', timeout=timeout_seconds)).click()
 				download_link = await tab.query('[id="frmPrincipal:lnkTxtlistado"]', timeout=timeout_seconds)
 				await download_link.click()
 				temp_path = await download.save_as('/tmp/')
 
-			# 5. Attach file to DocType
+			# 6. Attach file to DocType
 			with open(temp_path, "rb") as f:
 				file_content = f.read()
 			new_file = frappe.get_doc({
@@ -147,13 +136,9 @@ def _perform_sri_download(docname):
 				await browser.stop()
 
 def _perform_sri_download(docname):
-    # The wrapper's only job is to run the async function.
-    # All error handling and doc updates are now inside the async function.
     try:
         asyncio.run(_perform_sri_download_async(docname))
     except Exception:
-        # The error is already logged by the async function.
-        # We just catch it here to prevent the RQ worker from crashing.
         frappe.log_error(f"Async task for {docname} failed and was caught by sync wrapper.")
 
 @frappe.whitelist()
