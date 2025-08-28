@@ -67,13 +67,6 @@ def start_download(docname):
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
-	# Get credentials securely
-	username = settings.sri_username
-	password = get_password("SRI Downloader Settings", "sri_password")
-
-	if not username or not password:
-		frappe.throw(_("SRI Username and Password must be set in SRI Downloader Settings."))
-
 	try:
 		doc.status = "In Progress"
 		doc.save()

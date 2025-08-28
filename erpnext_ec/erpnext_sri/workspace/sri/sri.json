@@ -81,6 +81,20 @@
    "label": "Anexo Transaccional Simplificado",
    "link_to": "Anexo Transaccional Simplificado",
    "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SRI Invoice Download",
+   "link_to": "SRI Invoice Download",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "SRI Downloader Settings",
+   "link_to": "SRI Downloader Settings",
+   "type": "DocType"
   }
  ],
  "title": "Sri"
