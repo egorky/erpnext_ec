@@ -118,25 +118,30 @@ def _get_party_details(party_ids):
 
     # Fetch Supplier details
     if party_ids["Supplier"]:
-        supplier_fields = ["name", "tax_id", "typeidtax", "tipoproveedor", "parterel"] # Assuming these fields exist
+        supplier_fields = ["name", "tax_id", "typeidtax", "supplier_type"]
         suppliers = frappe.get_all("Supplier", filters={"name": ["in", list(party_ids["Supplier"])]}, fields=supplier_fields)
         for s in suppliers:
+            supplier_type = s.get("supplier_type")
+            # SRI Code: 01 -> Persona Natural, 02 -> Sociedad
+            tipo_prov_code = "01" if supplier_type == "Individual" else "02"
+
             details["Purchase Invoice"][s.name] = {
                 "idProv": s.tax_id,
                 "tpIdProv": s.get("typeidtax"),
-                "tipoProv": s.get("tipoproveedor"),
-                "parteRel": "SI" if s.get("parterel") else "NO"
+                "tipoProv": tipo_prov_code,
+                "parteRel": "NO" # No field found in schema for this
             }
 
     # Fetch Customer details
     if party_ids["Customer"]:
-        customer_fields = ["name", "tax_id", "typeidtax", "parterel"] # Assuming these fields exist
+        # Assuming 'parterel' does not exist on Customer either
+        customer_fields = ["name", "tax_id", "typeidtax"]
         customers = frappe.get_all("Customer", filters={"name": ["in", list(party_ids["Customer"])]}, fields=customer_fields)
         for c in customers:
             details["Sales Invoice"][c.name] = {
                 "idCliente": c.tax_id,
                 "tpIdCliente": c.get("typeidtax"),
-                "parteRelVtas": "SI" if c.get("parterel") else "NO"
+                "parteRelVtas": "NO" # No field found in schema for this
             }
 
     return details
