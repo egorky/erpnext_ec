@@ -536,7 +536,7 @@ def generate_xml(data, filters):
     for doc in annulled_docs:
         _build_annulled_xml(anulados_xml, doc)
 
-    xml_str = ET.tostring(root, 'utf-8', xml_declaration=True, encoding='UTF-8')
+    xml_str = ET.tostring(root, encoding='UTF-8', xml_declaration=True)
     parsed_str = minidom.parseString(xml_str)
     pretty_xml_str = parsed_str.toprettyxml(indent="  ", encoding="UTF-8").decode()
 
