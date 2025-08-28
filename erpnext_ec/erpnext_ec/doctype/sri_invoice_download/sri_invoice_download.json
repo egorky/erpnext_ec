@@ -1,0 +1,46 @@
+{
+ "name": "SRI Invoice Download",
+ "naming_rule": "Autoname",
+ "autoname": "format:SRI-DL-{#####}",
+ "module": "Erpnext Ec",
+ "owner": "Administrator",
+ "engine": "InnoDB",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "share": 1,
+   "report": 1
+  }
+ ],
+ "fields": [
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nIn Progress\nCompleted\nFailed",
+   "default": "Pending",
+   "read_only": 1,
+   "print_hide": 1
+  }
+ ],
+ "track_changes": 1,
+ "issingle": 0,
+ "doctype": "DocType",
+ "istable": 0
+}
