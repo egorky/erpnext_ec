@@ -68,17 +68,17 @@ async def _perform_sri_download_async(docname):
 			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
 
 			# 3. Set parameters
-			await (await tab.find(id='frmPrincipal:ano', timeout=timeout_seconds)).select(label=str(doc.year))
-			await (await tab.find(id='frmPrincipal:mes', timeout=timeout_seconds)).select(value=str(doc.month))
-			await (await tab.find(id='frmPrincipal:dia', timeout=timeout_seconds)).select(value=str(doc.day))
+			await (await tab.query('[id="frmPrincipal:ano"]', timeout=timeout_seconds)).select(label=str(doc.year))
+			await (await tab.query('[id="frmPrincipal:mes"]', timeout=timeout_seconds)).select(value=str(doc.month))
+			await (await tab.query('[id="frmPrincipal:dia"]', timeout=timeout_seconds)).select(value=str(doc.day))
 			doc_type_value = doc_type_map.get(doc.document_type)
 			if doc_type_value:
-				await (await tab.find(id='frmPrincipal:cmbTipoComprobante', timeout=timeout_seconds)).select(value=doc_type_value)
+				await (await tab.query('[id="frmPrincipal:cmbTipoComprobante"]', timeout=timeout_seconds)).select(value=doc_type_value)
 
 			# 4. Click search (reCAPTCHA) and download
 			async with tab.expect_download(timeout=timeout_seconds) as download:
 				await (await tab.find(id='btnRecaptcha', timeout=timeout_seconds)).click()
-				download_link = await tab.find(id='frmPrincipal:lnkTxtlistado', timeout=timeout_seconds)
+				download_link = await tab.query('[id="frmPrincipal:lnkTxtlistado"]', timeout=timeout_seconds)
 				await download_link.click()
 				temp_path = await download.save_as('/tmp/')
 
