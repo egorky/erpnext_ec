@@ -18,13 +18,14 @@ async def _perform_sri_download_async(docname):
 	from pyvirtualdisplay import Display
 	from pydoll.browser import Chrome
 	from pydoll.browser.options import ChromiumOptions as Options
-	from pydoll.exceptions import FailedToStartBrowser
+	from pydoll.exceptions import FailedToStartBrowser, ElementNotFound
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
+	timeout_seconds = settings.timeout or 60
 
 	if not username or not password:
 		raise ValueError("SRI Username and Password must be set.")
@@ -51,39 +52,37 @@ async def _perform_sri_download_async(docname):
 		browser = None
 		tab = None
 		try:
-			frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
 			browser = Chrome(options=options)
 			tab = await browser.start()
-			await browser.set_window_bounds({
-				'left': 0, 'top': 0, 'width': 1920, 'height': 1080
-			})
-			frappe.log_error("Browser started and window bounds set successfully.")
+			await browser.set_window_bounds({'left': 0, 'top': 0, 'width': 1920, 'height': 1080})
 
-			await tab.go_to(settings.sri_login_url)
-			await asyncio.sleep(random.uniform(1, 3))
-			await (await tab.find(id='usuario')).type_text(username, delay=random.uniform(50, 150))
-			await (await tab.find(id='password')).type_text(password, delay=random.uniform(50, 150))
-			await asyncio.sleep(random.uniform(0.5, 1.5))
-			await (await tab.find(id='kc-login')).click()
+			# 1. Login
+			await tab.go_to(settings.sri_login_url, timeout=timeout_seconds)
+			usuario_input = await tab.find(id='usuario', timeout=timeout_seconds)
+			await usuario_input.type_text(username)
+			password_input = await tab.find(id='password', timeout=timeout_seconds)
+			await password_input.type_text(password)
+			await (await tab.find(id='kc-login', timeout=timeout_seconds)).click()
 
-			await tab.wait_for(timeout=random.uniform(3, 5))
-			await tab.go_to(settings.sri_target_url)
-			await tab.wait_for(timeout=random.uniform(2, 4))
+			# 2. Navigate
+			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
 
-			await (await tab.find(id='frmPrincipal:ano')).select(label=str(doc.year))
-			await (await tab.find(id='frmPrincipal:mes')).select(value=str(doc.month))
-			await (await tab.find(id='frmPrincipal:dia')).select(value=str(doc.day))
+			# 3. Set parameters
+			await (await tab.find(id='frmPrincipal:ano', timeout=timeout_seconds)).select(label=str(doc.year))
+			await (await tab.find(id='frmPrincipal:mes', timeout=timeout_seconds)).select(value=str(doc.month))
+			await (await tab.find(id='frmPrincipal:dia', timeout=timeout_seconds)).select(value=str(doc.day))
 			doc_type_value = doc_type_map.get(doc.document_type)
 			if doc_type_value:
-				await (await tab.find(id='frmPrincipal:cmbTipoComprobante')).select(value=doc_type_value)
-			await asyncio.sleep(random.uniform(1, 2))
+				await (await tab.find(id='frmPrincipal:cmbTipoComprobante', timeout=timeout_seconds)).select(value=doc_type_value)
 
-			async with tab.expect_download(timeout=settings.timeout or 60) as download:
-				await (await tab.find(id='btnRecaptcha')).click()
-				await tab.wait_for(5)
-				await (await tab.find(id='frmPrincipal:lnkTxtlistado')).click()
+			# 4. Click search (reCAPTCHA) and download
+			async with tab.expect_download(timeout=timeout_seconds) as download:
+				await (await tab.find(id='btnRecaptcha', timeout=timeout_seconds)).click()
+				download_link = await tab.find(id='frmPrincipal:lnkTxtlistado', timeout=timeout_seconds)
+				await download_link.click()
 				temp_path = await download.save_as('/tmp/')
 
+			# 5. Attach file to DocType
 			with open(temp_path, "rb") as f:
 				file_content = f.read()
 			new_file = frappe.get_doc({
