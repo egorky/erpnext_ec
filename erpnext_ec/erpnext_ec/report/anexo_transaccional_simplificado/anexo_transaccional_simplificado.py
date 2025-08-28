@@ -15,23 +15,34 @@ def execute(filters=None):
 
 def get_columns(filters):
     return [
-        {"label": _("Tipo"), "fieldname": "tipo", "fieldtype": "Data", "width": 100},
-        {"label": _("Documento"), "fieldname": "documento", "fieldtype": "Dynamic Link", "options": "tipo", "width": 180},
-        {"label": _("Fecha"), "fieldname": "fecha", "fieldtype": "Date", "width": 100},
+        {"label": _("Tipo Documento"), "fieldname": "tipo", "fieldtype": "Data", "width": 140},
+        {"label": _("Serie y Número"), "fieldname": "documento", "fieldtype": "Dynamic Link", "options": "tipo", "width": 180},
+        {"label": _("Fecha Emisión"), "fieldname": "fecha", "fieldtype": "Date", "width": 120},
+        {"label": _("Tipo Comprobante"), "fieldname": "tipo_comprobante", "fieldtype": "Data", "width": 150},
+        {"label": _("RUC/Cédula"), "fieldname": "party_tax_id", "fieldtype": "Data", "width": 150},
         {"label": _("Tercero"), "fieldname": "tercero", "fieldtype": "Data", "width": 250},
+        {"label": _("Valor IVA"), "fieldname": "valor_iva", "fieldtype": "Currency", "width": 120},
         {"label": _("Total"), "fieldname": "total", "fieldtype": "Currency", "width": 120},
-        {"label": _("Estado"), "fieldname": "estado", "fieldtype": "Data", "width": 100},
+        {"label": _("Estado SRI"), "fieldname": "estado", "fieldtype": "Data", "width": 100},
     ]
 
 def get_data_for_view(filters):
     docs = get_raw_docs(filters)
+    docs = _enrich_data(docs)
     data = []
+
     for doc in docs:
+        party_info = doc.get("party_info", {})
+        tax_info = doc.get("tax_info", {})
+
         data.append({
             "tipo": doc.doctype,
             "documento": doc.name,
-            "fecha": doc.posting_date,
+            "fecha": doc.get("bill_date") or doc.posting_date,
+            "tipo_comprobante": _get_tipo_comprobante(doc),
+            "party_tax_id": party_info.get('idProv') or party_info.get('idCliente'),
             "tercero": doc.get("supplier_name") or doc.get("customer_name"),
+            "valor_iva": tax_info.get('montoIva', 0),
             "total": doc.grand_total,
             "estado": "Anulado" if doc.docstatus == 2 else "Emitido"
         })
@@ -74,11 +85,13 @@ def get_raw_docs(filters):
 
     # Fetch Sales Invoices
     ventas = frappe.get_all("Sales Invoice",
-        filters={
-            "company": company,
-            "posting_date": ["between", [start_date, end_date]],
-            "docstatus": ["in", [1, 2]]
-        },
+        filters=[
+            ["company", "=", company],
+            ["posting_date", "between", [start_date, end_date]],
+            ["docstatus", "in", [1, 2]],
+            ["numeroautorizacion", "is", "set"],
+            ["numeroautorizacion", "!=", ""]
+        ],
         fields=sales_fields
     )
     for v in ventas:
@@ -93,23 +106,38 @@ def _enrich_data(docs):
     """
     doc_map = {"Purchase Invoice": {}, "Sales Invoice": {}}
     party_ids = {"Supplier": set(), "Customer": set()}
+    sri_links = {"estab": set(), "ptoEmi": set()}
 
     for doc in docs:
         doc_map[doc.doctype][doc.name] = doc
-        if doc.doctype == "Purchase Invoice" and doc.supplier:
-            party_ids["Supplier"].add(doc.supplier)
-        elif doc.doctype == "Sales Invoice" and doc.customer:
-            party_ids["Customer"].add(doc.customer)
+        if doc.doctype == "Purchase Invoice":
+            if doc.supplier: party_ids["Supplier"].add(doc.supplier)
+            if doc.estab_link: sri_links["estab"].add(doc.estab_link)
+            if doc.ptoemi_link: sri_links["ptoEmi"].add(doc.ptoemi_link)
+        elif doc.doctype == "Sales Invoice":
+            if doc.customer: party_ids["Customer"].add(doc.customer)
+            if doc.estab: sri_links["estab"].add(doc.estab)
+            if doc.ptoEmi: sri_links["ptoEmi"].add(doc.ptoEmi)
 
     party_details = _get_party_details(party_ids)
     tax_details = _get_tax_details(doc_map)
     payment_details = _get_payment_details_for_sales(list(doc_map["Sales Invoice"].keys()))
 
+    # Fetch SRI codes for establishments and emission points
+    estab_codes = {e.name: e.record_name for e in frappe.get_all("Sri Establishment", filters={"name": ["in", list(sri_links["estab"])]}, fields=["name", "record_name"])}
+    ptoemi_codes = {p.name: p.record_name for p in frappe.get_all("Sri Ptoemi", filters={"name": ["in", list(sri_links["ptoEmi"])]}, fields=["name", "record_name"])}
+
     for doc in docs:
         doc.party_info = party_details.get(doc.doctype, {}).get(doc.supplier or doc.customer, {})
         doc.tax_info = tax_details.get(doc.name, {})
+
         if doc.doctype == 'Sales Invoice':
             doc.payment_info = payment_details.get(doc.name, {})
+            doc.estab_code = estab_codes.get(doc.estab)
+            doc.ptoemi_code = ptoemi_codes.get(doc.ptoEmi)
+        elif doc.doctype == 'Purchase Invoice':
+            doc.estab_code = estab_codes.get(doc.estab_link) if doc.estab_link else doc.estab
+            doc.ptoemi_code = ptoemi_codes.get(doc.ptoemi_link) if doc.ptoemi_link else doc.ptoEmi
 
     return docs
 
@@ -341,8 +369,8 @@ def _build_purchase_xml(parent_xml, doc):
     ET.SubElement(detalle, "denoProv").text = doc.supplier_name
     ET.SubElement(detalle, "parteRel").text = party_info.get("parteRel", "NO")
     ET.SubElement(detalle, "fechaRegistro").text = doc.posting_date.strftime("%d/%m/%Y")
-    ET.SubElement(detalle, "establecimiento").text = str(doc.estab or "").zfill(3)
-    ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoEmi or "").zfill(3)
+    ET.SubElement(detalle, "establecimiento").text = str(doc.estab_code or "").zfill(3)
+    ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoemi_code or "").zfill(3)
     ET.SubElement(detalle, "secuencial").text = str(doc.secuencial or "")
     ET.SubElement(detalle, "fechaEmision").text = (doc.bill_date or doc.posting_date).strftime("%d/%m/%Y")
     ET.SubElement(detalle, "autorizacion").text = str(doc.numeroautorizacion or "")
@@ -459,8 +487,8 @@ def _build_annulled_xml(parent_xml, doc):
     """Builds a <detalleAnulados> element."""
     detalle = ET.SubElement(parent_xml, "detalleAnulados")
     ET.SubElement(detalle, "tipoComprobante").text = _get_tipo_comprobante(doc)
-    ET.SubElement(detalle, "establecimiento").text = str(doc.estab or "").zfill(3)
-    ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoEmi or "").zfill(3)
+    ET.SubElement(detalle, "establecimiento").text = str(doc.estab_code or "").zfill(3)
+    ET.SubElement(detalle, "puntoEmision").text = str(doc.ptoemi_code or "").zfill(3)
     ET.SubElement(detalle, "secuencialInicio").text = str(doc.secuencial or "")
     ET.SubElement(detalle, "secuencialFin").text = str(doc.secuencial or "")
     ET.SubElement(detalle, "autorizacion").text = str(doc.numeroautorizacion or "")
@@ -469,10 +497,10 @@ def _build_ventas_establecimiento_xml(parent_xml, sales_docs):
     """Builds <ventaEst> elements for each establishment."""
     sales_by_estab = {}
     for doc in sales_docs:
-        estab = str(doc.estab or "999").zfill(3)
-        if estab not in sales_by_estab:
-            sales_by_estab[estab] = 0
-        sales_by_estab[estab] += doc.net_total
+        estab_code = str(doc.estab_code or "999").zfill(3)
+        if estab_code not in sales_by_estab:
+            sales_by_estab[estab_code] = 0
+        sales_by_estab[estab_code] += doc.net_total
 
     if not sales_by_estab: # Add at least one entry if no sales
         venta_est_xml = ET.SubElement(parent_xml, "ventaEst")
@@ -480,9 +508,9 @@ def _build_ventas_establecimiento_xml(parent_xml, sales_docs):
         ET.SubElement(venta_est_xml, "ventasEstab").text = "0.00"
         return
 
-    for estab, total in sales_by_estab.items():
+    for estab_code, total in sales_by_estab.items():
         venta_est_xml = ET.SubElement(parent_xml, "ventaEst")
-        ET.SubElement(venta_est_xml, "codEstab").text = estab
+        ET.SubElement(venta_est_xml, "codEstab").text = estab_code
         ET.SubElement(venta_est_xml, "ventasEstab").text = f"{total:.2f}"
         # ET.SubElement(venta_est_xml, "ivaComp").text = "0.00" # Ficha tecnica needed for this
 
