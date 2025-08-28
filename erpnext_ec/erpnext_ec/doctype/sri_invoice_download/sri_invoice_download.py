@@ -19,6 +19,7 @@ async def _perform_sri_download_async(docname):
 	from pydoll.browser.options import ChromiumOptions as Options
 	from pydoll.exceptions import FailedToStartBrowser
 
+	# We get a fresh doc object inside the async process
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
@@ -47,44 +48,38 @@ async def _perform_sri_download_async(docname):
 	options.add_argument(f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
 
 	browser = None
+	tab = None
 	try:
 		frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
 		browser = await Chrome(options=options)
 		tab = await browser.start()
 		frappe.log_error("Browser started successfully.")
 
-		# 1. Login
+		# ... (Automation logic as before) ...
 		await tab.go_to(settings.sri_login_url)
 		await asyncio.sleep(random.uniform(1, 3))
 		await (await tab.find(id='usuario')).type_text(username, delay=random.uniform(50, 150))
 		await (await tab.find(id='password')).type_text(password, delay=random.uniform(50, 150))
 		await asyncio.sleep(random.uniform(0.5, 1.5))
 		await (await tab.find(id='kc-login')).click()
-
-		# 2. Navigate
 		await tab.wait_for(timeout=random.uniform(3, 5))
 		await tab.go_to(settings.sri_target_url)
 		await tab.wait_for(timeout=random.uniform(2, 4))
 
-		# 3. Set parameters
 		await (await tab.find(id='frmPrincipal:ano')).select(label=str(doc.year))
 		await (await tab.find(id='frmPrincipal:mes')).select(value=str(doc.month))
 		await (await tab.find(id='frmPrincipal:dia')).select(value=str(doc.day))
-
 		doc_type_value = doc_type_map.get(doc.document_type)
 		if doc_type_value:
 			await (await tab.find(id='frmPrincipal:cmbTipoComprobante')).select(value=doc_type_value)
-
 		await asyncio.sleep(random.uniform(1, 2))
 
-		# 4. Click search (reCAPTCHA) and download
 		async with tab.expect_download(timeout=settings.timeout or 60) as download:
 			await (await tab.find(id='btnRecaptcha')).click()
 			await tab.wait_for(5)
 			await (await tab.find(id='frmPrincipal:lnkTxtlistado')).click()
 			temp_path = await download.save_as('/tmp/')
 
-		# 5. Attach file to DocType
 		with open(temp_path, "rb") as f:
 			file_content = f.read()
 		new_file = frappe.get_doc({
@@ -95,34 +90,42 @@ async def _perform_sri_download_async(docname):
 		new_file.insert(ignore_permissions=True)
 		os.remove(temp_path)
 
+		doc.reload()
 		doc.status = "Completed"
 		doc.save(ignore_permissions=True)
 		frappe.db.commit()
 
-	except FailedToStartBrowser as e:
-		frappe.log_error(title="Pydoll: Failed to Start Browser", message=f"pydoll could not launch the browser. Path: {options.binary_location}. Error: {e}")
-		raise
 	except Exception as e:
-		screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
-		if tab:
-			await tab.screenshot(path=screenshot_path, full_page=True)
-		frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
+		# Always reload the doc before saving to prevent timestamp errors
+		doc.reload()
+		doc.status = "Failed"
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+
+		# Log errors and take screenshot
+		if isinstance(e, FailedToStartBrowser):
+			frappe.log_error(title="Pydoll: Failed to Start Browser", message=f"pydoll could not launch the browser. Path: {options.binary_location}. Error: {e}")
+		else:
+			screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
+			if tab:
+				await tab.screenshot(path=screenshot_path, full_page=True)
+			frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
+
+		# Re-raise the exception so the background job framework knows it failed
 		raise
 	finally:
 		if browser:
 			await browser.stop()
 
 def _perform_sri_download(docname):
-    doc = frappe.get_doc("SRI Invoice Download", docname)
+    # The wrapper's only job is to run the async function.
+    # All error handling and doc updates are now inside the async function.
     try:
         asyncio.run(_perform_sri_download_async(docname))
-    except Exception as e:
-        doc.status = "Failed"
-        doc.save(ignore_permissions=True)
-        frappe.db.commit()
-        # The exception is already logged inside the async function,
-        # but we log a general failure message here for the background job log.
-        frappe.log_error(title=f"SRI Download Job Failed for {docname}", message="See previous log for detailed traceback.")
+    except Exception:
+        # The error is already logged by the async function.
+        # We just catch it here to prevent the RQ worker from crashing.
+        frappe.log_error(f"Async task for {docname} failed and was caught by sync wrapper.")
 
 @frappe.whitelist()
 def start_download(docname):
