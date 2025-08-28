@@ -4,6 +4,9 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
+import asyncio
+import os
+import random
 
 class SRIInvoiceDownload(Document):
 	pass
@@ -11,23 +14,18 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
-def _perform_sri_download(docname):
-	from playwright.sync_api import sync_playwright
-	import os
+async def _perform_sri_download_async(docname):
+	from pydoll.browser import Chrome
+	from pydoll.browser.options import ChromiumOptions as Options
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
-	timeout_ms = (settings.timeout or 60) * 1000
 
 	if not username or not password:
-		doc.status = "Failed"
-		doc.save()
-		frappe.db.commit()
-		frappe.log_error(title="SRI Download Failed", message="SRI Username and Password must be set.")
-		return
+		raise ValueError("SRI Username and Password must be set.")
 
 	doc_type_map = {
 		"Factura": "1",
@@ -37,42 +35,50 @@ def _perform_sri_download(docname):
 		"Comprobante de Retención": "6"
 	}
 
-	with sync_playwright() as p:
-		browser = p.chromium.launch(headless=True)
-		page = browser.new_page()
+	options = Options()
+	options.add_argument('--window-size=1920,1080')
+	options.add_argument('--start-maximized')
+	options.add_argument('--disable-infobars')
+	options.add_argument(f"--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36")
 
+	async with Chrome(options=options, headless=False) as browser:
+		tab = await browser.start()
 		try:
-			# 1. Login and navigate
-			page.goto(settings.sri_login_url, timeout=timeout_ms)
-			page.locator("#usuario").fill(username)
-			page.locator("#password").fill(password)
-			page.locator("#kc-login").click()
-			page.wait_for_load_state('networkidle', timeout=timeout_ms)
-			page.goto(settings.sri_target_url, wait_until='networkidle', timeout=timeout_ms)
+			# 1. Login
+			await tab.go_to(settings.sri_login_url)
+			await asyncio.sleep(random.uniform(1, 3))
+			await (await tab.find(id='usuario')).type_text(username, delay=random.uniform(50, 150))
+			await (await tab.find(id='password')).type_text(password, delay=random.uniform(50, 150))
+			await asyncio.sleep(random.uniform(0.5, 1.5))
+			await (await tab.find(id='kc-login')).click()
 
-			# 2. Set download parameters
-			page.select_option("#frmPrincipal\\:ano", label=str(doc.year))
-			page.select_option("#frmPrincipal\\:mes", value=str(doc.month))
-			page.select_option("#frmPrincipal\\:dia", value=str(doc.day))
+			# 2. Navigate
+			await tab.wait_for(timeout=random.uniform(3, 5))
+			await tab.go_to(settings.sri_target_url)
+			await tab.wait_for(timeout=random.uniform(2, 4))
+
+			# 3. Set parameters
+			await (await tab.find(id='frmPrincipal:ano')).select(label=str(doc.year))
+			await (await tab.find(id='frmPrincipal:mes')).select(value=str(doc.month))
+			await (await tab.find(id='frmPrincipal:dia')).select(value=str(doc.day))
+
 			doc_type_value = doc_type_map.get(doc.document_type)
 			if doc_type_value:
-				page.select_option("#frmPrincipal\\:cmbTipoComprobante", value=doc_type_value)
+				await (await tab.find(id='frmPrincipal:cmbTipoComprobante')).select(value=doc_type_value)
 
-			# 3. Click search (This is the reCAPTCHA-protected step)
-			# Note: This step is likely to fail if reCAPTCHA is active.
-			page.locator("#btnRecaptcha").click()
+			await asyncio.sleep(random.uniform(1, 2))
 
-			# 4. Wait for download link and download the file
-			page.wait_for_selector("#frmPrincipal\\:lnkTxtlistado", timeout=timeout_ms)
+			# 4. Click search (reCAPTCHA) and download
+			# Note: This step is where the CAPTCHA challenge occurs.
+			# pydoll's human-like interaction may help, but is not guaranteed to bypass it.
+			async with tab.expect_download(timeout=settings.timeout or 60) as download:
+				await (await tab.find(id='btnRecaptcha')).click()
+				# Wait for the page to process the search and the download link to appear
+				await tab.wait_for(5)
+				await (await tab.find(id='frmPrincipal:lnkTxtlistado')).click()
 
-			with page.expect_download() as download_info:
-				page.locator("#frmPrincipal\\:lnkTxtlistado").click()
-
-			download = download_info.value
-
-			# Save the file temporarily
-			temp_path = os.path.join("/tmp", download.suggested_filename)
-			download.save_as(temp_path)
+				# Save the downloaded file to a temporary path
+				temp_path = await download.save_as('/tmp/')
 
 			# 5. Attach file to DocType
 			with open(temp_path, "rb") as f:
@@ -80,28 +86,39 @@ def _perform_sri_download(docname):
 
 			new_file = frappe.get_doc({
 				"doctype": "File",
-				"file_name": download.suggested_filename,
+				"file_name": os.path.basename(temp_path),
 				"attached_to_doctype": "SRI Invoice Download",
 				"attached_to_name": doc.name,
 				"content": file_content,
 				"is_private": 1
 			})
-			new_file.insert()
-			os.remove(temp_path) # Clean up temporary file
+			new_file.insert(ignore_permissions=True)
+			os.remove(temp_path)
 
 			doc.status = "Completed"
-			doc.save()
+			doc.save(ignore_permissions=True)
 			frappe.db.commit()
-
 		except Exception as e:
 			doc.status = "Failed"
-			doc.save()
+			doc.save(ignore_permissions=True)
 			frappe.db.commit()
 			screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
-			page.screenshot(path=screenshot_path, full_page=True)
+			await tab.screenshot(path=screenshot_path, full_page=True)
 			frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
 		finally:
-			browser.close()
+			await browser.stop()
+
+def _perform_sri_download(docname):
+    try:
+        # pydoll uses asyncio, so we run its async function from our sync (background job) context
+        asyncio.run(_perform_sri_download_async(docname))
+    except Exception as e:
+        # Log any exceptions that occur outside the async function itself
+        frappe.log_error(title=f"SRI Download Async Runner Failed for {docname}", message=frappe.get_traceback())
+        doc = frappe.get_doc("SRI Invoice Download", docname)
+        doc.status = "Failed"
+        doc.save(ignore_permissions=True)
+        frappe.db.commit()
 
 @frappe.whitelist()
 def start_download(docname):
@@ -110,9 +127,7 @@ def start_download(docname):
 	"""
 	frappe.enqueue(
         "erpnext_ec.erpnext_ec.doctype.sri_invoice_download.sri_invoice_download._perform_sri_download",
-        queue="long",
-        timeout=1500,
-        docname=docname
+        queue="long", timeout=1500, docname=docname
     )
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
