@@ -1,0 +1,1824 @@
+<iva>
+  <TipoIDInformante>R</TipoIDInformante>
+  <IdInformante>983746546337001</IdInformante>
+  <razonSocial>GOLD SA</razonSocial>
+  <Anio>2025</Anio>
+  <Mes>06</Mes>
+  
+   <numEstabRuc>001</numEstabRuc> 
+  <totalVentas>0.00</totalVentas>
+  <codigoOperativo>IVA</codigoOperativo>
+  <compras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0921233227</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>13/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>26</secuencial>
+      <fechaEmision>13/06/2025</fechaEmision>
+      <autorizacion>1306202503099286061800120010020000000261994873619</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>230.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>230.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0923778898</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>13/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>27</secuencial>
+      <fechaEmision>13/06/2025</fechaEmision>
+      <autorizacion>1306202503099286061800120010020000000271994873614</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>230.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>230.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0911376994</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>13/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>28</secuencial>
+      <fechaEmision>13/06/2025</fechaEmision>
+      <autorizacion>1306202503099286061800120010020000000281994873611</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>230.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>230.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0950010801</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>13/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>29</secuencial>
+      <fechaEmision>13/06/2025</fechaEmision>
+      <autorizacion>1306202503099286061800120010020000000291994873615</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>50.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>50.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0928118108</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>13/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>30</secuencial>
+      <fechaEmision>13/06/2025</fechaEmision>
+      <autorizacion>1306202503099286061800120010020000000301994873610</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>66.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>66.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0924677446</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>16/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>31</secuencial>
+      <fechaEmision>16/06/2025</fechaEmision>
+      <autorizacion>1606202503099286061800120010020000000311994876619</autorizacion>
+      <baseNoGraIva>30.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>30.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0913931499</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>18/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>32</secuencial>
+      <fechaEmision>18/06/2025</fechaEmision>
+      <autorizacion>1806202503099286061800120010020000000321994878616</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>72.70</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>72.70</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0923494686</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>18/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>33</secuencial>
+      <fechaEmision>18/06/2025</fechaEmision>
+      <autorizacion>1806202503099286061800120010020000000331994878611</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>60.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>60.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0923778898</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>27/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>34</secuencial>
+      <fechaEmision>27/06/2025</fechaEmision>
+      <autorizacion>2706202503099286061800120010020000000341994887615</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>223.50</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>223.50</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>02</tpIdProv>
+      <idProv>0914664149</idProv>
+      <tipoComprobante>03</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>27/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>35</secuencial>
+      <fechaEmision>27/06/2025</fechaEmision>
+      <autorizacion>2706202503099286061800120010020000000351994887610</autorizacion>
+      <baseNoGraIva>100.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>100.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1791256115001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>02/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>327</puntoEmision>
+      <secuencial>116544711</secuencial>
+      <fechaEmision>02/06/2025</fechaEmision>
+      <autorizacion>0206202501179125611500120013271165447114144903117</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>38.50</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>5.78</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>38.50</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0992829605001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>01/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>112</puntoEmision>
+      <secuencial>215979</secuencial>
+      <fechaEmision>01/06/2025</fechaEmision>
+      <autorizacion>0106202501099282960500120011120002159791234567813</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>17.43</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.61</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>17.43</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0991331859001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>02/06/2025</fechaRegistro>
+      <establecimiento>103</establecimiento>
+      <puntoEmision>050</puntoEmision>
+      <secuencial>155606</secuencial>
+      <fechaEmision>02/06/2025</fechaEmision>
+      <autorizacion>0206202501099133185900121030500001556061357246815</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>21.74</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>3.26</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+        <air>
+          <detalleAir>
+            <codRetAir>332G</codRetAir>
+            <baseImpAir>21.74</baseImpAir>
+            <porcentajeAir>0.00</porcentajeAir>
+            <valRetAir>0.00</valRetAir>
+          </detalleAir>
+        </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1791256115001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>02/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>327</puntoEmision>
+      <secuencial>116567229</secuencial>
+      <fechaEmision>02/06/2025</fechaEmision>
+      <autorizacion>0206202501179125611500120013271165672294970256712</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>30.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>4.50</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>30.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0991331859001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>03/06/2025</fechaRegistro>
+      <establecimiento>009</establecimiento>
+      <puntoEmision>050</puntoEmision>
+      <secuencial>240848</secuencial>
+      <fechaEmision>03/06/2025</fechaEmision>
+      <autorizacion>0306202501099133185900120090500002408481357246813</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>18.26</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.74</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>18.26</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0914907043001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>04/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>100</puntoEmision>
+      <secuencial>574</secuencial>
+      <fechaEmision>04/06/2025</fechaEmision>
+      <autorizacion>0406202501091490704300120011000000005742282112117</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>40.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>6.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>40.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1790016919001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>05/06/2025</fechaRegistro>
+      <establecimiento>156</establecimiento>
+      <puntoEmision>109</puntoEmision>
+      <secuencial>183731</secuencial>
+      <fechaEmision>05/06/2025</fechaEmision>
+      <autorizacion>0506202501179001691900121561090001837310338002517</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>5.12</baseImponible>
+      <baseImpGrav>17.85</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.68</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+        <air>
+          <detalleAir>
+            <codRetAir>332G</codRetAir>
+            <baseImpAir>22.97</baseImpAir>
+            <porcentajeAir>0.00</porcentajeAir>
+            <valRetAir>0.00</valRetAir>
+          </detalleAir>
+        </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0991306498001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>06/06/2025</fechaRegistro>
+      <establecimiento>049</establecimiento>
+      <puntoEmision>011</puntoEmision>
+      <secuencial>17191</secuencial>
+      <fechaEmision>06/06/2025</fechaEmision>
+      <autorizacion>0606202501099130649800120490110000171911234567817</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>20.87</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>3.13</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+        <air>
+          <detalleAir>
+            <codRetAir>332G</codRetAir>
+            <baseImpAir>20.87</baseImpAir>
+            <porcentajeAir>0.00</porcentajeAir>
+            <valRetAir>0.00</valRetAir>
+          </detalleAir>
+        </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0992378395001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>11/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>008</puntoEmision>
+      <secuencial>1231517</secuencial>
+      <fechaEmision>11/06/2025</fechaEmision>
+      <autorizacion>1106202501099237839500120010080012315171234567812</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>17.39</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.61</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>17.39</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1791256115001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>12/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>327</puntoEmision>
+      <secuencial>117085048</secuencial>
+      <fechaEmision>12/06/2025</fechaEmision>
+      <autorizacion>1206202501179125611500120013271170850483786111111</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>70.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>10.50</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>70.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1791256115001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>12/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>327</puntoEmision>
+      <secuencial>116955766</secuencial>
+      <fechaEmision>12/06/2025</fechaEmision>
+      <autorizacion>1206202501179125611500120013271169557663872026910</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>56.40</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>8.46</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>56.40</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1792605504001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>14/06/2025</fechaRegistro>
+      <establecimiento>045</establecimiento>
+      <puntoEmision>002</puntoEmision>
+      <secuencial>241256</secuencial>
+      <fechaEmision>14/06/2025</fechaEmision>
+      <autorizacion>1406202501179260550400120450020002412561234567810</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>21.74</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>3.26</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>21.74</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0993379750001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>18/06/2025</fechaRegistro>
+      <establecimiento>002</establecimiento>
+      <puntoEmision>004</puntoEmision>
+      <secuencial>108426</secuencial>
+      <fechaEmision>18/06/2025</fechaEmision>
+      <autorizacion>1806202501099337975000120020040001084261234567813</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>16.58</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.49</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>16.58</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0992153563001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>18/06/2025</fechaRegistro>
+      <establecimiento>026</establecimiento>
+      <puntoEmision>100</puntoEmision>
+      <secuencial>65385697</secuencial>
+      <fechaEmision>18/06/2025</fechaEmision>
+      <autorizacion>1806202501099215356300120261000653856976538569716</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>24.84</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>24.84</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0968599020001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>20/06/2025</fechaRegistro>
+      <establecimiento>148</establecimiento>
+      <puntoEmision>999</puntoEmision>
+      <secuencial>65863446</secuencial>
+      <fechaEmision>20/06/2025</fechaEmision>
+      <autorizacion>2006202501096859902000121489990658634460175179615</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>70.84</baseImponible>
+      <baseImpGrav>0.00</baseImpGrav>
+      <baseImpExe>3.32</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.00</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>74.16</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>1791256115001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>22/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>327</puntoEmision>
+      <secuencial>117194121</secuencial>
+      <fechaEmision>22/06/2025</fechaEmision>
+      <autorizacion>2206202501179125611500120013271171941214222006115</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>55.00</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>8.25</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>55.00</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0991331859001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>23/06/2025</fechaRegistro>
+      <establecimiento>044</establecimiento>
+      <puntoEmision>050</puntoEmision>
+      <secuencial>191239</secuencial>
+      <fechaEmision>23/06/2025</fechaEmision>
+      <autorizacion>2306202501099133185900120440500001912391357246819</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>24.35</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>3.65</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+        <air>
+          <detalleAir>
+            <codRetAir>332G</codRetAir>
+            <baseImpAir>24.35</baseImpAir>
+            <porcentajeAir>0.00</porcentajeAir>
+            <valRetAir>0.00</valRetAir>
+          </detalleAir>
+        </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0907924583001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>23/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>100</puntoEmision>
+      <secuencial>1771</secuencial>
+      <fechaEmision>23/06/2025</fechaEmision>
+      <autorizacion>2306202501090792458300120011000000017719961270311</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>45.88</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>6.88</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>45.88</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0993323233001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>26/06/2025</fechaRegistro>
+      <establecimiento>002</establecimiento>
+      <puntoEmision>003</puntoEmision>
+      <secuencial>506182</secuencial>
+      <fechaEmision>26/06/2025</fechaEmision>
+      <autorizacion>2606202501099332323300120020030005061821234567813</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>17.86</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>2.68</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>17.86</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0991306498001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>29/06/2025</fechaRegistro>
+      <establecimiento>044</establecimiento>
+      <puntoEmision>011</puntoEmision>
+      <secuencial>1206593</secuencial>
+      <fechaEmision>29/06/2025</fechaEmision>
+      <autorizacion>2906202501099130649800120440110012065931234567819</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>22.61</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>3.39</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+        <air>
+          <detalleAir>
+            <codRetAir>332G</codRetAir>
+            <baseImpAir>22.61</baseImpAir>
+            <porcentajeAir>0.00</porcentajeAir>
+            <valRetAir>0.00</valRetAir>
+          </detalleAir>
+        </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+    <detalleCompras>
+      <codSustento>01</codSustento>
+      <tpIdProv>01</tpIdProv>
+      <idProv>0990005737001</idProv>
+      <tipoComprobante>01</tipoComprobante>
+      <tipoProv>01</tipoProv>
+      <denoProv>PERSONA NATURAL SA</denoProv>
+      <parteRel> NO </parteRel>
+      <fechaRegistro>30/06/2025</fechaRegistro>
+      <establecimiento>001</establecimiento>
+      <puntoEmision>001</puntoEmision>
+      <secuencial>222621195</secuencial>
+      <fechaEmision>30/06/2025</fechaEmision>
+      <autorizacion>3006202501099000573700120010012226211950110445512</autorizacion>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>6.45</baseImpGrav>
+      <baseImpExe>0.00</baseImpExe>
+      <montoIce>0.00</montoIce>
+      <montoIva>0.96</montoIva>
+      <valRetBien10>0.00</valRetBien10>
+      <valRetServ20>0.00</valRetServ20>
+      <valorRetBienes>0.00</valorRetBienes>
+      <valRetServ50>0.00</valRetServ50>
+      <valorRetServicios>0.00</valorRetServicios>
+      <valRetServ100>0.00</valRetServ100>
+      <valorRetencionNc>0.00</valorRetencionNc>
+      <totbasesImpReemb>0.00</totbasesImpReemb>
+      <pagoExterior>
+        <pagoLocExt>01</pagoLocExt>
+        <paisEfecPago>NA</paisEfecPago>
+        
+        <aplicConvDobTrib>NA</aplicConvDobTrib>
+        <pagExtSujRetNorLeg>NA</pagExtSujRetNorLeg>
+        
+      </pagoExterior>
+      
+      
+      
+      
+      
+      
+      
+      <air>
+        <detalleAir>
+          <codRetAir>332</codRetAir>
+          <baseImpAir>6.45</baseImpAir>
+          <porcentajeAir>0.00</porcentajeAir>
+          <valRetAir>0.00</valRetAir>
+        </detalleAir>
+      </air>
+      
+      
+      
+      
+    </detalleCompras>
+    
+  </compras>
+  
+  <ventas>
+    
+    <detalleVentas>
+      <tpIdCliente>04</tpIdCliente>
+      <idCliente>1791256115001</idCliente>
+      
+      <parteRelVtas> NO </parteRelVtas>
+      
+      
+      <tipoComprobante>18</tipoComprobante>
+      <tipoEmision>E</tipoEmision>
+      <numeroComprobantes>2</numeroComprobantes>
+      <baseNoGraIva>0.00</baseNoGraIva>
+      <baseImponible>0.00</baseImponible>
+      <baseImpGrav>5731.96</baseImpGrav>
+      <montoIva>859.79</montoIva>
+      <montoIce>0.00</montoIce>
+      <valorRetIva>601.86</valorRetIva>
+      <valorRetRenta>171.96</valorRetRenta>
+      <formasDePago>
+        
+        <formaPago>20</formaPago>
+        
+      </formasDePago>
+    </detalleVentas>
+    
+  </ventas>
+  
+  
+  <ventasEstablecimiento>
+    
+    <ventaEst>
+      <codEstab>001</codEstab>
+      <ventasEstab>0.00</ventasEstab>
+      <ivaComp>0.00</ivaComp>
+    </ventaEst>
+    
+  </ventasEstablecimiento>
+  
+  <anulados>
+    
+  </anulados>
+</iva>
