@@ -3,7 +3,6 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils.password import get_password
 
 class SRIInvoiceDownload(Document):
 	pass
@@ -20,7 +19,7 @@ def _perform_sri_download(settings, from_date, to_date):
 	"""
 	# Get credentials securely
 	username = settings.sri_username
-	password = get_password("SRI Downloader Settings", "sri_password")
+	password = settings.get_password("sri_password")
 
 	with sync_playwright() as p:
 		browser = p.chromium.launch(headless=True)
