@@ -107,7 +107,10 @@ async def _perform_sri_download_async(docname):
 			else:
 				screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
 				if tab:
-					await tab.screenshot(path=screenshot_path, full_page=True)
+					body = await tab.find(tag_name='body')
+					if body:
+						await body.take_screenshot(path=screenshot_path)
+						frappe.log_error(f"Screenshot of error page saved to: {screenshot_path}")
 				frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
 			raise
 		finally:
