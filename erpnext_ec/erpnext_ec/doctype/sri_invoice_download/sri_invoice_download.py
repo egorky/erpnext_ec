@@ -72,8 +72,8 @@ async def _perform_sri_download_async(docname):
 			await login_button.click()
 
 			# 2. Wait for navigation and check for login errors
-			await tab.wait_for_navigation(timeout=timeout_seconds)
-			login_error = await tab.find(class_name='sri-error-notificacion', raise_exc=False, timeout=3)
+			# The go_to call below will serve as the main wait. We also check for a login error message.
+			login_error = await tab.find(class_name='sri-error-notificacion', raise_exc=False, timeout=5)
 			if login_error:
 				error_text = await login_error.text
 				raise Exception(f"SRI login failed. Error message: {error_text}")
