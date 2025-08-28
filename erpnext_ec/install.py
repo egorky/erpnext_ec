@@ -15,10 +15,29 @@ def before_install():
 	#remove_old_columns()
 
 def after_install():
+	import subprocess
+	import sys
 	try:
 		print("Setting ErpNext Ecuador...")
-		# The pydoll library handles its own browser management,
-		# so the explicit installation step is no longer needed.
+
+		click.secho("Installing Chromium browser for automation...", fg="yellow")
+		try:
+			# First, update package list
+			subprocess.run(
+				["apt-get", "update"],
+				check=True, capture_output=True, text=True
+			)
+			# Then, install chromium
+			subprocess.run(
+				["apt-get", "install", "-y", "chromium-browser"],
+				check=True, capture_output=True, text=True
+			)
+			click.secho("Chromium browser installed successfully.", fg="green")
+		except subprocess.CalledProcessError as e:
+			click.secho(f"Chromium installation failed: {e.stderr}", fg="bright_red")
+			frappe.log_error(title="Chromium Install Failed", message=e.stderr)
+		except FileNotFoundError:
+			click.secho("apt-get not found. This script assumes a Debian-based system.", fg="bright_red")
 
 		click.secho("Thank you for installing ErpNext Ecuador!", fg="green")
 

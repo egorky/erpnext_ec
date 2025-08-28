@@ -36,6 +36,7 @@ async def _perform_sri_download_async(docname):
 	}
 
 	options = Options()
+	options.binary_location = "/usr/bin/chromium-browser"
 	options.add_argument('--window-size=1920,1080')
 	options.add_argument('--start-maximized')
 	options.add_argument('--disable-infobars')
