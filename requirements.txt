@@ -6,5 +6,5 @@ python-barcode
 dicttoxml
 xmltodict
 pycryptodome
-pydoll-python
+playwright
 pyvirtualdisplay

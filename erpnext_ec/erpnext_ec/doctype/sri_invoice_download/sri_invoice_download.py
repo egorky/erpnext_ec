@@ -4,9 +4,7 @@
 import frappe
 from frappe.model.document import Document
 from frappe import _
-import asyncio
 import os
-import random
 
 class SRIInvoiceDownload(Document):
 	pass
@@ -14,21 +12,24 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
-async def _perform_sri_download_async(docname):
+def _perform_sri_download(docname):
+	from playwright.sync_api import sync_playwright
 	from pyvirtualdisplay import Display
-	from pydoll.browser import Chrome
-	from pydoll.browser.options import ChromiumOptions as Options
-	from pydoll.exceptions import FailedToStartBrowser, ElementNotFound
 
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
-	timeout_seconds = settings.timeout or 60
+	timeout_ms = (settings.timeout or 60) * 1000
 
 	if not username or not password:
-		raise ValueError("SRI Username and Password must be set.")
+		doc.reload()
+		doc.status = "Failed"
+		doc.save(ignore_permissions=True)
+		frappe.db.commit()
+		frappe.log_error(title="SRI Download Failed", message="SRI Username and Password must be set.")
+		return
 
 	doc_type_map = {
 		"Factura": "1",
@@ -58,13 +59,32 @@ async def _perform_sri_download_async(docname):
 
 			# 1. Login
 			await tab.go_to(settings.sri_login_url, timeout=timeout_seconds)
+
+			# Fill both visible and hidden username fields
 			usuario_input = await tab.find(id='usuario', timeout=timeout_seconds)
 			await usuario_input.type_text(username)
+			hidden_username_input = await tab.find(id='username', timeout=timeout_seconds, raise_exc=False)
+			if hidden_username_input:
+				# pydoll can't type into hidden fields, so we use JS
+				await tab.execute_script(f"document.getElementById('username').value = '{username}';")
+
 			password_input = await tab.find(id='password', timeout=timeout_seconds)
 			await password_input.type_text(password)
-			await (await tab.find(id='kc-login', timeout=timeout_seconds)).click()
 
-			# 2. Navigate
+			login_button = await tab.find(id='kc-login', timeout=timeout_seconds)
+			await login_button.click()
+
+			# 2. Wait for navigation after login and check for errors
+			await tab.wait_for_navigation(timeout=timeout_seconds)
+
+			# Check if login failed by looking for an error message element
+			# This selector is a guess and may need to be adjusted
+			login_error = await tab.find(class_name='sri-error-notificacion', raise_exc=False, timeout=3)
+			if login_error:
+				error_text = await login_error.text
+				raise Exception(f"SRI login failed. Error message: {error_text}")
+
+			# 3. Navigate to the target download application
 			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
 
 			# Diagnostic screenshot

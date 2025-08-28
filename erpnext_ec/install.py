@@ -20,24 +20,18 @@ def after_install():
 	try:
 		print("Setting ErpNext Ecuador...")
 
-		click.secho("Installing Chromium browser for automation...", fg="yellow")
+		click.secho("Installing Playwright browsers for automation...", fg="yellow")
 		try:
-			# First, update package list
 			subprocess.run(
-				["apt-get", "update"],
+				[sys.executable, "-m", "playwright", "install", "--with-deps"],
 				check=True, capture_output=True, text=True
 			)
-			# Then, install chromium and xvfb
-			subprocess.run(
-				["apt-get", "install", "-y", "chromium-browser", "xvfb"],
-				check=True, capture_output=True, text=True
-			)
-			click.secho("Chromium browser and XVFB installed successfully.", fg="green")
+			click.secho("Playwright browsers installed successfully.", fg="green")
 		except subprocess.CalledProcessError as e:
-			click.secho(f"Chromium installation failed: {e.stderr}", fg="bright_red")
-			frappe.log_error(title="Chromium Install Failed", message=e.stderr)
+			click.secho(f"Playwright browser installation failed: {e.stderr}", fg="bright_red")
+			frappe.log_error(title="Playwright Install Failed", message=e.stderr)
 		except FileNotFoundError:
-			click.secho("apt-get not found. This script assumes a Debian-based system.", fg="bright_red")
+			click.secho("Playwright command not found. Please ensure 'playwright' is in requirements.txt.", fg="bright_red")
 
 		click.secho("Thank you for installing ErpNext Ecuador!", fg="green")
 
