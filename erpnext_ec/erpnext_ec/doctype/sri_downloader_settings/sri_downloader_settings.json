@@ -33,6 +33,13 @@
    "fieldname": "sri_password",
    "fieldtype": "Password",
    "label": "SRI Password"
+  },
+  {
+   "fieldname": "timeout",
+   "fieldtype": "Int",
+   "label": "Timeout (seconds)",
+   "default": 60,
+   "description": "Max time to wait for page operations. Default is 60 seconds."
   }
  ],
  "issingle": 1,

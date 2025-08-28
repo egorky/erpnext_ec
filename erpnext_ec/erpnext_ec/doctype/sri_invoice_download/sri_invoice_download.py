@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe import _
 
 class SRIInvoiceDownload(Document):
 	pass
@@ -10,46 +11,63 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
-def _perform_sri_download(settings, from_date, to_date):
+def _perform_sri_download(doc, settings):
 	from playwright.sync_api import sync_playwright
 	"""
 	This function contains the Playwright web scraping logic.
-	It logs in, navigates to the download page, and takes a screenshot.
+	It logs in, navigates, selects options, and takes a screenshot.
 	"""
-	# Get credentials securely
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
+	timeout_ms = (settings.timeout or 60) * 1000
+
+	if not username or not password:
+		frappe.throw(_("SRI Username and Password must be set in SRI Downloader Settings."))
+
+	# Mapping from DocType options to SRI form values
+	doc_type_map = {
+		"Factura": "1",
+		"Liquidación de compra de bienes y prestación de servicios": "2",
+		"Notas de Crédito": "3",
+		"Notas de Débito": "4",
+		"Comprobante de Retención": "6"
+	}
 
 	with sync_playwright() as p:
 		browser = p.chromium.launch(headless=True)
 		page = browser.new_page()
 
 		try:
-			# 1. Navigate to login page
+			# 1. Login
 			frappe.log_error("Navigating to SRI login page...")
-			page.goto(settings.sri_login_url, wait_until='networkidle')
-
-			# 2. Fill credentials and login
-			frappe.log_error("Filling login credentials...")
+			page.goto(settings.sri_login_url, timeout=timeout_ms)
 			page.locator("#usuario").fill(username)
 			page.locator("#password").fill(password)
 			page.locator("#kc-login").click()
-
-			# Wait for successful login navigation
-			page.wait_for_url("**/tuportal-internet/**", timeout=30000)
+			page.wait_for_load_state('networkidle', timeout=timeout_ms)
 			frappe.log_error("Login successful.")
 
-			# 3. Navigate to the target download application
+			# 2. Navigate to download page
 			frappe.log_error(f"Navigating to target URL: {settings.sri_target_url}")
-			page.goto(settings.sri_target_url, wait_until='networkidle')
+			page.goto(settings.sri_target_url, wait_until='networkidle', timeout=timeout_ms)
+			frappe.log_error("Navigation to download page successful.")
 
-			# 4. Take a screenshot to verify we reached the page
-			screenshot_path = frappe.get_site_path("public", "files", "sri_download_page.png")
+			# 3. Select download options
+			frappe.log_error("Selecting download parameters...")
+			page.select_option("#frmPrincipal\\:ano", label=str(doc.year))
+			page.select_option("#frmPrincipal\\:mes", value=str(doc.month))
+			page.select_option("#frmPrincipal\\:dia", value=str(doc.day))
+
+			doc_type_value = doc_type_map.get(doc.document_type)
+			if doc_type_value:
+				page.select_option("#frmPrincipal\\:cmbTipoComprobante", value=doc_type_value)
+
+			frappe.log_error(f"Parameters set: {doc.year}/{doc.month}/{doc.day}, Type: {doc.document_type}")
+
+			# 4. Take a screenshot to verify
+			screenshot_path = frappe.get_site_path("public", "files", "sri_download_page_with_options.png")
 			page.screenshot(path=screenshot_path, full_page=True)
 			frappe.log_error(f"Screenshot of download page saved to: {screenshot_path}")
-
-			# At this point, the user would need to solve reCAPTCHA and select dates.
-			# The logic to do that would be implemented here.
 
 		except Exception as e:
 			screenshot_path = frappe.get_site_path("public", "files", "sri_error.png")
@@ -73,7 +91,7 @@ def start_download(docname):
 		frappe.db.commit()
 
 		# Call the actual scraping function
-		_perform_sri_download(settings, doc.from_date, doc.to_date)
+		_perform_sri_download(doc, settings)
 
 		doc.status = "Completed"
 		doc.save()
