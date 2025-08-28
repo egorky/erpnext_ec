@@ -54,7 +54,10 @@ async def _perform_sri_download_async(docname):
 			frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
 			browser = Chrome(options=options)
 			tab = await browser.start()
-			frappe.log_error("Browser started successfully.")
+			await browser.set_window_bounds({
+				'left': 0, 'top': 0, 'width': 1920, 'height': 1080
+			})
+			frappe.log_error("Browser started and window bounds set successfully.")
 
 			await tab.go_to(settings.sri_login_url)
 			await asyncio.sleep(random.uniform(1, 3))
