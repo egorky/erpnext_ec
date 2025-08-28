@@ -27,12 +27,12 @@ def after_install():
 				["apt-get", "update"],
 				check=True, capture_output=True, text=True
 			)
-			# Then, install chromium
+			# Then, install chromium and xvfb
 			subprocess.run(
-				["apt-get", "install", "-y", "chromium-browser"],
+				["apt-get", "install", "-y", "chromium-browser", "xvfb"],
 				check=True, capture_output=True, text=True
 			)
-			click.secho("Chromium browser installed successfully.", fg="green")
+			click.secho("Chromium browser and XVFB installed successfully.", fg="green")
 		except subprocess.CalledProcessError as e:
 			click.secho(f"Chromium installation failed: {e.stderr}", fg="bright_red")
 			frappe.log_error(title="Chromium Install Failed", message=e.stderr)

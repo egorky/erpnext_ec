@@ -15,6 +15,7 @@ def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
 async def _perform_sri_download_async(docname):
+	from pyvirtualdisplay import Display
 	from pydoll.browser import Chrome
 	from pydoll.browser.options import ChromiumOptions as Options
 	from pydoll.exceptions import FailedToStartBrowser
@@ -49,14 +50,15 @@ async def _perform_sri_download_async(docname):
 
 	browser = None
 	tab = None
-	try:
-		frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
-		browser = Chrome(options=options)
-		tab = await browser.start()
-		frappe.log_error("Browser started successfully.")
+	with Display() as display:
+		try:
+			frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
+			browser = Chrome(options=options)
+			tab = await browser.start()
+			frappe.log_error("Browser started successfully.")
 
-		# ... (Automation logic as before) ...
-		await tab.go_to(settings.sri_login_url)
+			# ... (Automation logic as before) ...
+			await tab.go_to(settings.sri_login_url)
 		await asyncio.sleep(random.uniform(1, 3))
 		await (await tab.find(id='usuario')).type_text(username, delay=random.uniform(50, 150))
 		await (await tab.find(id='password')).type_text(password, delay=random.uniform(50, 150))
