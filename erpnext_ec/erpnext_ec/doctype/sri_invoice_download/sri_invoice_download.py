@@ -3,7 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import get_password
+from frappe.utils.password import get_password
 
 class SRIInvoiceDownload(Document):
 	pass
