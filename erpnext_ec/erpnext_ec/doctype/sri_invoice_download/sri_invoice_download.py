@@ -67,6 +67,13 @@ async def _perform_sri_download_async(docname):
 			# 2. Navigate
 			await tab.go_to(settings.sri_target_url, timeout=timeout_seconds)
 
+			# Diagnostic screenshot
+			diag_path = frappe.get_site_path("public", "files", f"sri_diag_{doc.name}.png")
+			body = await tab.find(tag_name='body')
+			if body:
+				await body.take_screenshot(path=diag_path)
+				frappe.log_error(f"Diagnostic screenshot saved to: {diag_path}")
+
 			# 3. Set parameters
 			await (await tab.query('[id="frmPrincipal:ano"]', timeout=timeout_seconds)).select(label=str(doc.year))
 			await (await tab.query('[id="frmPrincipal:mes"]', timeout=timeout_seconds)).select(value=str(doc.month))
