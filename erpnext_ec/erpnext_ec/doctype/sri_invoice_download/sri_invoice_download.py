@@ -51,7 +51,7 @@ async def _perform_sri_download_async(docname):
 	tab = None
 	try:
 		frappe.log_error(f"Attempting to launch browser with path: {options.binary_location}")
-		browser = await Chrome(options=options)
+		browser = Chrome(options=options)
 		tab = await browser.start()
 		frappe.log_error("Browser started successfully.")
 
