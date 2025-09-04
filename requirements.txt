@@ -6,3 +6,4 @@ python-barcode
 dicttoxml
 xmltodict
 pycryptodome
+playwright

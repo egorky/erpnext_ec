@@ -1,0 +1,76 @@
+{
+ "name": "SRI Invoice Download",
+ "naming_rule": "Autoname",
+ "autoname": "format:SRI-DL-{#####}",
+ "module": "Erpnext Ec",
+ "owner": "Administrator",
+ "engine": "InnoDB",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "share": 1,
+   "report": 1
+  }
+ ],
+ "fields": [
+  {
+   "fieldname": "year",
+   "fieldtype": "Select",
+   "label": "Year",
+   "options": "2025\n2024\n2023\n2022\n2021",
+   "reqd": 1,
+   "default": "2025"
+  },
+  {
+   "fieldname": "month",
+   "fieldtype": "Select",
+   "label": "Month",
+   "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12",
+   "reqd": 1
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "label": "Day (0 for All)",
+   "options": "0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31",
+   "default": "0",
+   "reqd": 1
+  },
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "label": "Document Type",
+   "options": "Factura\nLiquidación de compra de bienes y prestación de servicios\nNotas de Crédito\nNotas de Débito\nComprobante de Retención",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Pending\nIn Progress\nCompleted\nFailed",
+   "default": "Pending",
+   "read_only": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "hidden": 1
+  },
+  {
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "hidden": 1
+  }
+ ],
+ "track_changes": 1,
+ "issingle": 0,
+ "doctype": "DocType",
+ "istable": 0
+}

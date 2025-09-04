@@ -1,0 +1,48 @@
+{
+ "name": "SRI Downloader Settings",
+ "module": "Erpnext Ec",
+ "owner": "Administrator",
+ "engine": "InnoDB",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ],
+ "fields": [
+  {
+   "fieldname": "sri_login_url",
+   "fieldtype": "Data",
+   "label": "SRI Login URL",
+   "default": "https://srienlinea.sri.gob.ec/sri-en-linea/contribuyente/perfil"
+  },
+  {
+   "fieldname": "sri_target_url",
+   "fieldtype": "Data",
+   "label": "SRI Target URL (after login)",
+   "default": "https://srienlinea.sri.gob.ec/tuportal-internet/accederAplicacion.jspa?redireccion=57&idGrupo=55"
+  },
+  {
+   "fieldname": "sri_username",
+   "fieldtype": "Data",
+   "label": "SRI Username (RUC/C.I.)"
+  },
+  {
+   "fieldname": "sri_password",
+   "fieldtype": "Password",
+   "label": "SRI Password"
+  },
+  {
+   "fieldname": "timeout",
+   "fieldtype": "Int",
+   "label": "Timeout (seconds)",
+   "default": 60,
+   "description": "Max time to wait for page operations. Default is 60 seconds."
+  }
+ ],
+ "issingle": 1,
+ "doctype": "DocType",
+ "istable": 0
+}
