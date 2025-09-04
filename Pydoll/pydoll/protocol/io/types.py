@@ -1,0 +1,1 @@
+StreamHandle = str
