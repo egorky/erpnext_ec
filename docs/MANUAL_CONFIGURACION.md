@@ -98,3 +98,20 @@ Antes de que un documento pueda ser enviado exitosamente al SRI, el sistema vali
     -   **Solución:** Una factura debe tener un registro de pago asociado para poder ser enviada. Esto se puede hacer de dos maneras principales en ERPNext:
         -   **Opción A: Crear una Entrada de Pago.** Ve a `Contabilidad > Entrada de Pago`, crea un nuevo registro y aplícalo a la factura que deseas enviar. Esto es útil si la factura ya ha sido pagada total o parcialmente.
         -   **Opción B: Crear una Solicitud de Pago.** Desde la propia Factura de Venta, ve al menú `Crear > Solicitud de Pago`. Esto genera el registro necesario sin marcar la factura como pagada. Es la opción más común si solo necesitas cumplir el requisito para el envío al SRI.
+
+## Paso 8: Configurar Descarga de Documentos desde el SRI
+
+El módulo incluye una herramienta para descargar masivamente documentos electrónicos (Facturas, Retenciones, etc.) directamente desde el portal del SRI. Esta función es útil para la contabilidad de compras.
+
+1.  Ve a `Integraciones > Configuración del Descargador del SRI` (SRI Downloader Settings).
+2.  Rellena los siguientes campos:
+    -   **SRI Login URL:** La URL de inicio de sesión del SRI. Viene pre-llenada.
+    -   **SRI Target URL:** La URL a la que el sistema navegará después de iniciar sesión. Viene pre-llenada.
+    -   **SRI Username:** Tu RUC o C.I. de usuario del SRI.
+    -   **SRI Password:** Tu contraseña para el portal del SRI.
+    -   **Timeout (seconds):** Tiempo máximo de espera para las operaciones en la página. 60 segundos es un valor recomendado.
+    -   **Downloader Library (Librería de Descarga):** Esta opción te permite elegir la tecnología utilizada para la automatización del navegador.
+        -   **Playwright (por defecto):** Una librería de automatización robusta y ampliamente utilizada.
+        -   **Pydoll:** Una librería más nueva diseñada para simular el comportamiento humano de forma más precisa. **Selecciona esta opción si experimentas problemas con el CAPTCHA del SRI**, ya que `Pydoll` tiene más probabilidades de evitar ser detectado como un bot.
+
+Una vez configurado, puedes ir a `Integraciones > Descarga de Facturas SRI` (SRI Invoice Download) para crear una nueva solicitud de descarga, especificando el año, mes, día y tipo de documento que deseas obtener.

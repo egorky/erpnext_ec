@@ -7,3 +7,4 @@ dicttoxml
 xmltodict
 pycryptodome
 playwright
+pydoll-python

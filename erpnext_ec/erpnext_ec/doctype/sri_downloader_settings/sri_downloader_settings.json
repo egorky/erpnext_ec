@@ -40,6 +40,14 @@
    "label": "Timeout (seconds)",
    "default": 60,
    "description": "Max time to wait for page operations. Default is 60 seconds."
+  },
+  {
+   "fieldname": "downloader_library",
+   "fieldtype": "Select",
+   "label": "Downloader Library",
+   "options": "Playwright\nPydoll",
+   "default": "Playwright",
+   "description": "Choose the library to use for downloading documents. Pydoll may help bypass bot detection."
   }
  ],
  "issingle": 1,
