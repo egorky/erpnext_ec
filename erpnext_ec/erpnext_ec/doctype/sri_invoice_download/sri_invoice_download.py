@@ -85,7 +85,11 @@ async def _perform_sri_download_pydoll(docname):
 		# 1. Login and navigate
 		log_debug(f"Navigating to login URL: {settings.sri_login_url}")
 		await tab.go_to(settings.sri_login_url, timeout=timeout_s)
-		log_debug("Login page loaded. Filling credentials.")
+
+		log_debug("Login page loaded. Waiting 3 seconds for stability...")
+		await asyncio.sleep(3)
+
+		log_debug("Filling credentials.")
 		await (await tab.find("#usuario")).fill(username)
 		await (await tab.find("#password")).fill(password)
 		log_debug("Credentials filled. Clicking login button.")
