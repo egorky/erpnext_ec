@@ -96,10 +96,10 @@ async def _perform_sri_download_pydoll(docname):
 				try:
 					log_debug(f"Attempt {attempt + 1} to fill credentials.")
 					user_field = await tab.find(name="usuario")
-					await user_field.fill(username)
+					await user_field.type_keys(username)
 
 					pass_field = await tab.find(name="password")
-					await pass_field.fill(password)
+					await pass_field.type_keys(password)
 
 					log_debug("Credentials filled successfully.")
 					last_exception = None
