@@ -14,6 +14,27 @@ class SRIInvoiceDownload(Document):
 def _get_settings():
 	return frappe.get_doc("SRI Downloader Settings")
 
+def _get_chrome_executable_path():
+	"""
+	Dynamically finds the path to the Playwright-installed Chromium executable.
+	"""
+	try:
+		home_dir = os.path.expanduser('~')
+		playwright_cache_path = os.path.join(home_dir, '.cache', 'ms-playwright')
+
+		if not os.path.isdir(playwright_cache_path):
+			return None
+
+		for item in os.listdir(playwright_cache_path):
+			if item.startswith('chromium-') and os.path.isdir(os.path.join(playwright_cache_path, item)):
+				executable_path = os.path.join(playwright_cache_path, item, 'chrome-linux', 'chrome')
+				if os.path.exists(executable_path):
+					return executable_path
+		return None
+	except Exception:
+		# If any error occurs during path finding, return None safely.
+		return None
+
 async def _perform_sri_download_pydoll(docname):
 	from pydoll.browser.chromium import Chrome
 	from pydoll.browser.options import ChromiumOptions
@@ -44,10 +65,17 @@ async def _perform_sri_download_pydoll(docname):
 
 	log_debug("Setting Chromium options...")
 	options = ChromiumOptions()
+
+	chrome_path = _get_chrome_executable_path()
+	if not chrome_path:
+		log_debug("Chromium executable not found in Playwright cache.")
+		raise FileNotFoundError("Could not find Playwright's Chromium executable. Please ensure Playwright is installed correctly (`playwright install chromium`).")
+
+	options.binary_location = chrome_path
 	options.add_argument('--headless=new')
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-dev-shm-usage')
-	log_debug("Chromium options set.")
+	log_debug(f"Chromium options set with binary location: {options.binary_location}")
 
 	async with Chrome(options=options) as browser:
 		log_debug("Chrome launched. Starting new tab...")
@@ -237,10 +265,9 @@ def _perform_sri_download(docname):
 		doc.status = "Failed"
 		doc.save()
 		frappe.db.commit()
-		# The actual error logging (with screenshot for Playwright) is now handled
-		# within the respective download functions. This block just catches the final
-		# exception to update the status.
-		# We don't log here to avoid duplicate log entries.
+		# Log any exception that was not caught and logged by the specific downloaders.
+		# This is crucial for debugging failures during the initialization phase (e.g., browser not found).
+		frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
 
 
 @frappe.whitelist()
