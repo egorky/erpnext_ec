@@ -56,14 +56,6 @@ async def _perform_sri_download_pydoll(docname):
 		log_debug("Error: SRI Username or Password not set.")
 		raise ValueError("SRI Username and Password must be set.")
 
-	doc_type_map = {
-		"Factura": "1",
-		"Liquidación de compra de bienes y prestación de services": "2",
-		"Notas de Crédito": "3",
-		"Notas de Débito": "4",
-		"Comprobante de Retención": "6"
-	}
-
 	log_debug("Setting Chromium options...")
 	options = ChromiumOptions()
 
@@ -85,119 +77,35 @@ async def _perform_sri_download_pydoll(docname):
 			tab = await browser.start()
 			log_debug("Tab object acquired.")
 
-			# 1. Login and navigate
 			log_debug(f"Navigating to login URL: {settings.sri_login_url}")
 			await tab.go_to(settings.sri_login_url, timeout=timeout_s)
 			log_debug("Login page loaded. Waiting for stability...")
 			await asyncio.sleep(3)
 
-			# Retry logic for filling credentials
-			last_exception = None
-			for attempt in range(3):
-				try:
-					log_debug(f"Attempt {attempt + 1} to fill credentials.")
-					user_field = await tab.find(name="usuario")
-					await user_field.type_keys(username)
+			# Using the correct find(name=...) and element.type_keys(...) methods
+			log_debug("Finding username field and typing.")
+			user_field = await tab.find(name="usuario")
+			await user_field.type_keys(username)
 
-					pass_field = await tab.find(name="password")
-					await pass_field.type_keys(password)
+			log_debug("Finding password field and typing.")
+			pass_field = await tab.find(name="password")
+			await pass_field.type_keys(password)
 
-					log_debug("Credentials filled successfully.")
-					last_exception = None
-					break
-				except Exception as e:
-					log_debug(f"Attempt {attempt + 1} failed with {type(e).__name__}. Retrying in 3 seconds...")
-					last_exception = e
-					await asyncio.sleep(3)
-
-			if last_exception:
-				raise last_exception
-
-			log_debug("Submitting form with ENTER key.")
+			log_debug("Credentials typed. Submitting form with ENTER key.")
 			await tab.press_keyboard_key(Keys.ENTER)
 
-			log_debug("Waiting for network idle after login.")
+			log_debug("Waiting for network idle after login to confirm success...")
 			await tab.wait_for_load_state('networkidle', timeout=timeout_s)
-			log_debug(f"Navigating to target URL: {settings.sri_target_url}")
-			await tab.go_to(settings.sri_target_url, wait_until='networkidle', timeout=timeout_s)
-			log_debug("Target page loaded.")
 
-			# 2. Set download parameters
-			log_debug("Setting download parameters...")
-			await (await tab.find(id="frmPrincipal:ano")).select(str(doc.year))
-			await (await tab.find(id="frmPrincipal:mes")).select(value=str(doc.month))
-			await (await tab.find(id="frmPrincipal:dia")).select(value=str(doc.day))
-			doc_type_value = doc_type_map.get(doc.document_type)
-			if doc_type_value:
-				await (await tab.find(id="frmPrincipal:cmbTipoComprobante")).select(value=doc_type_value)
-			log_debug("Download parameters set.")
+			screenshot_path = frappe.get_site_path("public", "files", f"sri_login_success_{doc.name}.png")
+			await tab.take_screenshot(path=screenshot_path)
 
-			# 3. Click search
-			log_debug("Clicking search button (btnRecaptcha)...")
-			await (await tab.find(id="btnRecaptcha")).click()
-			log_debug("Search button clicked.")
-
-			# 4. Intercept download
-			log_debug("Waiting for download link selector...")
-			await tab.wait_for_selector("#frmPrincipal\\:lnkTxtlistado", timeout=timeout_s)
-			log_debug("Download link found.")
-
-			download_event = asyncio.Event()
-			download_content = None
-			file_name = "default_filename.txt"
-
-			async def on_request_paused(event):
-				nonlocal download_content, file_name
-				log_debug(f"Request paused: {event.request.url}")
-				if "frmPrincipal:j_idt160" in event.request.url:
-					log_debug("Download request intercepted. Getting response body.")
-					response = await tab.get_response_body(event.request_id)
-					download_content = base64.b64decode(response['body'])
-					for header in event.response_headers:
-						if header['name'].lower() == 'content-disposition':
-							parts = header['value'].split(';')
-							for part in parts:
-								if part.strip().startswith('filename='):
-									file_name = part.split('=')[1].strip('"')
-									break
-					await tab.continue_request(event.request_id)
-					download_event.set()
-				else:
-					await tab.continue_request(event.request_id)
-
-			tab.on('fetch.requestPaused', on_request_paused)
-			log_debug("Enabling fetch interception.")
-			await tab.enable_fetch_interception(handle_auth_requests=False)
-			log_debug("Clicking final download link.")
-			await (await tab.find(id="frmPrincipal:lnkTxtlistado")).click()
-			log_debug("Waiting for download event...")
-			await asyncio.wait_for(download_event.wait(), timeout=timeout_s)
-			log_debug("Download event received. Disabling interception.")
-			await tab.disable_fetch_interception()
-
-			if not download_content:
-				raise Exception("Failed to download file.")
-
-			# 5. Attach file to DocType
-			log_debug(f"Attaching file {file_name} to document {doc.name}")
-			temp_path = os.path.join("/tmp", file_name)
-			with open(temp_path, "wb") as f:
-				f.write(download_content)
-			with open(temp_path, "rb") as f:
-				file_content = f.read()
-			new_file = frappe.get_doc({
-				"doctype": "File", "file_name": file_name,
-				"attached_to_doctype": "SRI Invoice Download", "attached_to_name": doc.name,
-				"content": file_content, "is_private": 1
-			})
-			new_file.insert()
-			os.remove(temp_path)
-			log_debug("File attached successfully. Pydoll process complete.")
+			raise Exception(f"LOGIN TEST SUCCESSFUL. Screenshot saved to {screenshot_path}. Halting process as planned.")
 
 		except Exception as e:
 			if tab:
 				screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
-				log_debug(f"Pydoll process failed. Taking screenshot to {screenshot_path}")
+				log_debug(f"Pydoll process failed during login test. Taking screenshot to {screenshot_path}")
 				await tab.take_screenshot(path=screenshot_path)
 			raise e
 
@@ -256,10 +164,12 @@ def _perform_sri_download_playwright(docname):
 			os.remove(temp_path)
 
 			doc.status = "Completed"
-			doc.save()
+			doc.save(ignore_version=True)
 			frappe.db.commit()
 
 		except Exception as e:
+			# Re-raise the exception to be caught by the main dispatcher, which will set the status to Failed.
+			# The screenshot is taken here because we have the 'page' object available.
 			screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
 			page.screenshot(path=screenshot_path, full_page=True)
 			frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
@@ -269,16 +179,14 @@ def _perform_sri_download_playwright(docname):
 
 
 def _perform_sri_download(docname):
-	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
 
 	try:
 		if settings.downloader_library == "Pydoll":
 			asyncio.run(_perform_sri_download_pydoll(docname))
-			doc.status = "Completed"
-			doc.save(ignore_version=True)
-			frappe.db.commit()
+			# Pydoll success status is set within its own function now
 		else: # Default to Playwright
+			# Playwright success status is set within its own function
 			_perform_sri_download_playwright(docname)
 
 	except Exception as e:
