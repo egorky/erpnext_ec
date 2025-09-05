@@ -38,6 +38,7 @@ def _get_chrome_executable_path():
 async def _perform_sri_download_pydoll(docname):
         from pydoll.browser.chromium import Chrome
         from pydoll.browser.options import ChromiumOptions
+	from pydoll.constants import Keys
 
         def log_debug(message):
                 frappe.log_error(title="Pydoll Debug", message=message)
@@ -112,9 +113,8 @@ async def _perform_sri_download_pydoll(docname):
                         if last_exception:
                                 raise last_exception
 
-                        log_debug("Clicking login button.")
-                        login_button = await tab.find(id="kc-login")
-                        await login_button.click()
+                        log_debug("Submitting form with ENTER key on password field.")
+                        await pass_field.press_keyboard_key(Keys.ENTER)
 
                         log_debug("Waiting 5 seconds for page to load after login.")
                         await asyncio.sleep(5)
