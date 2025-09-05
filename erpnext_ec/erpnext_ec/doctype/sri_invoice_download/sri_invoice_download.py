@@ -175,6 +175,16 @@ def _perform_sri_download_playwright(docname):
 			})
 			new_file.insert()
 			os.remove(temp_path)
+
+			doc.status = "Completed"
+			doc.save()
+			frappe.db.commit()
+
+		except Exception as e:
+			screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
+			page.screenshot(path=screenshot_path, full_page=True)
+			frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
+			raise e # Re-raise the exception to be caught by the main dispatcher
 		finally:
 			browser.close()
 
@@ -186,20 +196,20 @@ def _perform_sri_download(docname):
 	try:
 		if settings.downloader_library == "Pydoll":
 			asyncio.run(_perform_sri_download_pydoll(docname))
+			doc.status = "Completed"
+			doc.save()
+			frappe.db.commit()
 		else: # Default to Playwright
 			_perform_sri_download_playwright(docname)
-
-		doc.status = "Completed"
-		doc.save()
-		frappe.db.commit()
 
 	except Exception as e:
 		doc.status = "Failed"
 		doc.save()
 		frappe.db.commit()
-		# Pydoll doesn't have a direct screenshot method in the same way,
-		# so we log the error without a screenshot for now.
-		frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
+		# The actual error logging (with screenshot for Playwright) is now handled
+		# within the respective download functions. This block just catches the final
+		# exception to update the status.
+		# We don't log here to avoid duplicate log entries.
 
 
 @frappe.whitelist()
