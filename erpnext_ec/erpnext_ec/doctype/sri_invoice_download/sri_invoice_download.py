@@ -18,14 +18,20 @@ async def _perform_sri_download_pydoll(docname):
 	from pydoll.browser.chromium import Chrome
 	from pydoll.browser.options import ChromiumOptions
 
+	def log_debug(message):
+		frappe.log_error(title="Pydoll Debug", message=message)
+
+	log_debug("Starting Pydoll download process...")
 	doc = frappe.get_doc("SRI Invoice Download", docname)
 	settings = _get_settings()
+	log_debug("Settings loaded.")
 
 	username = settings.sri_username
 	password = settings.get_password("sri_password")
 	timeout_s = settings.timeout or 60
 
 	if not username or not password:
+		log_debug("Error: SRI Username or Password not set.")
 		raise ValueError("SRI Username and Password must be set.")
 
 	doc_type_map = {
@@ -36,55 +42,73 @@ async def _perform_sri_download_pydoll(docname):
 		"Comprobante de Retención": "6"
 	}
 
+	log_debug("Setting Chromium options...")
 	options = ChromiumOptions()
 	options.add_argument('--headless=new')
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-dev-shm-usage')
+	log_debug("Chromium options set.")
 
 	async with Chrome(options=options) as browser:
+		log_debug("Chrome launched. Starting new tab...")
 		tab = await browser.start()
+		log_debug("Tab started.")
 
 		# 1. Login and navigate
+		log_debug(f"Navigating to login URL: {settings.sri_login_url}")
 		await tab.go_to(settings.sri_login_url, timeout=timeout_s)
+		log_debug("Login page loaded. Filling credentials.")
 		await (await tab.find("#usuario")).fill(username)
 		await (await tab.find("#password")).fill(password)
+		log_debug("Credentials filled. Clicking login button.")
 		await (await tab.find("#kc-login")).click()
 
+		log_debug("Waiting for network idle after login.")
 		await tab.wait_for_load_state('networkidle', timeout=timeout_s)
+		log_debug(f"Navigating to target URL: {settings.sri_target_url}")
 		await tab.go_to(settings.sri_target_url, wait_until='networkidle', timeout=timeout_s)
+		log_debug("Target page loaded.")
 
 		# 2. Set download parameters
+		log_debug("Setting download parameters...")
 		await (await tab.find("#frmPrincipal\\:ano")).select(str(doc.year))
 		await (await tab.find("#frmPrincipal\\:mes")).select(value=str(doc.month))
 		await (await tab.find("#frmPrincipal\\:dia")).select(value=str(doc.day))
 		doc_type_value = doc_type_map.get(doc.document_type)
 		if doc_type_value:
 			await (await tab.find("#frmPrincipal\\:cmbTipoComprobante")).select(value=doc_type_value)
+		log_debug("Download parameters set.")
 
 		# 3. Click search (relying on Pydoll to handle the reCAPTCHA)
+		log_debug("Clicking search button (btnRecaptcha)...")
 		await (await tab.find("#btnRecaptcha")).click()
+		log_debug("Search button clicked.")
 
 		# 4. Intercept download
+		log_debug("Waiting for download link selector...")
 		await tab.wait_for_selector("#frmPrincipal\\:lnkTxtlistado", timeout=timeout_s)
+		log_debug("Download link found.")
 
 		download_event = asyncio.Event()
 		download_content = None
-		file_name = "default_filename.txt" # Default filename
+		file_name = "default_filename.txt"
 
 		async def on_request_paused(event):
 			nonlocal download_content, file_name
-			# A simple check to see if it's our file download request
+			log_debug(f"Request paused: {event.request.url}")
 			if "frmPrincipal:j_idt160" in event.request.url:
+				log_debug("Download request intercepted. Getting response body.")
 				response = await tab.get_response_body(event.request_id)
 				download_content = base64.b64decode(response['body'])
 
-				# Try to get filename from content-disposition header
 				for header in event.response_headers:
 					if header['name'].lower() == 'content-disposition':
+						log_debug(f"Found Content-Disposition header: {header['value']}")
 						parts = header['value'].split(';')
 						for part in parts:
 							if part.strip().startswith('filename='):
 								file_name = part.split('=')[1].strip('"')
+								log_debug(f"Extracted filename: {file_name}")
 								break
 
 				await tab.continue_request(event.request_id)
@@ -93,17 +117,23 @@ async def _perform_sri_download_pydoll(docname):
 				await tab.continue_request(event.request_id)
 
 		tab.on('fetch.requestPaused', on_request_paused)
+		log_debug("Enabling fetch interception.")
 		await tab.enable_fetch_interception(handle_auth_requests=False)
 
+		log_debug("Clicking final download link.")
 		await (await tab.find("#frmPrincipal\\:lnkTxtlistado")).click()
 
+		log_debug("Waiting for download event...")
 		await asyncio.wait_for(download_event.wait(), timeout=timeout_s)
+		log_debug("Download event received. Disabling interception.")
 		await tab.disable_fetch_interception()
 
 		if not download_content:
+			log_debug("Error: Download content is empty.")
 			raise Exception("Failed to download file.")
 
 		# 5. Attach file to DocType
+		log_debug(f"Attaching file {file_name} to document {doc.name}")
 		temp_path = os.path.join("/tmp", file_name)
 		with open(temp_path, "wb") as f:
 			f.write(download_content)
@@ -121,6 +151,7 @@ async def _perform_sri_download_pydoll(docname):
 		})
 		new_file.insert()
 		os.remove(temp_path)
+		log_debug("File attached successfully. Pydoll process complete.")
 
 
 def _perform_sri_download_playwright(docname):
