@@ -38,7 +38,6 @@ def _get_chrome_executable_path():
 async def _perform_sri_download_pydoll(docname):
 	from pydoll.browser.chromium import Chrome
 	from pydoll.browser.options import ChromiumOptions
-	from pydoll.constants import By
 
 	def log_debug(message):
 		frappe.log_error(title="Pydoll Debug", message=message)
@@ -96,10 +95,10 @@ async def _perform_sri_download_pydoll(docname):
 			for attempt in range(3):
 				try:
 					log_debug(f"Attempt {attempt + 1} to fill credentials.")
-					user_field = await tab.find(by=By.CSS_SELECTOR, value="input[name='usuario']")
+					user_field = await tab.find(name="usuario")
 					await user_field.fill(username)
 
-					pass_field = await tab.find(by=By.CSS_SELECTOR, value="input[name='password']")
+					pass_field = await tab.find(name="password")
 					await pass_field.fill(password)
 
 					log_debug("Credentials filled successfully.")
@@ -114,7 +113,7 @@ async def _perform_sri_download_pydoll(docname):
 				raise last_exception
 
 			log_debug("Clicking login button.")
-			login_button = await tab.find(by=By.CSS_SELECTOR, value="#kc-login")
+			login_button = await tab.find(id="kc-login")
 			await login_button.click()
 
 			log_debug("Waiting for network idle after login.")
@@ -125,17 +124,17 @@ async def _perform_sri_download_pydoll(docname):
 
 			# 2. Set download parameters
 			log_debug("Setting download parameters...")
-			await (await tab.find(by=By.CSS_SELECTOR, value="#frmPrincipal\\:ano")).select(str(doc.year))
-			await (await tab.find(by=By.CSS_SELECTOR, value="#frmPrincipal\\:mes")).select(value=str(doc.month))
-			await (await tab.find(by=By.CSS_SELECTOR, value="#frmPrincipal\\:dia")).select(value=str(doc.day))
+			await (await tab.find(id="frmPrincipal:ano")).select(str(doc.year))
+			await (await tab.find(id="frmPrincipal:mes")).select(value=str(doc.month))
+			await (await tab.find(id="frmPrincipal:dia")).select(value=str(doc.day))
 			doc_type_value = doc_type_map.get(doc.document_type)
 			if doc_type_value:
-				await (await tab.find(by=By.CSS_SELECTOR, value="#frmPrincipal\\:cmbTipoComprobante")).select(value=doc_type_value)
+				await (await tab.find(id="frmPrincipal:cmbTipoComprobante")).select(value=doc_type_value)
 			log_debug("Download parameters set.")
 
 			# 3. Click search
 			log_debug("Clicking search button (btnRecaptcha)...")
-			await (await tab.find(by=By.CSS_SELECTOR, value="#btnRecaptcha")).click()
+			await (await tab.find(id="btnRecaptcha")).click()
 			log_debug("Search button clicked.")
 
 			# 4. Intercept download
@@ -170,7 +169,7 @@ async def _perform_sri_download_pydoll(docname):
 			log_debug("Enabling fetch interception.")
 			await tab.enable_fetch_interception(handle_auth_requests=False)
 			log_debug("Clicking final download link.")
-			await (await tab.find(by=By.CSS_SELECTOR, value="#frmPrincipal\\:lnkTxtlistado")).click()
+			await (await tab.find(id="frmPrincipal:lnkTxtlistado")).click()
 			log_debug("Waiting for download event...")
 			await asyncio.wait_for(download_event.wait(), timeout=timeout_s)
 			log_debug("Download event received. Disabling interception.")
