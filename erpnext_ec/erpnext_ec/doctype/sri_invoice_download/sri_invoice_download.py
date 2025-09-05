@@ -256,14 +256,17 @@ def _perform_sri_download(docname):
 		if settings.downloader_library == "Pydoll":
 			asyncio.run(_perform_sri_download_pydoll(docname))
 			doc.status = "Completed"
-			doc.save()
+			doc.save(ignore_version=True)
 			frappe.db.commit()
 		else: # Default to Playwright
 			_perform_sri_download_playwright(docname)
 
 	except Exception as e:
-		doc.status = "Failed"
-		doc.save()
+		# Use ignore_version=True to prevent TimestampMismatchError if the doc was
+		# modified while the background job was running.
+		doc_to_fail = frappe.get_doc("SRI Invoice Download", docname)
+		doc_to_fail.status = "Failed"
+		doc_to_fail.save(ignore_version=True)
 		frappe.db.commit()
 		# Log any exception that was not caught and logged by the specific downloaders.
 		# This is crucial for debugging failures during the initialization phase (e.g., browser not found).
