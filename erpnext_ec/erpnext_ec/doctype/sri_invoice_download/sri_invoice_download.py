@@ -97,10 +97,10 @@ async def _perform_sri_download_pydoll(docname):
                                 try:
                                         log_debug(f"Attempt {attempt + 1} to fill credentials.")
                                         user_field = await tab.find(name="usuario")
-                                        await user_field.type_keys(username)
+                                        await user_field.type_text(username)
 
                                         pass_field = await tab.find(name="password")
-                                        await pass_field.type_keys(password)
+                                        await pass_field.type_text(password)
 
                                         log_debug("Credentials filled successfully.")
                                         last_exception = None
@@ -113,8 +113,10 @@ async def _perform_sri_download_pydoll(docname):
                         if last_exception:
                                 raise last_exception
 
-                        log_debug("Submitting form with ENTER key on password field.")
-                        await pass_field.press_keyboard_key(Key.ENTER)
+                        log_debug("Focusing login button and submitting with ENTER.")
+                        login_button = await tab.find(id="kc-login")
+                        await login_button.focus()
+                        await tab.press_keyboard_key(Key.ENTER)
 
                         log_debug("Waiting 5 seconds for page to load after login.")
                         await asyncio.sleep(5)
