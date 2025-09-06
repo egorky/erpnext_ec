@@ -38,7 +38,6 @@ def _get_chrome_executable_path():
 async def _perform_sri_download_pydoll(docname):
         from pydoll.browser.chromium import Chrome
         from pydoll.browser.options import ChromiumOptions
-        from pydoll.constants import Key
 
         def log_debug(message):
                 frappe.log_error(title="Pydoll Debug", message=message)
@@ -97,10 +96,10 @@ async def _perform_sri_download_pydoll(docname):
                                 try:
                                         log_debug(f"Attempt {attempt + 1} to fill credentials.")
                                         user_field = await tab.find(name="usuario")
-                                        await user_field.type_text(username)
+                                        await user_field.type_keys(username)
 
                                         pass_field = await tab.find(name="password")
-                                        await pass_field.type_text(password)
+                                        await pass_field.type_keys(password)
 
                                         log_debug("Credentials filled successfully.")
                                         last_exception = None
@@ -113,10 +112,12 @@ async def _perform_sri_download_pydoll(docname):
                         if last_exception:
                                 raise last_exception
 
-                        log_debug("Focusing login button and submitting with ENTER.")
+                        log_debug("Finding login button and waiting for it to be interactable.")
                         login_button = await tab.find(id="kc-login")
-                        await login_button.focus()
-                        await tab.press_keyboard_key(Key.ENTER)
+                        await login_button.wait_until(is_interactable=True, timeout=10)
+
+                        log_debug("Clicking login button.")
+                        await login_button.click()
 
                         log_debug("Waiting 5 seconds for page to load after login.")
                         await asyncio.sleep(5)
