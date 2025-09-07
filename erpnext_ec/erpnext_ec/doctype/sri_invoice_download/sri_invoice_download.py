@@ -380,14 +380,122 @@ def _perform_sri_download_camoufox(docname):
 		'navigator.product': 'Gecko',
 		'navigator.productSub': '20030107',
 		'navigator.maxTouchPoints': 10,
-		# WebGL Spoofing
-		'webGl:renderer': 'Intel Iris Pro OpenGL Engine',
-		'webGl:vendor': 'Intel Inc.',
+
 		# Battery Status Spoofing
 		'battery:charging': True,
 		'battery:level': 0.85,
 		'battery:chargingTime': 3600,
-		'battery:dischargingTime': 'Infinity',
+		'battery:dischargingTime': 10.00,
+
+		# Comprehensive WebGL Spoofing
+		"webGl:renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A6) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+		"webGl:vendor": "Google Inc. (Intel)",
+		"webGl:contextAttributes": {
+			"alpha": True, "antialias": True, "depth": True, "desynchronized": False,
+			"failIfMajorPerformanceCaveat": False, "powerPreference": "default", "premultipliedAlpha": True,
+			"preserveDrawingBuffer": False, "stencil": False, "xrCompatible": False
+		},
+		"webGl:supportedExtensions": [
+			"ANGLE_instanced_arrays", "EXT_blend_minmax", "EXT_clip_control", "EXT_color_buffer_half_float",
+			"EXT_depth_clamp", "EXT_disjoint_timer_query", "EXT_float_blend", "EXT_frag_depth",
+			"EXT_polygon_offset_clamp", "EXT_shader_texture_lod", "EXT_texture_compression_bptc",
+			"EXT_texture_compression_rgtc", "EXT_texture_filter_anisotropic", "EXT_texture_mirror_clamp_to_edge",
+			"EXT_sRGB", "KHR_parallel_shader_compile", "OES_element_index_uint", "OES_fbo_render_mipmap",
+			"OES_standard_derivatives", "OES_texture_float", "OES_texture_float_linear", "OES_texture_half_float",
+			"OES_texture_half_float_linear", "OES_vertex_array_object", "WEBGL_blend_func_extended",
+			"WEBGL_color_buffer_float", "WEBGL_compressed_texture_s3tc", "WEBGL_compressed_texture_s3tc_srgb",
+			"WEBGL_debug_renderer_info", "WEBGL_debug_shaders", "WEBGL_depth_texture", "WEBGL_draw_buffers",
+			"WEBGL_lose_context", "WEBGL_multi_draw", "WEBGL_polygon_mode"
+		],
+		"webGl:parameters": {
+			"2849": 1, "2884": False, "2885": 1029, "2886": 2305, "2928": [0, 1], "2929": False, "2930": True,
+			"2931": 1, "2932": 513, "2960": False, "2961": 0, "2962": 519, "2963": 4294967295, "2964": 7680,
+			"2965": 7680, "2966": 7680, "2967": 0, "2968": 4294967295, "2978": [0, 0, 256, 256], "3024": True,
+			"3042": False, "3074": None, "3088": [0, 0, 256, 256], "3089": False, "3106": [0, 0, 0, 0],
+			"3107": [True, True, True, True], "3314": None, "3315": None, "3316": None, "3317": 4, "3330": None,
+			"3331": None, "3332": None, "3333": 4, "3379": 16384, "3386": [32767, 32767], "3408": 4, "3410": 8,
+			"3411": 8, "3412": 8, "3413": 8, "3414": 24, "3415": 0, "7936": "WebKit", "7937": "WebKit WebGL",
+			"7938": "WebGL 1.0 (OpenGL ES 2.0 Chromium)", "10752": 0, "32773": [0, 0, 0, 0], "32777": 32774,
+			"32823": False, "32824": 0, "32873": None, "32877": None, "32878": None, "32883": None, "32926": False,
+			"32928": False, "32936": 1, "32937": 4, "32938": 1, "32939": False, "32968": 0, "32969": 1, "32970": 0,
+			"32971": 1, "33000": None, "33001": None, "33170": 4352, "33901": [1, 1024], "33902": [1, 1],
+			"34016": 33984, "34024": 16384, "34045": None, "34047": None, "34068": None, "34076": 16384,
+			"34467": None, "34816": 519, "34817": 7680, "34818": 7680, "34819": 7680, "34852": None, "34853": None,
+			"34854": None, "34855": None, "34856": None, "34857": None, "34858": None, "34859": None, "34860": None,
+			"34877": 32774, "34921": 16, "34930": 16, "34964": None, "34965": None, "35071": None, "35076": None,
+			"35077": None, "35371": None, "35373": None, "35374": None, "35375": None, "35376": None, "35377": None,
+			"35379": None, "35380": None, "35657": None, "35658": None, "35659": None, "35660": 16, "35661": 32,
+			"35723": None, "35724": "WebGL GLSL ES 1.0 (OpenGL ES GLSL ES 1.0 Chromium)", "35725": None,
+			"35738": 5121, "35739": 6408, "35968": None, "35977": None, "35978": None, "35979": None, "36003": 0,
+			"36004": 4294967295, "36005": 4294967295, "36006": None, "36007": None, "36063": None, "36183": None,
+			"36203": None, "36345": None, "36347": 4096, "36348": 30, "36349": 1024, "36387": None, "36388": None,
+			"36392": None, "36795": None, "37137": None, "37154": None, "37157": None, "37440": False,
+			"37441": False, "37443": 37444, "37444": None, "37445": "Google Inc. (Intel)",
+			"37446": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A6) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+			"37447": None, "38449": None
+		},
+		"webGl:shaderPrecisionFormats": {
+			"35633,36336": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35633,36337": {"rangeMin": 127, "rangeMax": 127, "precision": 23},
+			"35633,36338": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35633,36339": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35633,36340": {"rangeMin": 31, "rangeMax": 30, "precision": 0}, "35633,36341": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35632,36336": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35632,36337": {"rangeMin": 127, "rangeMax": 127, "precision": 23},
+			"35632,36338": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35632,36339": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35632,36340": {"rangeMin": 31, "rangeMax": 30, "precision": 0}, "35632,36341": {"rangeMin": 31, "rangeMax": 30, "precision": 0}
+		},
+		"webGl2:renderer": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A6) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+		"webGl2:vendor": "Google Inc. (Intel)",
+		"webGl2:contextAttributes": {
+			"alpha": True, "antialias": True, "depth": True, "desynchronized": False, "failIfMajorPerformanceCaveat": False,
+			"powerPreference": "default", "premultipliedAlpha": True, "preserveDrawingBuffer": False, "stencil": False,
+			"xrCompatible": False
+		},
+		"webGl2:supportedExtensions": [
+			"EXT_clip_control", "EXT_color_buffer_float", "EXT_color_buffer_half_float", "EXT_conservative_depth",
+			"EXT_depth_clamp", "EXT_disjoint_timer_query_webgl2", "EXT_float_blend", "EXT_polygon_offset_clamp",
+			"EXT_render_snorm", "EXT_texture_compression_bptc", "EXT_texture_compression_rgtc",
+			"EXT_texture_filter_anisotropic", "EXT_texture_mirror_clamp_to_edge", "EXT_texture_norm16",
+			"KHR_parallel_shader_compile", "NV_shader_noperspective_interpolation", "OES_draw_buffers_indexed",
+			"OES_sample_variables", "OES_shader_multisample_interpolation", "OES_texture_float_linear",
+			"OVR_multiview2", "WEBGL_blend_func_extended", "WEBGL_clip_cull_distance",
+			"WEBGL_compressed_texture_s3tc", "WEBGL_compressed_texture_s3tc_srgb", "WEBGL_debug_renderer_info",
+			"WEBGL_debug_shaders", "WEBGL_lose_context", "WEBGL_multi_draw", "WEBGL_polygon_mode",
+			"WEBGL_provoking_vertex", "WEBGL_stencil_texturing"
+		],
+		"webGl2:parameters": {
+			"2849": 1, "2884": False, "2885": 1029, "2886": 2305, "2928": [0, 1], "2929": False, "2930": True,
+			"2931": 1, "2932": 513, "2960": False, "2961": 0, "2962": 519, "2963": 4294967295, "2964": 7680,
+			"2965": 7680, "2966": 7680, "2967": 0, "2968": 4294967295, "2978": [0, 0, 256, 256], "3024": True,
+			"3042": False, "3074": 1029, "3088": [0, 0, 256, 256], "3089": False, "3106": [0, 0, 0, 0],
+			"3107": [True, True, True, True], "3314": 0, "3315": 0, "3316": 0, "3317": 4, "3330": 0, "3331": 0,
+			"3332": 0, "3333": 4, "3379": 16384, "3386": [32767, 32767], "3408": 4, "3410": 8, "3411": 8,
+			"3412": 8, "3413": 8, "3414": 24, "3415": 0, "7936": "WebKit", "7937": "WebKit WebGL",
+			"7938": "WebGL 2.0 (OpenGL ES 3.0 Chromium)", "10752": 0, "32773": [0, 0, 0, 0], "32777": 32774,
+			"32823": False, "32824": 0, "32873": None, "32877": 0, "32878": 0, "32883": 2048, "32926": False,
+			"32928": False, "32936": 1, "32937": 4, "32938": 1, "32939": False, "32968": 0, "32969": 1, "32970": 0,
+			"32971": 1, "33000": 2147483647, "33001": 2147483647, "33170": 4352, "33901": [1, 1024],
+			"33902": [1, 1], "34016": 33984, "34024": 16384, "34045": 2, "34047": None, "34068": None,
+			"34076": 16384, "34467": None, "34816": 519, "34817": 7680, "34818": 7680, "34819": 7680, "34852": 8,
+			"34853": 1029, "34854": 1029, "34855": 1029, "34856": 1029, "34857": 1029, "34858": 1029, "34859": 1029,
+			"34860": 1029, "34877": 32774, "34921": 16, "34930": 16, "34964": None, "34965": None, "35071": 2048,
+			"35076": -8, "35077": 7, "35371": 12, "35373": 12, "35374": 24, "35375": 24, "35376": 65536,
+			"35377": 212992, "35379": 200704, "35380": 256, "35657": 4096, "35658": 16384, "35659": 120,
+			"35660": 16, "35661": 32, "35723": 4352, "35724": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+			"35725": None, "35738": 5121, "35739": 6408, "35968": 4, "35977": False, "35978": 120, "35979": 4,
+			"36003": 0, "36004": 4294967295, "36005": 4294967295, "36006": None, "36007": None, "36063": 8,
+			"36183": 16, "36203": 4294967294, "36345": None, "36347": 4096, "36348": 30, "36349": 1024,
+			"36387": False, "36388": False, "36392": None, "36795": None, "37137": 0, "37154": 120, "37157": 120,
+			"37440": False, "37441": False, "37443": 37444, "37444": None, "37445": "Google Inc. (Intel)",
+			"37446": "ANGLE (Intel, Intel(R) Iris(R) Xe Graphics (0x000046A6) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+			"37447": 0, "38449": None
+		},
+		"webGl2:shaderPrecisionFormats": {
+			"35633,36336": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35633,36337": {"rangeMin": 127, "rangeMax": 127, "precision": 23},
+			"35633,36338": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35633,36339": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35633,36340": {"rangeMin": 31, "rangeMax": 30, "precision": 0}, "35633,36341": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35632,36336": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35632,36337": {"rangeMin": 127, "rangeMax": 127, "precision": 23},
+			"35632,36338": {"rangeMin": 127, "rangeMax": 127, "precision": 23}, "35632,36339": {"rangeMin": 31, "rangeMax": 30, "precision": 0},
+			"35632,36340": {"rangeMin": 31, "rangeMax": 30, "precision": 0}, "35632,36341": {"rangeMin": 31, "rangeMax": 30, "precision": 0}
+		}
 	}
 
 	with Camoufox(
