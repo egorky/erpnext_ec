@@ -45,9 +45,9 @@
    "fieldname": "downloader_library",
    "fieldtype": "Select",
    "label": "Downloader Library",
-   "options": "Playwright\nPydoll",
+   "options": "Playwright\nPydoll\nCamoufox",
    "default": "Playwright",
-   "description": "Choose the library to use for downloading documents. Pydoll may help bypass bot detection."
+   "description": "Choose the library to use for downloading documents. Pydoll or Camoufox may help bypass bot detection."
   }
  ],
  "issingle": 1,

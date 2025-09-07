@@ -76,7 +76,7 @@ async def _perform_sri_download_pydoll(docname):
         options.add_argument('--window-size=1024,768')
         options.add_argument('--disable-dev-shm-usage')
         # Add a realistic User-Agent
-        options.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
+        options.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36')
 
         fake_timestamp = int(time.time()) - (90 * 24 * 60 * 60)  # 90 days ago
         options.browser_preferences = {
@@ -350,16 +350,75 @@ def _perform_sri_download_playwright(docname):
                         browser.close()
 
 
+def _perform_sri_download_camoufox(docname):
+	from camoufox import Camoufox
+
+	doc = frappe.get_doc("SRI Invoice Download", docname)
+	settings = _get_settings()
+	username = settings.sri_username
+	password = settings.get_password("sri_password")
+	timeout_ms = (settings.timeout or 60) * 1000
+
+	if not username or not password:
+		raise ValueError("SRI Username and Password must be set.")
+
+	doc_type_map = {
+		"Factura": "1",
+		"Liquidación de compra de bienes y prestación de servicios": "2",
+		"Notas de Crédito": "3",
+		"Notas de Débito": "4",
+		"Comprobante de Retención": "6"
+	}
+
+	profile_path = frappe.get_site_path("private", "camoufox_profile")
+	with Camoufox(profile_path=profile_path, headless=True) as driver:
+		page = driver.new_page()
+		try:
+			page.goto(settings.sri_login_url, timeout=timeout_ms)
+			page.locator("#usuario").fill(username)
+			page.locator("#password").fill(password)
+			page.locator("#kc-login").click()
+			page.wait_for_load_state('networkidle', timeout=timeout_ms)
+			page.goto(settings.sri_target_url, wait_until='networkidle', timeout=timeout_ms)
+			page.select_option(f'select[name="frmPrincipal:ano"]', label=str(doc.year))
+			page.select_option(f'select[name="frmPrincipal:mes"]', value=str(doc.month))
+			page.select_option(f'select[name="frmPrincipal:dia"]', value=str(doc.day))
+			doc_type_value = doc_type_map.get(doc.document_type)
+			if doc_type_value:
+				page.select_option(f'select[name="frmPrincipal:cmbTipoComprobante"]', value=doc_type_value)
+			page.locator("#btnRecaptcha").click()
+			page.wait_for_selector("#frmPrincipal\\:lnkTxtlistado", timeout=timeout_ms)
+			with page.expect_download() as download_info:
+				page.locator("#frmPrincipal\\:lnkTxtlistado").click()
+			download = download_info.value
+			temp_path = os.path.join("/tmp", download.suggested_filename)
+			download.save_as(temp_path)
+			with open(temp_path, "rb") as f:
+				file_content = f.read()
+			new_file = frappe.get_doc({
+				"doctype": "File", "file_name": download.suggested_filename,
+				"attached_to_doctype": "SRI Invoice Download", "attached_to_name": doc.name,
+				"content": file_content, "is_private": 1
+			})
+			new_file.insert()
+			os.remove(temp_path)
+			doc.status = "Completed"
+			doc.save(ignore_version=True)
+			frappe.db.commit()
+		except Exception as e:
+			screenshot_path = frappe.get_site_path("public", "files", f"sri_error_{doc.name}.png")
+			page.screenshot(path=screenshot_path, full_page=True)
+			frappe.log_error(title=f"SRI Download Failed for {doc.name}", message=frappe.get_traceback())
+			raise e
+
 def _perform_sri_download(docname):
-        doc = frappe.get_doc("SRI Invoice Download", docname)
         settings = _get_settings()
 
         try:
                 if settings.downloader_library == "Pydoll":
                         asyncio.run(_perform_sri_download_pydoll(docname))
-                        doc.status = "Completed"
-                        doc.save(ignore_version=True)
-                        frappe.db.commit()
+                elif settings.downloader_library == "Camoufox":
+                        _perform_sri_download_camoufox(docname)
                 else: # Default to Playwright
                         _perform_sri_download_playwright(docname)
 

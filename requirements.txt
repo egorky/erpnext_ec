@@ -8,3 +8,4 @@ xmltodict
 pycryptodome
 playwright
 pydoll-python
+camoufox

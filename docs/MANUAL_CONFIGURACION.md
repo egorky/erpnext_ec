@@ -112,6 +112,7 @@ El módulo incluye una herramienta para descargar masivamente documentos electr�
     -   **Timeout (seconds):** Tiempo máximo de espera para las operaciones en la página. 60 segundos es un valor recomendado.
     -   **Downloader Library (Librería de Descarga):** Esta opción te permite elegir la tecnología utilizada para la automatización del navegador.
         -   **Playwright (por defecto):** Una librería de automatización robusta y ampliamente utilizada.
-        -   **Pydoll:** Una librería más nueva diseñada para simular el comportamiento humano de forma más precisa. **Selecciona esta opción si experimentas problemas con el CAPTCHA del SRI**, ya que `Pydoll` tiene más probabilidades de evitar ser detectado como un bot.
+        -   **Pydoll:** Una librería más nueva diseñada para simular el comportamiento humano de forma más precisa.
+        -   **Camoufox:** La opción más avanzada. Es un "envoltorio" de Playwright que modifica la huella digital del navegador (WebGL, fuentes, etc.) para evitar las detecciones de bots más sofisticadas. **Selecciona esta opción si Pydoll y Playwright son bloqueados por el CAPTCHA.**
 
 Una vez configurado, puedes ir a `Integraciones > Descarga de Facturas SRI` (SRI Invoice Download) para crear una nueva solicitud de descarga, especificando el año, mes, día y tipo de documento que deseas obtener.
