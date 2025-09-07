@@ -75,45 +75,47 @@ async def _perform_sri_download_pydoll(docname):
         options.add_argument('--start-maximized')
         options.add_argument('--window-size=1024,768')
         options.add_argument('--disable-dev-shm-usage')
-        # Add a realistic User-Agent
-        options.add_argument('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36')
-
         fake_timestamp = int(time.time()) - (90 * 24 * 60 * 60)  # 90 days ago
         options.browser_preferences = {
             'profile': {
-                'password_manager_enabled': False,
                 'last_engagement_time': fake_timestamp,
                 'exit_type': 'Normal',
                 'exited_cleanly': True,
             },
             'newtab_page_location_override': 'https://www.google.com',
             'intl': {
-                'accept_languages': 'es-EC,es;q=0.9,en;q=0.8,en-US;q=0.7',
+                'accept_languages': 'es-EC,es,en-US,en',
             },
             'user_experience_metrics': {
                 'reporting_enabled': False
             },
-            'enable_do_not_track': True,
-            'enable_referrers': False,
-            'safebrowsing': {
-                'enabled': False
-            },
-            'autofill': {
-                'enabled': False
-            },
-            'search': {
-                'suggest_enabled': False
-            },
-            'download': {
-                'default_directory': '/tmp/automation-downloads',
-                'prompt_for_download': False
-            },
-            'session': {
-                'restore_on_startup': 5,
-                'startup_urls': ['about:blank']
-            },
-            'homepage': 'https://www.google.com',
-            'homepage_is_newtabpage': False
+    'enable_do_not_track': True,
+    'enable_referrers': False,
+    'safebrowsing': {
+        'enabled': False
+    },
+    # Disable data collection
+    'profile': {
+        'password_manager_enabled': False
+    },
+    'autofill': {
+        'enabled': False
+    },
+    'search': {
+        'suggest_enabled': False
+    },
+    'download': {
+        'default_directory': '/tmp/automation-downloads',
+        'prompt_for_download': False
+    },
+    # Session behavior
+    'session': {
+        'restore_on_startup': 5,  # Open New Tab Page
+        'startup_urls': ['about:blank']
+    },
+    # Homepage
+    'homepage': 'https://www.google.com',
+    'homepage_is_newtabpage': False
         }
 
         log_debug(f"Chromium options set with binary location: {options.binary_location}")
@@ -124,20 +126,6 @@ async def _perform_sri_download_pydoll(docname):
                         log_debug("Chrome launched. Starting new tab...")
                         tab = await browser.start()
                         log_debug("Tab object acquired.")
-
-                        # Prime the browser with some cookies before navigation
-                        log_debug("Priming browser with cookies...")
-                        cookies_to_set = [
-                            {
-                                "name": "_ga", "value": f"GA1.1.{time.time()}.{time.time()}",
-                                "domain": ".sri.gob.ec", "path": "/"
-                            },
-                            {
-                                "name": "prefs", "value": "lang=es&layout=responsive",
-                                "domain": ".sri.gob.ec", "path": "/"
-                            }
-                        ]
-                        await browser.set_cookies(cookies_to_set)
 
                         # 1. Login and navigate
                         log_debug(f"Navigating to login URL: {settings.sri_login_url}")
@@ -372,17 +360,34 @@ def _perform_sri_download_camoufox(docname):
 
 	profile_path = frappe.get_site_path("private", "camoufox_profile")
 
-	# Configuration to spoof fingerprinting
+	# Comprehensive fingerprint injection configuration
 	config = {
-		'window.outerHeight': 1080,
+		# Window and Navigator Spoofing from user
+		'window.outerHeight': 1056,
 		'window.outerWidth': 1920,
-		'window.innerHeight': 1080,
+		'window.innerHeight': 1008,
 		'window.innerWidth': 1920,
+		'window.history.length': 4,
 		'navigator.userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
-		'navigator.language': 'es-ES',
-		'navigator.languages': ['es-ES', 'es'],
+		'navigator.appCodeName': 'Mozilla',
+		'navigator.appName': 'Netscape',
+		'navigator.appVersion': '5.0 (Windows)',
+		'navigator.oscpu': 'Windows NT 10.0; Win64; x64',
+		'navigator.language': 'en-US',
+		'navigator.languages': ['en-US'],
 		'navigator.platform': 'Win32',
-		'navigator.hardwareConcurrency': 8,
+		'navigator.hardwareConcurrency': 12,
+		'navigator.product': 'Gecko',
+		'navigator.productSub': '20030107',
+		'navigator.maxTouchPoints': 10,
+		# WebGL Spoofing
+		'webgl.renderer': 'Intel Iris Pro OpenGL Engine',
+		'webgl.vendor': 'Intel Inc.',
+		# Battery Status Spoofing
+		'battery.charging': True,
+		'battery.level': 0.85,
+		'battery.chargingTime': 3600,
+		'battery.dischargingTime': 'Infinity',
 	}
 
 	with Camoufox(
