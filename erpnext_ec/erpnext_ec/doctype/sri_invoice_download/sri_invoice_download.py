@@ -1,6 +1,3 @@
-# Copyright (c) 2025, Jules and contributors
-# For license information, please see license.txt
-
 import frappe
 from frappe.model.document import Document
 from frappe import _
@@ -74,7 +71,23 @@ async def _perform_sri_download_pydoll(docname):
         options.binary_location = chrome_path
         options.add_argument('--headless=new')
         options.add_argument('--no-sandbox')
+        options.add_argument('--start-maximized')
+        options.add_argument('--window-size=1024,768')
         options.add_argument('--disable-dev-shm-usage')
+
+        options.browser_preferences = {
+            'profile': {
+                'exit_type': 'Normal',
+                'exited_cleanly': True,
+            },
+            'intl': {
+                'accept_languages': 'es-EC,es,en-US,en',
+            },
+            'user_experience_metrics': {
+                'reporting_enabled': False
+            }
+        }
+
         log_debug(f"Chromium options set with binary location: {options.binary_location}")
 
         async with Chrome(options=options) as browser:
@@ -96,10 +109,10 @@ async def _perform_sri_download_pydoll(docname):
                                 try:
                                         log_debug(f"Attempt {attempt + 1} to fill credentials.")
                                         user_field = await tab.find(name="usuario")
-                                        await user_field.type_keys(username)
+                                        await user_field.type_text(username, interval=0.2)
 
                                         pass_field = await tab.find(name="password")
-                                        await pass_field.type_keys(password)
+                                        await pass_field.type_text(password, interval=0.2)
 
                                         log_debug("Credentials filled successfully.")
                                         last_exception = None
@@ -113,43 +126,51 @@ async def _perform_sri_download_pydoll(docname):
                                 raise last_exception
 
                         log_debug("Finding login button and waiting for it to be interactable.")
+                        await asyncio.sleep(2)
                         login_button = await tab.find(id="kc-login")
-                        await login_button.wait_until(is_interactable=True, timeout=10)
+                        #await login_button.wait_until(is_interactable=True, timeout=10)
 
                         log_debug("Clicking login button.")
-                        await login_button.click()
+                        await login_button.scroll_into_view()
+                        await login_button.click_using_js()
 
                         log_debug("Waiting 5 seconds for page to load after login.")
-                        await asyncio.sleep(5)
+                        await asyncio.sleep(10)
                         log_debug(f"Navigating to target URL: {settings.sri_target_url}")
+                        all_cookies = await tab.get_cookies()
+                        log_debug("Number of cookies: {len(all_cookies)}")
                         await tab.go_to(settings.sri_target_url, timeout=timeout_s)
                         log_debug("Target page loaded.")
 
                         # 2. Set download parameters
                         log_debug("Setting download parameters...")
-                        # Year
-                        await (await tab.find(id="frmPrincipal:ano")).click()
+                       # Year
+                        await (await tab.find(name="frmPrincipal\:ano", timeout=10)).click()
                         await asyncio.sleep(0.5)
                         await (await tab.find(tag_name='option', value=str(doc.year))).click()
                         # Month
-                        await (await tab.find(id="frmPrincipal:mes")).click()
-                        await asyncio.sleep(0.5)
+                        await (await tab.find(name="frmPrincipal\:mes", timeout=10)).click()
+                        await asyncio.sleep(2)
                         await (await tab.find(tag_name='option', value=str(doc.month))).click()
                         # Day
-                        await (await tab.find(id="frmPrincipal:dia")).click()
-                        await asyncio.sleep(0.5)
+                        await (await tab.find(name="frmPrincipal\:dia", timeout=10)).click()
+                        await asyncio.sleep(1.1)
                         await (await tab.find(tag_name='option', value=str(doc.day))).click()
                         # Doc Type
                         doc_type_value = doc_type_map.get(doc.document_type)
                         if doc_type_value:
-                                await (await tab.find(id="frmPrincipal:cmbTipoComprobante")).click()
-                                await asyncio.sleep(0.5)
+                                await (await tab.find(name="frmPrincipal\:cmbTipoComprobante", timeout=10)).click()
+                                await asyncio.sleep(1.5)
                                 await (await tab.find(tag_name='option', value=doc_type_value)).click()
+
                         log_debug("Download parameters set.")
 
                         # 3. Click search
+                        await asyncio.sleep(1)
                         log_debug("Clicking search button (btnRecaptcha)...")
-                        await (await tab.find(id="btnRecaptcha")).click()
+                        search_button = await tab.find(id="btnRecaptcha")
+                        await search_button.wait_until(is_interactable=True, timeout=10)
+                        await search_button.click(delay=0.2)
                         log_debug("Search button clicked.")
 
                         # 4. Intercept download
@@ -208,6 +229,8 @@ async def _perform_sri_download_pydoll(docname):
                         new_file.insert()
                         os.remove(temp_path)
                         log_debug("File attached successfully. Pydoll process complete.")
+                        await tab.delete_all_cookies()
+                        await browser.stop()
 
                 except Exception as e:
                         if tab:
