@@ -127,12 +127,24 @@ async def _perform_sri_download_pydoll(docname):
 
                         # 2. Set download parameters
                         log_debug("Setting download parameters...")
-                        await (await tab.find(id="frmPrincipal:ano")).select(str(doc.year))
-                        await (await tab.find(id="frmPrincipal:mes")).select(value=str(doc.month))
-                        await (await tab.find(id="frmPrincipal:dia")).select(value=str(doc.day))
+                        # Year
+                        await (await tab.find(id="frmPrincipal:ano")).click()
+                        await asyncio.sleep(0.5)
+                        await (await tab.find(tag_name='option', value=str(doc.year))).click()
+                        # Month
+                        await (await tab.find(id="frmPrincipal:mes")).click()
+                        await asyncio.sleep(0.5)
+                        await (await tab.find(tag_name='option', value=str(doc.month))).click()
+                        # Day
+                        await (await tab.find(id="frmPrincipal:dia")).click()
+                        await asyncio.sleep(0.5)
+                        await (await tab.find(tag_name='option', value=str(doc.day))).click()
+                        # Doc Type
                         doc_type_value = doc_type_map.get(doc.document_type)
                         if doc_type_value:
-                                await (await tab.find(id="frmPrincipal:cmbTipoComprobante")).select(value=doc_type_value)
+                                await (await tab.find(id="frmPrincipal:cmbTipoComprobante")).click()
+                                await asyncio.sleep(0.5)
+                                await (await tab.find(tag_name='option', value=doc_type_value)).click()
                         log_debug("Download parameters set.")
 
                         # 3. Click search
