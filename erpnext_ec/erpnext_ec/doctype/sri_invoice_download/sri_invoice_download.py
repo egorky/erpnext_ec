@@ -381,13 +381,13 @@ def _perform_sri_download_camoufox(docname):
 		'navigator.productSub': '20030107',
 		'navigator.maxTouchPoints': 10,
 		# WebGL Spoofing
-		'webgl.renderer': 'Intel Iris Pro OpenGL Engine',
-		'webgl.vendor': 'Intel Inc.',
+		'webGl:renderer': 'Intel Iris Pro OpenGL Engine',
+		'webGl:vendor': 'Intel Inc.',
 		# Battery Status Spoofing
-		'battery.charging': True,
-		'battery.level': 0.85,
-		'battery.chargingTime': 3600,
-		'battery.dischargingTime': 'Infinity',
+		'battery:charging': True,
+		'battery:level': 0.85,
+		'battery:chargingTime': 3600,
+		'battery:dischargingTime': 'Infinity',
 	}
 
 	with Camoufox(
