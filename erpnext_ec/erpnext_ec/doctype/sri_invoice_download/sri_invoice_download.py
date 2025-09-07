@@ -371,7 +371,27 @@ def _perform_sri_download_camoufox(docname):
 	}
 
 	profile_path = frappe.get_site_path("private", "camoufox_profile")
-	with Camoufox(profile_path=profile_path, headless=True) as driver:
+
+	# Configuration to spoof fingerprinting
+	config = {
+		'window.outerHeight': 1080,
+		'window.outerWidth': 1920,
+		'window.innerHeight': 1080,
+		'window.innerWidth': 1920,
+		'navigator.userAgent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+		'navigator.language': 'es-ES',
+		'navigator.languages': ['es-ES', 'es'],
+		'navigator.platform': 'Win32',
+		'navigator.hardwareConcurrency': 8,
+	}
+
+	with Camoufox(
+		user_data_dir=profile_path,
+		headless=True,
+		persistent_context=True,
+		config=config,
+		i_know_what_im_doing=True
+	) as driver:
 		page = driver.new_page()
 		try:
 			page.goto(settings.sri_login_url, timeout=timeout_ms)
