@@ -4,6 +4,7 @@ from frappe import _
 import asyncio
 import os
 import base64
+import time
 
 class SRIInvoiceDownload(Document):
         pass
@@ -74,18 +75,45 @@ async def _perform_sri_download_pydoll(docname):
         options.add_argument('--start-maximized')
         options.add_argument('--window-size=1024,768')
         options.add_argument('--disable-dev-shm-usage')
+        # Add a realistic User-Agent
+        options.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
 
+        fake_timestamp = int(time.time()) - (90 * 24 * 60 * 60)  # 90 days ago
         options.browser_preferences = {
             'profile': {
+                'password_manager_enabled': False,
+                'last_engagement_time': fake_timestamp,
                 'exit_type': 'Normal',
                 'exited_cleanly': True,
             },
+            'newtab_page_location_override': 'https://www.google.com',
             'intl': {
-                'accept_languages': 'es-EC,es,en-US,en',
+                'accept_languages': 'es-EC,es;q=0.9,en;q=0.8,en-US;q=0.7',
             },
             'user_experience_metrics': {
                 'reporting_enabled': False
-            }
+            },
+            'enable_do_not_track': True,
+            'enable_referrers': False,
+            'safebrowsing': {
+                'enabled': False
+            },
+            'autofill': {
+                'enabled': False
+            },
+            'search': {
+                'suggest_enabled': False
+            },
+            'download': {
+                'default_directory': '/tmp/automation-downloads',
+                'prompt_for_download': False
+            },
+            'session': {
+                'restore_on_startup': 5,
+                'startup_urls': ['about:blank']
+            },
+            'homepage': 'https://www.google.com',
+            'homepage_is_newtabpage': False
         }
 
         log_debug(f"Chromium options set with binary location: {options.binary_location}")
@@ -97,11 +125,25 @@ async def _perform_sri_download_pydoll(docname):
                         tab = await browser.start()
                         log_debug("Tab object acquired.")
 
+                        # Prime the browser with some cookies before navigation
+                        log_debug("Priming browser with cookies...")
+                        cookies_to_set = [
+                            {
+                                "name": "_ga", "value": f"GA1.1.{time.time()}.{time.time()}",
+                                "domain": ".sri.gob.ec", "path": "/"
+                            },
+                            {
+                                "name": "prefs", "value": "lang=es&layout=responsive",
+                                "domain": ".sri.gob.ec", "path": "/"
+                            }
+                        ]
+                        await browser.set_cookies(cookies_to_set)
+
                         # 1. Login and navigate
                         log_debug(f"Navigating to login URL: {settings.sri_login_url}")
                         await tab.go_to(settings.sri_login_url, timeout=timeout_s)
                         log_debug("Login page loaded. Waiting for stability...")
-                        await asyncio.sleep(3)
+                        await asyncio.sleep(5)
 
                         # Retry logic for filling credentials
                         last_exception = None
@@ -109,10 +151,11 @@ async def _perform_sri_download_pydoll(docname):
                                 try:
                                         log_debug(f"Attempt {attempt + 1} to fill credentials.")
                                         user_field = await tab.find(name="usuario")
-                                        await user_field.type_text(username, interval=0.2)
+                                        await user_field.type_text(username, interval=1)
+                                        await asyncio.sleep(2)
 
                                         pass_field = await tab.find(name="password")
-                                        await pass_field.type_text(password, interval=0.2)
+                                        await pass_field.type_text(password, interval=1.2)
 
                                         log_debug("Credentials filled successfully.")
                                         last_exception = None
@@ -145,35 +188,36 @@ async def _perform_sri_download_pydoll(docname):
                         # 2. Set download parameters
                         log_debug("Setting download parameters...")
                        # Year
-                        await (await tab.find(name="frmPrincipal\:ano", timeout=10)).click()
+                        await (await tab.find(name="frmPrincipal\:ano", timeout=10)).click(hold_time=0.5, x_offset=10, y_offset=5)
                         await asyncio.sleep(0.5)
-                        await (await tab.find(tag_name='option', value=str(doc.year))).click()
+                        await (await tab.find(tag_name='option', value=str(doc.year))).click(hold_time=0.5, x_offset=10, y_offset=5)
                         # Month
-                        await (await tab.find(name="frmPrincipal\:mes", timeout=10)).click()
+                        await (await tab.find(name="frmPrincipal\:mes", timeout=10)).click(hold_time=0.5, x_offset=10, y_offset=5)
                         await asyncio.sleep(2)
-                        await (await tab.find(tag_name='option', value=str(doc.month))).click()
+                        await (await tab.find(tag_name='option', value=str(doc.month))).click(hold_time=0.5, x_offset=10, y_offset=5)
                         # Day
-                        await (await tab.find(name="frmPrincipal\:dia", timeout=10)).click()
+                        await (await tab.find(name="frmPrincipal\:dia", timeout=10)).click(hold_time=0.5, x_offset=10, y_offset=5)
                         await asyncio.sleep(1.1)
-                        await (await tab.find(tag_name='option', value=str(doc.day))).click()
+                        await (await tab.find(tag_name='option', value=str(doc.day))).click(hold_time=0.5, x_offset=10, y_offset=5)
                         # Doc Type
                         doc_type_value = doc_type_map.get(doc.document_type)
                         if doc_type_value:
-                                await (await tab.find(name="frmPrincipal\:cmbTipoComprobante", timeout=10)).click()
+                                await (await tab.find(name="frmPrincipal\:cmbTipoComprobante", timeout=10)).click(hold_time=0.5, x_offset=10, y_offset=5)
                                 await asyncio.sleep(1.5)
-                                await (await tab.find(tag_name='option', value=doc_type_value)).click()
+                                await (await tab.find(tag_name='option', value=doc_type_value)).click(hold_time=0.5, x_offset=10, y_offset=5)
 
                         log_debug("Download parameters set.")
 
                         # 3. Click search
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(2)
                         log_debug("Clicking search button (btnRecaptcha)...")
                         search_button = await tab.find(id="btnRecaptcha")
                         await search_button.wait_until(is_interactable=True, timeout=10)
-                        await search_button.click(delay=0.2)
+                        await search_button.click(hold_time=0.5, x_offset=10, y_offset=5)
                         log_debug("Search button clicked.")
 
                         # 4. Intercept download
+                        await asyncio.sleep(5)
                         log_debug("Waiting for download link selector...")
                         await tab.wait_for_selector("#frmPrincipal\\:lnkTxtlistado", timeout=timeout_s)
                         log_debug("Download link found.")
