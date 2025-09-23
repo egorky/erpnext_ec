@@ -1,49 +1,37 @@
 import frappe
+from frappe.custom.doctype.custom_field.custom_field import add_custom_field
 
 def execute():
-    # --- Cleanup old/wrong custom fields ---
-    # Use a try/except block to avoid errors if the fields don't exist
-    try:
-        if frappe.db.exists("Custom Field", "POS Profile-estab"):
-            frappe.delete_doc("Custom Field", "POS Profile-estab", ignore_permissions=True, force=True)
-    except frappe.DoesNotExistError:
-        pass
+    # --- Cleanup all previous versions of the custom fields ---
+    if frappe.db.exists("Custom Field", "POS Profile-estab"):
+        frappe.delete_doc("Custom Field", "POS Profile-estab", ignore_permissions=True, force=True)
 
-    try:
-        if frappe.db.exists("Custom Field", "POS Profile-ptoemi"):
-            frappe.delete_doc("Custom Field", "POS Profile-ptoemi", ignore_permissions=True, force=True)
-    except frappe.DoesNotExistError:
-        pass
+    if frappe.db.exists("Custom Field", "POS Profile-ptoemi"):
+        frappe.delete_doc("Custom Field", "POS Profile-ptoemi", ignore_permissions=True, force=True)
 
-    # Explicitly commit the deletions to the database
+    if frappe.db.exists("Custom Field", "POS Profile-custom_estab"):
+        frappe.delete_doc("Custom Field", "POS Profile-custom_estab", ignore_permissions=True, force=True)
+
+    if frappe.db.exists("Custom Field", "POS Profile-custom_ptoemi"):
+        frappe.delete_doc("Custom Field", "POS Profile-custom_ptoemi", ignore_permissions=True, force=True)
+
+    # Commit the deletions to ensure they are gone before creation
     frappe.db.commit()
 
-    # --- Create new, correctly named and typed custom fields ---
+    # --- Create the new fields using the robust add_custom_field API ---
+    add_custom_field("POS Profile", {
+        "fieldname": "custom_estab",
+        "label": "Establecimiento SRI",
+        "fieldtype": "Link",
+        "options": "Sri Establishment",
+        "insert_after": "company",
+        "no_copy": 1,
+    })
 
-    # Create 'custom_estab' field
-    if not frappe.db.exists("Custom Field", "POS Profile-custom_estab"):
-        frappe.get_doc({
-            "doctype": "Custom Field",
-            "dt": "POS Profile",
-            "fieldname": "custom_estab",
-            "label": "Establecimiento SRI",
-            "fieldtype": "Link",
-            "options": "Sri Establishment",
-            "insert_after": "company",
-            "no_copy": 1,
-        }).insert(ignore_permissions=True)
-
-    # Create 'custom_ptoemi' field
-    if not frappe.db.exists("Custom Field", "POS Profile-custom_ptoemi"):
-        frappe.get_doc({
-            "doctype": "Custom Field",
-            "dt": "POS Profile",
-            "fieldname": "custom_ptoemi",
-            "label": "Punto de Emision SRI",
-            "fieldtype": "Select",
-            "insert_after": "custom_estab",
-            "no_copy": 1,
-        }).insert(ignore_permissions=True)
-
-    # Explicitly commit the creations to the database
-    frappe.db.commit()
+    add_custom_field("POS Profile", {
+        "fieldname": "custom_ptoemi",
+        "label": "Punto de Emision SRI",
+        "fieldtype": "Select",
+        "insert_after": "custom_estab",
+        "no_copy": 1,
+    })
