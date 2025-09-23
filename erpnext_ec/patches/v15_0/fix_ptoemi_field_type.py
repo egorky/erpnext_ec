@@ -14,7 +14,15 @@ def execute():
             "no_copy": 1,
         }).insert()
 
-    # Ensure 'ptoemi' custom field exists and is of the correct type
+    # Handle 'ptoemi' field: delete if it's the wrong 'Link' type, then (re)create as 'Select'.
+    if frappe.db.exists("Custom Field", "POS Profile-ptoemi"):
+        # Check if the existing field is of the wrong type.
+        field_type = frappe.db.get_value("Custom Field", "POS Profile-ptoemi", "fieldtype")
+        if field_type == "Link":
+            # If it's a Link, delete it. We'll recreate it correctly.
+            frappe.delete_doc("Custom Field", "POS Profile-ptoemi", ignore_permissions=True)
+
+    # Now, create the 'ptoemi' field if it doesn't exist (or was just deleted).
     if not frappe.db.exists("Custom Field", "POS Profile-ptoemi"):
         frappe.get_doc({
             "doctype": "Custom Field",
@@ -25,10 +33,3 @@ def execute():
             "insert_after": "estab",
             "no_copy": 1,
         }).insert()
-    else:
-        # If it exists, it might be the old buggy 'Link' type. Correct it.
-        custom_field = frappe.get_doc("Custom Field", "POS Profile-ptoemi")
-        if custom_field.fieldtype == "Link":
-            custom_field.fieldtype = "Select"
-            custom_field.options = ""
-            custom_field.save()
