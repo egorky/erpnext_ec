@@ -1,6 +1,7 @@
 [
     {
         "doctype": "Custom Field",
+        "name": "POS Profile-custom_estab",
         "dt": "POS Profile",
         "fieldname": "custom_estab",
         "label": "Establecimiento SRI",
@@ -11,6 +12,7 @@
     },
     {
         "doctype": "Custom Field",
+        "name": "POS Profile-custom_ptoemi",
         "dt": "POS Profile",
         "fieldname": "custom_ptoemi",
         "label": "Punto de Emision SRI",
