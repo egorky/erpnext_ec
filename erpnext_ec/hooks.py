@@ -33,6 +33,7 @@ doctype_js = {
     "Delivery Note" : "public/js/overrides/delivery_note_form_sri.js",
     "Purchase Invoice" : "public/js/overrides/purchase_invoice_form_sri.js",
     "Company" : "public/js/overrides/company_form_sri.js",
+    "POS Profile" : "public/js/overrides/pos_profile_form_sri.js",
     }
 doctype_list_js = {
     "Sales Invoice" : "public/js/overrides/sales_invoice_list_sri.js",
