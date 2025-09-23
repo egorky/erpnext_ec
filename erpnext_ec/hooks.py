@@ -10,6 +10,8 @@ required_apps = [
     'erpnext'
 ]
 
+fixtures = ["Custom Field"]
+
 app_include_js = [
     "/assets/erpnext_ec/js/sri_custom.js",
     "/assets/erpnext_ec/js/sales_invoice_tools.js",

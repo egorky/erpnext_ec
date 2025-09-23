@@ -1,0 +1,21 @@
+[
+    {
+        "doctype": "Custom Field",
+        "dt": "POS Profile",
+        "fieldname": "custom_estab",
+        "label": "Establecimiento SRI",
+        "fieldtype": "Link",
+        "options": "Sri Establishment",
+        "insert_after": "company",
+        "no_copy": 1
+    },
+    {
+        "doctype": "Custom Field",
+        "dt": "POS Profile",
+        "fieldname": "custom_ptoemi",
+        "label": "Punto de Emision SRI",
+        "fieldtype": "Select",
+        "insert_after": "custom_estab",
+        "no_copy": 1
+    }
+]

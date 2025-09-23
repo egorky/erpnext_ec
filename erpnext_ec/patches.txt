@@ -3,5 +3,5 @@ erpnext_ec.patches.v15_0.client_scripts
 erpnext_ec.patches.v15_0.sales_invoice_custom
 
 [post_model_sync]
-erpnext_ec.patches.v15_0.fix_ptoemi_field_type
+erpnext_ec.patches.v15_0.cleanup_pos_profile_fields
 
