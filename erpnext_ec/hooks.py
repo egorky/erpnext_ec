@@ -90,6 +90,9 @@ doc_events = {
         "validate": "erpnext_ec.erpnext_ec.doctype.xml_responses.events.validate",
 	    "on_update": "erpnext_ec.erpnext_ec.doctype.xml_responses.events.on_update",
         "after_insert": "erpnext_ec.erpnext_ec.doctype.xml_responses.events.after_insert",
+    },
+    "Sales Invoice": {
+        "validate": "erpnext_ec.utilities.pos_tools.validate_pos_invoice"
     }
 }
 

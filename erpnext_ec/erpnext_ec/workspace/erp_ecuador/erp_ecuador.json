@@ -1,0 +1,135 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"zGVrPDbnHn\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">ERP Ecuador</span>\",\"col\":12}},{\"id\":\"jUYKLjvGRZ\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Facturas de Venta\",\"col\":3}},{\"id\":\"MtTIC-F4iI\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Guias de Remision\",\"col\":3}},{\"id\":\"UAo3z71NbA\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Retenciones de Compra\",\"col\":3}},{\"id\":\"ID1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Facturas de Compra\",\"col\":3}},{\"id\":\"ID3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Configuracion Regional\",\"col\":3}},{\"id\":\"ID4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Establecimientos\",\"col\":3}},{\"id\":\"ID5\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Firmas Electronicas\",\"col\":3}},{\"id\":\"newShortcut123\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Anexo Transaccional Simplificado\",\"col\":3}}]",
+ "creation": "2025-09-22 17:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "solid-success",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "ERP Ecuador",
+ "links": [],
+ "modified": "2025-09-22 17:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Erpnext Ec",
+ "name": "ERP Ecuador",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 24.0,
+ "shortcuts": [
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Facturas de Venta",
+   "link_to": "Sales Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Guias de Remision",
+   "link_to": "Delivery Note",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Retenciones de Compra",
+   "link_to": "Purchase Withholding Sri Ec",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Facturas de Compra",
+   "link_to": "Purchase Invoice",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Configuracion Regional",
+   "link_to": "Regional Settings Ec",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Establecimientos",
+   "link_to": "Sri Establishment",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Firmas Electronicas",
+   "link_to": "Sri Signature",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Secuencias",
+   "link_to": "Sri Sequence",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Tipos de Comprobantes",
+   "link_to": "Sri Type Doc",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Tipos de Identificacion",
+   "link_to": "Sri Type Id",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Ambientes SRI",
+   "link_to": "Sri Environment",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "List",
+   "label": "Anexo Transaccional Simplificado",
+   "link_to": "Anexo Transaccional Simplificado",
+   "type": "Report"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Descarga de Facturas SRI",
+   "link_to": "SRI Invoice Download",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Configuracion Descarga SRI",
+   "link_to": "SRI Downloader Settings",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "List",
+   "label": "Respuestas XML",
+   "link_to": "Xml Responses",
+   "type": "DocType"
+  }
+ ],
+ "title": "ERP Ecuador"
+}
