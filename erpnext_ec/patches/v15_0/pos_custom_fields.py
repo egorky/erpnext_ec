@@ -20,8 +20,7 @@ def execute():
             "dt": "POS Profile",
             "fieldname": "ptoemi",
             "label": "Punto de Emision SRI",
-            "fieldtype": "Link",
-            "options": "Sri Ptoemi",
+            "fieldtype": "Select",
             "insert_after": "estab",
             "no_copy": 1,
         }).insert()
