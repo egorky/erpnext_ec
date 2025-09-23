@@ -126,12 +126,10 @@ def build_doc_fac(doc_name):
 		ruc = doc.tax_id #doc.company_tax_id
 		
 		puntoEmision_rec = get_full_ptoemi(doc.ptoemi)
-		doc.ptoemi = puntoEmision_rec.record_name
-		puntoEmision = doc.ptoemi
+		puntoEmision = puntoEmision_rec.record_name
 		
 		establecimiento_rec = get_full_establishment(doc.estab)
-		doc.estab = establecimiento_rec.record_name
-		establecimiento = doc.estab
+		establecimiento = establecimiento_rec.record_name
 
 		if(ruc == None):
 			ruc = '0000000000000'
